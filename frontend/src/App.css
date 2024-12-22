@@ -1,0 +1,93 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   App.css                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/12/22 18:00:08 by npatron           #+#    #+#             */
+/*   Updated: 2024/12/22 18:27:08 by npatron          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+
+@font-face {
+  font-family: 'Arcade';
+  src: url('./assets/rocabe-trial-font/RocabetrialRegular-E4p78.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Arcade2';
+  src: url('./assets/arcade-2/Pacfont-ZEBZ.ttf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Arcade3';
+  src: url('./assets/arcade-2/PacfontGood-yYye.ttf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body, html, #root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+body, html, #root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+} 
+
+#background-container {
+  height: 100vh;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+  background: rgb(2,0,36);
+  background: radial-gradient(circle, rgba(2,0,36,1) 0%, rgba(36,0,70,1) 61%, rgba(60,9,108,1) 100%);
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  }  */
+
+.content {
+  color: #887a91;
+  text-align: center;
+}
+
+.header {
+  position: absolute;
+  width: 80vh;
+  height: 20vh;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  top: 0px;
+  user-select: none;
+}
+
+.header-write {
+  font-family: Arcade2;
+  font-size: 70px;
+  color: #7B2CBF;
+}
+
+.header-write:hover {
+  font-family: Arcade2;
+  font-size: 72px;
+  color: #C77DFF;
+  cursor: pointer;
+}
+
+

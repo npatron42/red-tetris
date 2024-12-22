@@ -1,0 +1,66 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   LoginRegister.css                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/12/22 17:48:38 by npatron           #+#    #+#             */
+/*   Updated: 2024/12/22 18:26:57 by npatron          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+@font-face {
+	font-family: 'Arcade';
+	src: url('./assets/rocabe-trial-font/RocabetrialRegular-E4p78.otf') format('opentype');
+	font-weight: normal;
+	font-style: normal;
+  }
+  
+  @font-face {
+	font-family: 'Arcade2';
+	src: url('./assets/arcade-2/Pacfont-ZEBZ.ttf') format('opentype');
+	font-weight: normal;
+	font-style: normal;
+  }
+  
+  @font-face {
+	font-family: 'Arcade3';
+	src: url('./assets/arcade-2/PacfontGood-yYye.ttf') format('opentype');
+	font-weight: normal;
+	font-style: normal;
+  }
+
+  @font-face {
+	font-family: 'Bold';
+	src: url('../../assets/boldFont/AmericanCaptain-MdEY.otf') format('opentype');
+	font-weight: normal;
+	font-style: normal;
+  }
+
+.principalCadre {
+	width: 100vw;
+	height: 20vh;
+	align-items: center;
+	justify-content: center;
+	display: flex;
+	flex-direction: column;
+	user-select: none;
+}
+
+.loginRegisterWriting {
+	font-family: Bold;
+	font-size: 50px;
+	padding-top: 20px;
+	padding-bottom: 20px;
+	color: #9D4EDD;
+}
+
+.loginRegisterWriting:hover {
+	font-family: Bold;
+	font-size: 52px;
+	padding-top: 20px;
+	padding-bottom: 20px;
+	color: #f0ebd8;
+	cursor: pointer;
+}

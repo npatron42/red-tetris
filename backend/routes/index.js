@@ -1,9 +1,13 @@
-var express = require('express');
-var router = express.Router();
+import express from 'express';
+import userRouter from './userRoutes.js';
+var principalRouter = express.Router();
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+principalRouter.get('/', function(req, res, next) {
+  res.json({"test": "qwdqwdqwdqwdqwdqwdd"});
 });
 
-module.exports = router;
+
+principalRouter.use('/users', userRouter);
+
+export default principalRouter;
