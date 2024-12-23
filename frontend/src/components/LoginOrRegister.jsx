@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   LoginRegister.jsx                                  :+:      :+:    :+:   */
+/*   LoginOrRegister.jsx                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
+/*   By: fpalumbo <fpalumbo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/22 17:47:44 by npatron           #+#    #+#             */
-/*   Updated: 2024/12/22 18:25:27 by npatron          ###   ########.fr       */
+/*   Updated: 2024/12/23 16:15:52 by fpalumbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@ const LoginRegister = () => {
 	const goToRegister = () => {
 		navigate("/register");
 	}
+
+	console.log("TEST")
 
 	return (
 		<div className="principalCadre">

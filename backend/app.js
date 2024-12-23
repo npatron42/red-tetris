@@ -3,6 +3,7 @@ import morgan from 'morgan';
 import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { expressjwt } from "express-jwt";
 import http from 'http';
 import principalRouter from './routes/index.js';
 import userRoutes from './routes/userRoutes.js'
@@ -20,6 +21,14 @@ app.use(express.json());
 
 
 app.use(express.static(path.join(__dirname, 'public')));
+
+
+app.use(
+  expressjwt({
+    secret: 'momo',
+    algorithms: ['HS256'],
+  }).unless({ path: ['/user/login', '/user/createUser'] })
+);
 
 const port = normalizePort(process.env.PORT || '8000');
 app.set('port', port);

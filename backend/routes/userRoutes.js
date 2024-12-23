@@ -1,13 +1,11 @@
 import express from "express";
 
-import { createUser, loginUser } from "../controllers/usersController.js"; 
+import { createUser, loginUser, getUser } from "../controllers/usersController.js"; 
 
 var userRouter = express.Router();
 
 /* GET users listing. */
-userRouter.get('/', function(req, res, next) {
-  res.json({"users": "ouiqwdqwdqwdqwdqwd"});
-});
+userRouter.get('/', getUser);
 
 userRouter.post('/createUser', createUser);
 

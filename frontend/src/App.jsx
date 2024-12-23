@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   App.jsx                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
+/*   By: fpalumbo <fpalumbo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/22 17:43:01 by npatron           #+#    #+#             */
-/*   Updated: 2024/12/23 12:09:15 by npatron          ###   ########.fr       */
+/*   Updated: 2024/12/23 16:18:28 by fpalumbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ import HomePage from './components/HomePage';
 import LoginRegister from './components/LoginOrRegister';
 import Register from './components/Register';
 import Login from './components/Login';
-
+import { UserAuthProvider } from './providers/UserAuthProvider';
 
 const App = () => {
 
@@ -33,23 +33,32 @@ const App = () => {
 	const isPublicRoute = publicPaths.includes(location.pathname);
 
 	const goToHome = () => {
-		navigate("/");
+
+		const myJwt = localStorage.getItem("jwt")
+
+		if (myJwt)
+			navigate("/home");
+		else
+			navigate("/");
 		return ;
 	}
 
 	return (
-		<div id="background-container">
-			<div className="header">
-				<span className="header-write" onClick={() => goToHome()}>RED-TETRIS</span>
-			</div>
-
+			<div id="background-container">
+				<div className="header">
+					<span className="header-write" onClick={() => goToHome()}>RED-TETRIS</span>
+				</div>
 			<Routes>
-				<Route path="/" element={<LoginRegister />} />
-				<Route path="/home" element={<HomePage />} />
-				<Route path="/register" element={<Register />} />
-				<Route path="/login" element={<Login />} />
+					<Route path="/" element={<LoginRegister />} />
 			</Routes>
-		</div>
+			<UserAuthProvider>
+				<Routes>
+					<Route path="/home" element={<HomePage />} />
+					<Route path="/register" element={<Register />} />
+					<Route path="/login" element={<Login />} />
+				</Routes>
+			</UserAuthProvider>
+			</div>
   );
 };
 

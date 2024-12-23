@@ -9,7 +9,7 @@ export const getUser = async () => {
 			}
 		};
 		
-		const response = await axios.get(`https://${location.host}/api/user/`, config);
+		const response = await axios.get("http://localhost:8000/user", config);
 
 		return response.data;
 	} catch (error) {

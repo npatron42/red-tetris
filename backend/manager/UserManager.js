@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   UserManager.js                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
+/*   By: fpalumbo <fpalumbo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 10:24:03 by npatron           #+#    #+#             */
-/*   Updated: 2024/12/23 11:37:36 by npatron          ###   ########.fr       */
+/*   Updated: 2024/12/23 16:42:57 by fpalumbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,16 @@ export class UserManager {
 	constructor() {
         this.userDao = new UserDao();
     }
+
+	getUserByUsername = async (myUsername) => {
+
+		if (myUsername) {
+
+			const user = await this.userDao.getUserByUsername(myUsername);
+			return user
+		}
+	}
+
 
 	userAlreadyExists = async (myUsername) => {
 

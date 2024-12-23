@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Login.jsx                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
+/*   By: fpalumbo <fpalumbo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/22 18:29:31 by npatron           #+#    #+#             */
-/*   Updated: 2024/12/23 12:22:40 by npatron          ###   ########.fr       */
+/*   Updated: 2024/12/23 15:44:56 by fpalumbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,9 +46,14 @@ const Login = () => {
 			const myResult = await loginUser(myUser);
 			
 			if (myResult.success) {
-				await sleep(2000);
-				navigate("/home");
-				setIsLoading(false);
+				if (myResult.token)
+					{
+						await sleep(2000);
+						const myJwt = myResult.token
+						localStorage.setItem("jwt", myJwt);
+						navigate("/home");
+						setIsLoading(false);
+					}
 			}
 
 			// USER NOT EXISTING
