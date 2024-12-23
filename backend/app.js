@@ -7,6 +7,7 @@ import http from 'http';
 import principalRouter from './routes/index.js';
 import userRoutes from './routes/userRoutes.js'
 import debug from 'debug';
+import userRouter from './routes/userRoutes.js';
 
 const app = express();
 
@@ -98,7 +99,9 @@ function onError(error) {
     debug('Listening on ' + bind);
   }
   
-  app.use('/', principalRouter);           
+  app.use('/', principalRouter);
+  app.use('/user', userRouter)
+
   
 
 export default app;

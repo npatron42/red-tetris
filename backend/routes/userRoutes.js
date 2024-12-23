@@ -1,6 +1,6 @@
 import express from "express";
 
-import { createUser } from "../controllers/usersController.js";
+import { createUser, loginUser } from "../controllers/usersController.js"; 
 
 var userRouter = express.Router();
 
@@ -9,6 +9,8 @@ userRouter.get('/', function(req, res, next) {
   res.json({"users": "ouiqwdqwdqwdqwdqwd"});
 });
 
-userRouter.get('/createUser', createUser);
+userRouter.post('/createUser', createUser);
+
+userRouter.post('/login', loginUser);
 
 export default userRouter;

@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/22 17:43:01 by npatron           #+#    #+#             */
-/*   Updated: 2024/12/22 18:34:53 by npatron          ###   ########.fr       */
+/*   Updated: 2024/12/23 12:09:15 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import HomePage from './components/HomePage';
 import LoginRegister from './components/LoginOrRegister';
 import Register from './components/Register';
+import Login from './components/Login';
+
 
 const App = () => {
 
@@ -45,6 +47,7 @@ const App = () => {
 				<Route path="/" element={<LoginRegister />} />
 				<Route path="/home" element={<HomePage />} />
 				<Route path="/register" element={<Register />} />
+				<Route path="/login" element={<Login />} />
 			</Routes>
 		</div>
   );

@@ -6,33 +6,35 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/22 18:29:27 by npatron           #+#    #+#             */
-/*   Updated: 2024/12/22 23:01:19 by npatron          ###   ########.fr       */
+/*   Updated: 2024/12/23 12:18:09 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import './css/Register.css'
 
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import Swal from 'sweetalert2'
 
 import { createUser } from '../api/api';
-
+import ButtonLoading from './ButtonLoading';
 
 const Register = () => {
 
+	const navigate = useNavigate();
 
-
+	const [isLoading, setIsLoading] = useState(false)
+	
 	const [usernameInput, setUsernameInput] = useState("");
 	const [passwordInput, setPasswordInput] = useState("");
 	const [confirmationInput, setConfirmationInput] = useState("");
-	
-	const [isUsernameDone, setUsernameDone] = useState(false);
-	const [isPasswordDone, setPasswordDone] = useState(false);
-	const [isPasswordConfirmationDone, setPasswordConfirmationDone] = useState(false);
 	
 	const myRegex = /^[a-zA-Z0-9_]{3,16}$/;
 
 
 	const handleSubmit = async () => {
+		const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+		setIsLoading(true)
 		if (myRegex.test(usernameInput) && myRegex.test(passwordInput))
 			if (passwordInput == confirmationInput) {
 
@@ -40,10 +42,32 @@ const Register = () => {
 					"username": usernameInput,
 					"password": passwordInput,
 				}
-				console.log(myUser);
 				const myResult = await createUser(myUser);
-				console.log(myResult);
+
+				// USER NOT EXISTING
+
+				if (myResult.success) {
+					await sleep(2000);
+					navigate("/");
+					setIsLoading(false)	
+					return ;
+				}
+
+				// USER EXISTS
+
+				else {
+					Swal.fire({
+						icon: "error",
+						title: "Oops...",
+						text: "User already exists!",
+					});
+					setUsernameInput("");
+					setPasswordInput("");
+					setConfirmationInput("");
+				}
 			}
+		await sleep(2000)
+		setIsLoading(false)
 
 	}
 
@@ -69,7 +93,7 @@ const Register = () => {
 					type="text" 
 					placeholder="Enter your username" 
 					className="inputRegister"
-					maxlength="16"
+					maxLength="16"
 					value={usernameInput}
 					onChange={(e) => setUsernameInput(e.target.value)}
 					onKeyPress={handleKeyPress}
@@ -87,7 +111,7 @@ const Register = () => {
 					type="password" 
 					placeholder="Enter your password" 
 					className="inputRegister"
-					maxlength="16" 
+					maxLength="16" 
 					value={passwordInput}
 					onChange={(e) => setPasswordInput(e.target.value)}
 					onKeyPress={handleKeyPress}
@@ -104,16 +128,24 @@ const Register = () => {
 					type="password"
 					placeholder="Confirm your password" 
 					className="inputRegister"
-					maxlength="16"
+					maxLength="16"
 					value={confirmationInput}
 					onChange={(e) => setConfirmationInput(e.target.value)}
 					onKeyPress={handleKeyPress}
 				/>
 			</div>
-
-			<button className="submitButton">
-				<span className="nameWrite2" onClick={() => handleSubmit()}>SUBMIT</span>
-			</button>
+			{ isLoading == false && (
+				<div className="positionButton">
+					<button className="submitButton">
+						<span className="nameWrite2" onClick={() => handleSubmit()}>REGISTER</span>
+					</button>					
+				</div>
+			)}
+			{ isLoading == true && (
+				<div className="positionButton">
+					<ButtonLoading />					
+				</div>
+			)}			
 
 		</div>
 	)	
