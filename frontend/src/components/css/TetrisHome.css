@@ -3,29 +3,76 @@
 /*                                                        :::      ::::::::   */
 /*   TetrisHome.css                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
+/*   By: fpalumbo <fpalumbo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/24 15:29:59 by npatron           #+#    #+#             */
-/*   Updated: 2024/12/25 10:59:14 by npatron          ###   ########.fr       */
+/*   Updated: 2024/12/27 17:40:24 by fpalumbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
-/* Grille principale */
-.tetris-grid {
+@font-face {
+	font-family: 'Bold';
+	src: url('../../assets/boldFont/AmericanCaptain-MdEY.otf') format('opentype');
+	font-weight: normal;
+	font-style: normal;
+  }
+  
+.tetris-grid
+{
+    display: flex;
+    margin-top: 100px;
     display: grid;
-    grid-template-columns: repeat(10, 30px); /* 10 colonnes de 30px */
-    grid-template-rows: repeat(20, 30px);   /* 20 lignes de 30px */
-    gap: 1px; /* Espacement entre les cellules */
-    background-color: #000; /* Fond noir pour simuler un cadre */
+    grid-template-columns: repeat(10, 30px);
+    grid-template-rows: repeat(20, 30px);
+    gap: 1px; 
+    background-color: #3C096C;
     padding: 5px;
-    border: 2px solid #333; /* Bordure pour le contour de la grille */
+    border: 3px solid #d6d5d6;
+    z-index: 3;
 }
 
-/* Cellules individuelles */
+
 .tetris-cell {
     width: 30px;
     height: 30px;
-    background-color: #444; /* Couleur des cellules */
-    border: 1px solid #555; /* Bordures des cellules pour mieux les visualiser */
+    background-color: #FF9E00;
+    border: 1px solid #FF6D00;
+}
+
+.buttonPlay {
+    position: absolute;
+    top: 450px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex; 
+    align-items: center;
+    justify-content: center;
+    width: 150px;
+    height: 100px;
+    border-radius: 25px;
+    background-color: #5A189A;
+    border: 4px solid #240046;
+    z-index: 1;
+}
+
+.buttonPlay:hover {
+    position: absolute;
+    top: 450px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex; 
+    align-items: center;
+    justify-content: center;
+    width: 150px;
+    height: 100px;
+    border-radius: 25px;
+    background-color: #9D4EDD;
+    border: 4px solid #240046;
+    z-index: 1;
+}
+
+.writePlay {
+    font-size: 40px;
+    color: #d6d5d6;
+    font-family: 'Bold';
 }

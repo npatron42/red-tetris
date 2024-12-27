@@ -1,32 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   HomePage.jsx                                       :+:      :+:    :+:   */
+/*   TetrisGame.jsx                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fpalumbo <fpalumbo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/22 17:21:52 by npatron           #+#    #+#             */
-/*   Updated: 2024/12/27 18:30:48 by fpalumbo         ###   ########.fr       */
+/*   Created: 2024/12/27 18:02:53 by fpalumbo          #+#    #+#             */
+/*   Updated: 2024/12/27 18:30:01 by fpalumbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-import { getUser } from '../api/api.js'
+import React from 'react'
 
-import Logout from './Logout.jsx';
-import Welcome from './Welcome.jsx';
-import TetrisHome from './TetrisHome.jsx';
+console.log("QJWDKQJWNDKJQW")
 
-const HomePage = () => {
+const TetrisGame = () => {
 
-	return (
-		<div>
-			<Welcome />
-			<Logout />
-			<TetrisHome />
-		</div>
-	)
+    const test = () => {
+        console.log("TEST")
+    }
 
-	
+
+    return (
+        <div>TEST</div>
+    )
+
 }
 
-export default HomePage;
+export default TetrisGame;
