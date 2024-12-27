@@ -1,0 +1,31 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   TetrisHome.css                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/12/24 15:29:59 by npatron           #+#    #+#             */
+/*   Updated: 2024/12/25 10:59:14 by npatron          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+
+/* Grille principale */
+.tetris-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 30px); /* 10 colonnes de 30px */
+    grid-template-rows: repeat(20, 30px);   /* 20 lignes de 30px */
+    gap: 1px; /* Espacement entre les cellules */
+    background-color: #000; /* Fond noir pour simuler un cadre */
+    padding: 5px;
+    border: 2px solid #333; /* Bordure pour le contour de la grille */
+}
+
+/* Cellules individuelles */
+.tetris-cell {
+    width: 30px;
+    height: 30px;
+    background-color: #444; /* Couleur des cellules */
+    border: 1px solid #555; /* Bordures des cellules pour mieux les visualiser */
+}

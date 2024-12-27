@@ -9,11 +9,16 @@ import principalRouter from './routes/index.js';
 import userRoutes from './routes/userRoutes.js'
 import debug from 'debug';
 import userRouter from './routes/userRoutes.js';
+import { Server } from 'socket.io'
+
+
 
 const app = express();
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+
+
 
 app.use(morgan('dev'));   
 app.use(cors());         
@@ -38,6 +43,24 @@ app.set('port', port);
 */
 
 const server = http.createServer(app);
+const io = new Server(server);
+
+io.on('connection', (socket) => {
+  console.log('Un client est connecté !');
+
+  // Recevoir un message du client
+  socket.on('message', (msg) => {
+      console.log('Message reçu :', msg);
+
+      // Diffuser le message à tous les clients
+      io.emit('message', msg);
+  });
+
+  // Gérer la déconnexion
+  socket.on('disconnect', () => {
+      console.log('Un client s\'est déconnecté.');
+  });
+});
 
 /**
  * Listen on provided port, on all network interfaces.
