@@ -6,7 +6,7 @@
 /*   By: fpalumbo <fpalumbo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 16:03:13 by fpalumbo          #+#    #+#             */
-/*   Updated: 2024/12/23 17:14:41 by fpalumbo         ###   ########.fr       */
+/*   Updated: 2024/12/28 19:04:14 by fpalumbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,8 @@ export const UserAuthProvider = ({ children }) => {
         const defineUser = async () => {
             try {
                 const myUserTmp = await getUser();
-                console.log("myUser --> ", myUserTmp)
                 setUser(myUserTmp);
+                console.log("myUserTmp --> ", myUserTmp)
             } catch (error) {
                 localStorage.removeItem("jwt");
                 navigate('/');

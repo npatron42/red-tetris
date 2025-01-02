@@ -9,7 +9,9 @@ export const getUser = async () => {
 			}
 		};
 		
-		const response = await axios.get("http://localhost:8000/user", config);
+		const response = await axios.get("http://localhost:8000/users", config);
+
+		console.log(`Response --> ${response.data}`)
 
 		return response.data;
 	} catch (error) {

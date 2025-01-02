@@ -6,7 +6,7 @@
 /*   By: fpalumbo <fpalumbo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/27 17:41:53 by fpalumbo          #+#    #+#             */
-/*   Updated: 2024/12/27 18:30:56 by fpalumbo         ###   ########.fr       */
+/*   Updated: 2024/12/28 19:42:15 by fpalumbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,10 +35,10 @@ const TetrisGrid = () => {
 
     const createGame = () => {
 
-        const uuid = uuidv4()
+        const roomId = uuidv4()
         const leader = myUser.username
 
-        navigate(`/${uuid}/${leader}`)
+        navigate(`/${roomId}/${leader}`, { state: { roomId }})
         return ;
     }
 

@@ -6,11 +6,10 @@ import { fileURLToPath } from 'url';
 import { expressjwt } from "express-jwt";
 import http from 'http';
 import principalRouter from './routes/index.js';
-import userRoutes from './routes/userRoutes.js'
 import debug from 'debug';
 import userRouter from './routes/userRoutes.js';
 import { Server } from 'socket.io'
-
+import socketLogic from './socket/socket.js';
 
 
 const app = express();
@@ -38,30 +37,30 @@ app.use(
 const port = normalizePort(process.env.PORT || '8000');
 app.set('port', port);
 
+
+
+
 /**
  * Create HTTP server.
 */
 
 const server = http.createServer(app);
-const io = new Server(server);
 
-io.on('connection', (socket) => {
-  console.log('Un client est connecté !');
 
-  // Recevoir un message du client
-  socket.on('message', (msg) => {
-      console.log('Message reçu :', msg);
+const corsOptions = {
+  origin: 'http://localhost:5173',
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type'],
+  credentials: true,
+};
 
-      // Diffuser le message à tous les clients
-      io.emit('message', msg);
-  });
+app.use(cors(corsOptions));
 
-  // Gérer la déconnexion
-  socket.on('disconnect', () => {
-      console.log('Un client s\'est déconnecté.');
-  });
+const io = new Server(server, {
+  cors: corsOptions,  
 });
 
+socketLogic(io);
 /**
  * Listen on provided port, on all network interfaces.
 */
