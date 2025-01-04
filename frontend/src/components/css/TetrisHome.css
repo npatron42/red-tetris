@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   TetrisHome.css                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fpalumbo <fpalumbo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/24 15:29:59 by npatron           #+#    #+#             */
-/*   Updated: 2024/12/27 17:40:24 by fpalumbo         ###   ########.fr       */
+/*   Updated: 2025/01/03 11:30:32 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@
     display: flex;
     margin-top: 100px;
     display: grid;
-    grid-template-columns: repeat(10, 30px);
-    grid-template-rows: repeat(20, 30px);
+    grid-template-columns: repeat(10, 25px);
+    grid-template-rows: repeat(20, 25px);
     gap: 1px; 
     background-color: #3C096C;
     padding: 5px;
@@ -41,7 +41,7 @@
 
 .buttonPlay {
     position: absolute;
-    top: 450px;
+    top: 50vh;
     left: 50%;
     transform: translateX(-50%);
     display: flex; 
@@ -57,7 +57,7 @@
 
 .buttonPlay:hover {
     position: absolute;
-    top: 450px;
+    top: 50vh;
     left: 50%;
     transform: translateX(-50%);
     display: flex; 

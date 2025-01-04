@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/22 18:00:08 by npatron           #+#    #+#             */
-/*   Updated: 2024/12/22 18:27:08 by npatron          ###   ########.fr       */
+/*   Updated: 2025/01/02 17:48:27 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ body, html, #root {
 
 .header-write:hover {
   font-family: Arcade2;
-  font-size: 72px;
+  font-size: 71px;
   color: #C77DFF;
   cursor: pointer;
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Welcome.css                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fpalumbo <fpalumbo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 16:46:53 by fpalumbo          #+#    #+#             */
-/*   Updated: 2024/12/23 16:59:49 by fpalumbo         ###   ########.fr       */
+/*   Updated: 2025/01/03 11:31:12 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 .welcomeMessage {
     
     position: fixed;
-    width: 15vw;
+    width: 18vw;
     height: 10vh;
     top: 8vh;
     left: 8vw;

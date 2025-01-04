@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   socket.js                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fpalumbo <fpalumbo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/28 18:50:10 by fpalumbo          #+#    #+#             */
-/*   Updated: 2024/12/28 20:55:15 by fpalumbo         ###   ########.fr       */
+/*   Updated: 2025/01/03 14:22:00 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,12 +31,19 @@ class Player {
 			---- Winner --> ${this.winner}, Leader --> ${this.leader} `);
 		return ;
 	}
+
+	getPlayerId() {
+		return this.id;
+	}
+
+	
 }
 
 class Room {
 	constructor(roomId) {
 	  	this.roomId = roomId;
 	  	this.leader = "nobody";
+		this.launched = false;
 	  	this.players = []; 
 	}
   
@@ -50,6 +57,17 @@ class Room {
 		this.leader = leader;
 	}
 
+	printRoom() {
+		
+		if (this.roomId === undefined) {
+			console.error("Erreur : RoomId est undefined !");
+		}
+		console.log("------------------------------");
+		console.log("| RoomId --> ", this.roomId);
+		console.log("| Players --> ", this.players.length);
+		console.log("| Launched ? --> ", this.launched);
+		console.log("------------------------------");
+	}
 }
 
 function addSocketId(socket) {
@@ -70,7 +88,7 @@ function sendToPlayer(io, userId) {
 	
 }
 
-function sendToPlayersInRoom(io, socket, userId) {
+function sendToPlayersInRoom(io, userId) {
 
 	const socket = allSockets.get(userId)
 
@@ -81,8 +99,6 @@ function sendToPlayersInRoom(io, socket, userId) {
 }
 
 
-// Return True if the Room is full, return false if not
-
 function handleRooms(userId, roomId) {
 
 	const room = allRooms.get(roomId)
@@ -92,18 +108,15 @@ function handleRooms(userId, roomId) {
 	if (room == undefined) {
 		
 		const myRoom = new Room(roomId)
-
-		const players = new Array();
 		
 		const myPlayer = new Player(userId)
 		
-		
 		myRoom.addPlayer(myPlayer)
-		myRoom.setLeader(myPlayer.id)
 
 		myPlayer.leader = true;
-		players.concat(myPlayer)
-		
+		myRoom.leader = userId;
+		myRoom.roomId = roomId
+
 		allRooms.set(roomId, myRoom);
 		
 	}
@@ -111,7 +124,7 @@ function handleRooms(userId, roomId) {
 	// Room existing --> Add player to Players Array
 
 	else {
-
+		
 		const myRoom = room;
 		const myPlayer = new Player(userId);
 		
@@ -124,8 +137,10 @@ function isGameReadyToLaunch(roomId) {
 
 	const room = allRooms.get(roomId);
 		
-	if (room.players.length == 2)
+	if (room.players.length == 2 && room.launched == false) {
+		room.players.launched == true;
 		return true;
+	}
 	return false;
 }
 
@@ -138,19 +153,17 @@ export default function socketLogic(io) {
 		const { userId, roomId } = socket.handshake.query;
 		socket.userId = userId;
 		addSocketId(socket)
-
+		
+		console.log("allSockets --> ", allSockets)
+		
 		handleRooms(socket, roomId)
 		
 		if (isGameReadyToLaunch(roomId) == true) {
 			
-			socket.
+			console.log("GAME READYTOLAUNCH")
 
 		}
 
-
-
-
-		
       	socket.on('message', (data) => {
         	console.log('Message reçu :', data);
         	socket.emit('response', 'Message reçu');
