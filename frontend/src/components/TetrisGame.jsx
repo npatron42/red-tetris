@@ -3,33 +3,31 @@
 /*                                                        :::      ::::::::   */
 /*   TetrisGame.jsx                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fpalumbo <fpalumbo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/27 18:02:53 by fpalumbo          #+#    #+#             */
-/*   Updated: 2024/12/28 19:43:49 by fpalumbo         ###   ########.fr       */
+/*   Updated: 2025/01/07 20:38:08 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import React, { useEffect } from 'react';
 
 import { io } from 'socket.io-client';
-import { useLocation } from 'react-router-dom'
-
+import { useLocation, useParams } from 'react-router-dom'
 import { useAuth } from '../providers/UserAuthProvider'
-
 
 
 const TetrisGame = () => {
    
     const { myUser } = useAuth();
     const location = useLocation()
-    const myRoomId = location.state?.roomId;
-
+    const {roomId} = useParams()
+    
 
     useEffect(() => {
         
         const socket = io('http://localhost:8000', {
-            query: { userId: myUser.id, roomId: myRoomId }
+            query: { userId: myUser.id, roomId: roomId }
           });
         
         socket.on(`${myUser.username}`, () => {

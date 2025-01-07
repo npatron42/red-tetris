@@ -6,38 +6,13 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/28 18:50:10 by fpalumbo          #+#    #+#             */
-/*   Updated: 2025/01/03 14:22:00 by npatron          ###   ########.fr       */
+/*   Updated: 2025/01/07 21:34:58 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 const allSockets = new Map();
 
 const allRooms = new Map();
-
-class Player {
-	
-	constructor(userId) {
-		
-	  this.id = userId;
-	  this.score = 0;
-	  this.leader = false;
-	  this.winner = false;
-	}
-	
-
-	printPlayer() {
-
-		console.log(` ---- PlayerId --> ${this.id}, Score --> ${this.score}\n
-			---- Winner --> ${this.winner}, Leader --> ${this.leader} `);
-		return ;
-	}
-
-	getPlayerId() {
-		return this.id;
-	}
-
-	
-}
 
 class Room {
 	constructor(roomId) {
@@ -48,9 +23,8 @@ class Room {
 	}
   
 	addPlayer(player) {
-	  	if (player instanceof Player) {
-			this.players.push(player);
-	}}
+		this.players.push(player);
+	}
   
 
 	setLeader(leader) {
@@ -72,6 +46,14 @@ class Room {
 
 function addSocketId(socket) {
 	allSockets.set(socket.userId, socket.id);
+}
+
+function addRoom(id, room) {
+	allRooms.set(id, room)
+}
+
+function getRoom(id) {
+	return allRooms.get(id);
 }
 
 function removeSocketId(socket) {
@@ -101,41 +83,40 @@ function sendToPlayersInRoom(io, userId) {
 
 function handleRooms(userId, roomId) {
 
-	const room = allRooms.get(roomId)
+	const room = getRoom(roomId)
+	console.log(`RoomId in handlerooms --> ${roomId}`)
+	
+	let output = "0"
 
-	// myRoom undefined --> Player = leader
-
-	if (room == undefined) {
+	if (!room) {
 		
 		const myRoom = new Room(roomId)
-		
-		const myPlayer = new Player(userId)
-		
-		myRoom.addPlayer(myPlayer)
+				
+		myRoom.addPlayer(userId)
 
-		myPlayer.leader = true;
 		myRoom.leader = userId;
 		myRoom.roomId = roomId
-
-		allRooms.set(roomId, myRoom);
-		
+		addRoom(roomId, myRoom);		
+		console.log(`CREATION ROOM --> `);
+		myRoom.printRoom();
 	}
-
-	// Room existing --> Add player to Players Array
 
 	else {
 		
-		const myRoom = room;
-		const myPlayer = new Player(userId);
-		
-		myRoom.addPlayer(myPlayer)
+		if (room.players.length == 1) {
+			room.addPlayer(userId)
+			console.log(`ROOM ALREADY CREATED --> `);
+			room.printRoom();
+		}
+		else
+			output = "error: room full"
 	}
+	return output
 }
-
 
 function isGameReadyToLaunch(roomId) {
 
-	const room = allRooms.get(roomId);
+	const room = getRoom(roomId);
 		
 	if (room.players.length == 2 && room.launched == false) {
 		room.players.launched == true;
@@ -144,6 +125,48 @@ function isGameReadyToLaunch(roomId) {
 	return false;
 }
 
+function removePlayerFromRoom(userId, output) {
+
+	const room = inWhatRoomWasMyPlayer(userId);
+	
+	console.log(`room where player leaved ==> ${room.roomId}`)
+	
+	if (output != "0")
+		return ;
+
+	if (!room)
+		throw new Error("Failed: invalid room")
+	
+	if (room.players.length === 2) {
+		room.players = room.players.filter(player => player !== userId);
+		console.log(`Now len players --> ${room.players.length}`)
+		
+		// Player was leader
+		
+		if (room.leader == userId) {
+			room.leader = room.players[0];
+		}
+	}
+	else if (room.players.length == 1) {
+		console.log("Room deleted")
+		allRooms.delete(room.roomId)
+	}
+	else
+		return ;
+}
+
+function inWhatRoomWasMyPlayer(userId) {
+
+	const rooms = allRooms.values()
+	for (const room of rooms) {
+		
+		let players = room.players;
+		if (players.includes(userId)) {
+			return room;
+		}
+	}
+	return null;
+}
 
 
 export default function socketLogic(io) {
@@ -153,15 +176,20 @@ export default function socketLogic(io) {
 		const { userId, roomId } = socket.handshake.query;
 		socket.userId = userId;
 		addSocketId(socket)
+				
+		const output = handleRooms(userId, roomId)
 		
-		console.log("allSockets --> ", allSockets)
-		
-		handleRooms(socket, roomId)
-		
-		if (isGameReadyToLaunch(roomId) == true) {
+		if (output == '0') {
 			
-			console.log("GAME READYTOLAUNCH")
+			if (isGameReadyToLaunch(roomId) == true) {
+				console.log("GAME READYTOLAUNCH")
+			}
+		}
+		else {
 
+			if (output == "error: room full")
+				console.log("ROOM FUUUUULLLL")
+			// TODO --> send to socket error / launch game
 		}
 
       	socket.on('message', (data) => {
@@ -171,6 +199,7 @@ export default function socketLogic(io) {
   
       	socket.on('disconnect', () => {
 			removeSocketId(socket)
+			removePlayerFromRoom(userId, output)
       	});
 
       

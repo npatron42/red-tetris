@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Login.jsx                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fpalumbo <fpalumbo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/22 18:29:31 by npatron           #+#    #+#             */
-/*   Updated: 2024/12/23 15:44:56 by fpalumbo         ###   ########.fr       */
+/*   Updated: 2025/01/07 20:56:58 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ const Login = () => {
 			if (myResult.success) {
 				if (myResult.token)
 					{
-						await sleep(2000);
+						await sleep(1000);
 						const myJwt = myResult.token
 						localStorage.setItem("jwt", myJwt);
 						navigate("/home");
