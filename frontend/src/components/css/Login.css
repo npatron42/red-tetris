@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/22 18:37:12 by npatron           #+#    #+#             */
-/*   Updated: 2024/12/23 12:08:34 by npatron          ###   ########.fr       */
+/*   Updated: 2025/01/13 16:15:10 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,15 +35,15 @@
 }
 
 .nameWrite {
-	font-family: Bold;
-	font-size: 20px;
+	font-family: 'Millimetre';
+	font-size: 15px;
 	color: #f0ebd8;
 	padding-left: 10px;
 }
 
 .nameWrite2{
-	font-family: Bold;
-	font-size: 20px;
+	font-family: 'Millimetre';
+	font-size: 15px;
 	color: #f0ebd8;
 }
 
@@ -51,23 +51,31 @@
 	outline: none;
 	width: 15vw;
 	height: 6vh;
-	border: 3px solid #5A189A;
+	border: 3px solid #641220;
 	border-radius: 50px;
-	background-color: transparent;
+	background-color: #f0ebd8;
 	font-family:'Millimetre';
 	padding-left: 10px;
-	color: #f0ebd8;
+	color: #250902;
 }
 
-.inputRegister:hover {
-	width: 15vw;
-	height: 6vh;
-	border: 3px solid #5A189A;
-	border-radius: 50px;
+.nameWriteLoginRegister {
+	
+	padding-top: 10px;
+	font-family: Bold;
+	font-size: 30px;
+	color: #f0ebd8;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .inputBloc {
-	padding-top: 30px;
+	flex-direction: column;
+	display: flex;
+	align-items: center;
+	justify-content: center;	
+	
 }
 
 .submitButton {
@@ -75,13 +83,25 @@
 	width: 5vw;
 	height: 6vh;
 	border-radius: 25px;
-	background-color: #C77DFF;
-	border: 2px solid #5A189A;
+	background-color: #A11D33;
+	border: 2px solid #4f0e19;
 }
 
 .positionButton {
 	justify-content: center;
 	align-items: center;
 	display: flex;
-	margin-top: 20px;
+	margin-top: 40px;
+}
+
+.myCadre {
+    box-shadow: 0 1px 30px 0 rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.5); /* Noir semi-transparent */
+    width: 25vw;
+    height: 55vh;
+    margin-left: 10px;
+    margin-right: 10px;
+	border-radius: 50px;
+    overflow: hidden;
+    border: solid 3px #161719;
 }

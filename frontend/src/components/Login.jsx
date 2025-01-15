@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/22 18:29:31 by npatron           #+#    #+#             */
-/*   Updated: 2025/01/07 20:56:58 by npatron          ###   ########.fr       */
+/*   Updated: 2025/01/12 13:14:37 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,58 +97,61 @@ const Login = () => {
 	};
 
 	return (
-
-		<div className="registerForm">
-			
-			
-			<div className="inputBloc">
-				<div className="nameInput">
-					<span className="nameWrite">
-						USERNAME
-					</span>
+		<div className="myCadre">
+			<div className="registerForm">
+				<span className="nameWriteLoginRegister">
+					LOGIN
+				</span>
+				
+				<div className="inputBloc">
+					<div className="nameInput">
+						<span className="nameWrite">
+							USERNAME
+						</span>
+					</div>
+					<input 
+						type="text" 
+						placeholder="Enter your username" 
+						className="inputRegister"
+						maxLength="16"
+						value={usernameInput}
+						onChange={(e) => setUsernameInput(e.target.value)}
+						onKeyPress={handleKeyPress}
+					/>
 				</div>
-				<input 
-					type="text" 
-					placeholder="Enter your username" 
-					className="inputRegister"
-					maxLength="16"
-					value={usernameInput}
-					onChange={(e) => setUsernameInput(e.target.value)}
-					onKeyPress={handleKeyPress}
-				/>
+
+
+				<div className="inputBloc">
+					<div className="nameInput">
+						<span className="nameWrite">
+							PASSWORD
+						</span>
+					</div>
+					<input 
+						type="password" 
+						placeholder="Enter your password" 
+						className="inputRegister"
+						maxLength="16" 
+						value={passwordInput}
+						onChange={(e) => setPasswordInput(e.target.value)}
+						onKeyPress={handleKeyPress}
+					/>
+				</div>
+				
+				{ isLoading == false && (
+					<div className="positionButton">
+						<button className="submitButton">
+							<span className="nameWrite2" onClick={() => handleSubmit()}>LOGIN</span>
+						</button>					
+					</div>
+				)}
+				{ isLoading == true && (
+					<div className="positionButton">
+						<ButtonLoading />					
+					</div>
+				)}			
+
 			</div>
-
-
-			<div className="inputBloc">
-				<div className="nameInput">
-					<span className="nameWrite">
-						PASSWORD
-					</span>
-				</div>
-				<input 
-					type="password" 
-					placeholder="Enter your password" 
-					className="inputRegister"
-					maxLength="16" 
-					value={passwordInput}
-					onChange={(e) => setPasswordInput(e.target.value)}
-					onKeyPress={handleKeyPress}
-				/>
-			</div>
-			
-			{ isLoading == false && (
-				<div className="positionButton">
-					<button className="submitButton">
-						<span className="nameWrite2" onClick={() => handleSubmit()}>LOGIN</span>
-					</button>					
-				</div>
-			)}
-			{ isLoading == true && (
-				<div className="positionButton">
-					<ButtonLoading />					
-				</div>
-			)}			
-
 		</div>
 	)	
 }

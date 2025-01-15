@@ -1,0 +1,68 @@
+/**
+ * Copyright (c) 2024 - Indigen Solutions
+ * Authors:
+ *   - Nicolas Patron <nicolas.patron@indigen.com>
+ * NOTICE: All information contained herein is, and remains
+ * the property of Indigen Solutions and its suppliers, if any.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Indigen Solutions.
+ */
+
+
+ .tetrominosGenerator-user {
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    background-color: transparent;
+    top: 17.5vh;
+    left: 36vw;
+
+    width: 8vw;
+    height: 12vh;
+
+    border: 5px solid #6e1423;
+    border-radius: 25px;
+ }
+
+ .tetrominosGenerator-enemy {
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    background-color: transparent;
+    top: 17.5vh;
+    right: 36vw;
+
+    width: 8vw;
+    height: 12vh;
+
+    border: 5px solid #6e1423;
+    border-radius: 25px;
+ }
+
+ .tetromino {
+    display: inline-block;
+    margin: 10px;
+}
+
+.tetromino-row {
+    display: flex;
+}
+
+.tetromino-cell {
+    width: 25px;
+    height: 25px;
+}
+
+.tetromino-cell.active {
+    background-color: blue;
+    border: 1px solid #ddd;
+}
+
+.tetromino-cell.inactive {
+    background-color: transparent;
+}

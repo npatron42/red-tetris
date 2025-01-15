@@ -6,13 +6,19 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/28 18:50:10 by fpalumbo          #+#    #+#             */
-/*   Updated: 2025/01/07 21:34:58 by npatron          ###   ########.fr       */
+/*   Updated: 2025/01/15 14:17:19 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+import { UserManager } from "../manager/UserManager.js";
+import { Game } from "../game/tetris.js";
+
 
 const allSockets = new Map();
 
 const allRooms = new Map();
+
+const userManager = new UserManager();
 
 class Room {
 	constructor(roomId) {
@@ -60,24 +66,28 @@ function removeSocketId(socket) {
 	allSockets.delete(socket.userId)
 }
 
-function sendToPlayer(io, userId) {
+function sendToPlayer(io, userId, string, json) {
 
 	const socket = allSockets.get(userId)
 
-	io.to(socket).emit("GAME IS READY");
-
+	io.to(socket).emit(string, json);
 	return ;
 	
 }
 
-function sendToPlayersInRoom(io, userId) {
+function sendToPlayersInRoom(io, userId, string, json) {
 
-	const socket = allSockets.get(userId)
-
-	io.to(socket).emit("GAME IS READY");
+	const room = inWhatRoomIsMyPlayer(userId)
+	
+	const players = room.players;
+	
+	const socketOne = allSockets.get(players[0])
+	const socketTwo = allSockets.get(players[1])
+	
+	io.to(socketOne).emit(string, json);
+	io.to(socketTwo).emit(string, json);
 
 	return ;
-	
 }
 
 
@@ -97,7 +107,6 @@ function handleRooms(userId, roomId) {
 		myRoom.leader = userId;
 		myRoom.roomId = roomId
 		addRoom(roomId, myRoom);		
-		console.log(`CREATION ROOM --> `);
 		myRoom.printRoom();
 	}
 
@@ -105,7 +114,6 @@ function handleRooms(userId, roomId) {
 		
 		if (room.players.length == 1) {
 			room.addPlayer(userId)
-			console.log(`ROOM ALREADY CREATED --> `);
 			room.printRoom();
 		}
 		else
@@ -125,12 +133,10 @@ function isGameReadyToLaunch(roomId) {
 	return false;
 }
 
-function removePlayerFromRoom(userId, output) {
+function removePlayerFromRoom(io, userId, output) {
 
-	const room = inWhatRoomWasMyPlayer(userId);
-	
-	console.log(`room where player leaved ==> ${room.roomId}`)
-	
+	const room = inWhatRoomIsMyPlayer(userId);
+		
 	if (output != "0")
 		return ;
 
@@ -139,13 +145,18 @@ function removePlayerFromRoom(userId, output) {
 	
 	if (room.players.length === 2) {
 		room.players = room.players.filter(player => player !== userId);
-		console.log(`Now len players --> ${room.players.length}`)
 		
 		// Player was leader
 		
 		if (room.leader == userId) {
 			room.leader = room.players[0];
 		}
+		const playerToPrevent = room.players[0];
+		const dataToSend = {
+			"enemy": undefined
+		}
+		sendToPlayer(io, playerToPrevent, 'enemyDisconnected', dataToSend)
+		
 	}
 	else if (room.players.length == 1) {
 		console.log("Room deleted")
@@ -155,7 +166,7 @@ function removePlayerFromRoom(userId, output) {
 		return ;
 }
 
-function inWhatRoomWasMyPlayer(userId) {
+function inWhatRoomIsMyPlayer(userId) {
 
 	const rooms = allRooms.values()
 	for (const room of rooms) {
@@ -168,8 +179,47 @@ function inWhatRoomWasMyPlayer(userId) {
 	return null;
 }
 
+async function launchGame(io, roomId) {
 
-export default function socketLogic(io) {
+	const room = getRoom(roomId)
+	// const userManager = new UserManager()
+
+	const players = room.players;
+	
+	const playerOne = await userManager.getUserById(Number(players[0]))
+	const playerTwo = await userManager.getUserById(Number(players[1]))
+	
+	const dataToSendToPlayerOne = {
+		"enemy": playerTwo.username
+	}
+	
+	const dataToSendToPlayerTwo = {
+		"enemy": playerOne.username
+	}
+
+	sendToPlayer(io, players[0], 'enemyName', dataToSendToPlayerOne)
+	sendToPlayer(io, players[1], 'enemyName', dataToSendToPlayerTwo)
+
+	const myGame = new Game();
+
+	myGame.generateTetrominos();
+
+
+	const dataToSend = {
+		
+		"tetrominos": myGame.tetrominosGenerated
+	}
+
+	console.log(myGame.tetrominosGenerated)
+
+	// const jsonToSend = JSON.stringify(dataToSend);
+		
+	sendToPlayersInRoom(io, players[0], 'tetrominosGenerated', dataToSend)
+	
+	return ;
+}
+
+export default async function socketLogic(io) {
     
     io.on('connection', (socket) => {
 		
@@ -182,7 +232,7 @@ export default function socketLogic(io) {
 		if (output == '0') {
 			
 			if (isGameReadyToLaunch(roomId) == true) {
-				console.log("GAME READYTOLAUNCH")
+				launchGame(io, roomId)
 			}
 		}
 		else {
@@ -199,7 +249,7 @@ export default function socketLogic(io) {
   
       	socket.on('disconnect', () => {
 			removeSocketId(socket)
-			removePlayerFromRoom(userId, output)
+			removePlayerFromRoom(io, userId, output)
       	});
 
       

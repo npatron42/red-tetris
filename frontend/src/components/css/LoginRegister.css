@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/22 17:48:38 by npatron           #+#    #+#             */
-/*   Updated: 2024/12/22 18:26:57 by npatron          ###   ########.fr       */
+/*   Updated: 2025/01/12 12:47:31 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,16 +49,22 @@
 }
 
 .loginRegisterWriting {
+	margin-left: 30px;
 	font-family: Bold;
-	font-size: 50px;
+	font-size: 58px;
 	padding-top: 20px;
 	padding-bottom: 20px;
-	color: #9D4EDD;
+	color: #FEFFED;
+	text-shadow: 
+    -2px -2px 0 #000,
+    2px -2px 0 #000, 
+    -2px 2px 0 #000,
+    2px 2px 0 #000; 
 }
 
 .loginRegisterWriting:hover {
 	font-family: Bold;
-	font-size: 52px;
+	font-size: 60px;
 	padding-top: 20px;
 	padding-bottom: 20px;
 	color: #f0ebd8;

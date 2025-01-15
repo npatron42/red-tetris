@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/24 15:29:59 by npatron           #+#    #+#             */
-/*   Updated: 2025/01/03 11:30:32 by npatron          ###   ########.fr       */
+/*   Updated: 2025/01/13 22:23:39 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,24 +19,27 @@
   
 .tetris-grid
 {
+    left: 50%;
+    top: 50%;
+    margin-top: 6vh;
+    transform: translate(-50%, -50%);
     display: flex;
-    margin-top: 100px;
     display: grid;
-    grid-template-columns: repeat(10, 25px);
-    grid-template-rows: repeat(20, 25px);
-    gap: 1px; 
-    background-color: #3C096C;
+    grid-template-columns: repeat(10, 2.2vw);
+    grid-template-rows: repeat(20, 3.8vh);
+    background-color: #6e1423;
     padding: 5px;
-    border: 3px solid #d6d5d6;
-    z-index: 3;
+    border: 3px solid #170d0e;
+    z-index: 1;
+    position: fixed;
 }
 
 
 .tetris-cell {
-    width: 30px;
-    height: 30px;
-    background-color: #FF9E00;
-    border: 1px solid #FF6D00;
+    width: 2.2vw;
+    height: 3.8vh;
+    background-color: #f8961e;
+    border: 1px solid #85182a;
 }
 
 .buttonPlay {
@@ -50,8 +53,8 @@
     width: 150px;
     height: 100px;
     border-radius: 25px;
-    background-color: #5A189A;
-    border: 4px solid #240046;
+    background-color: #bd1f36;
+    border: 4px solid #641220;
     z-index: 1;
 }
 
@@ -66,13 +69,13 @@
     width: 150px;
     height: 100px;
     border-radius: 25px;
-    background-color: #9D4EDD;
-    border: 4px solid #240046;
+    background-color: #c71f37;
+    border: 4px solid #641220;
     z-index: 1;
 }
 
 .writePlay {
     font-size: 40px;
-    color: #d6d5d6;
+    color: #f0ebd8;
     font-family: 'Bold';
 }

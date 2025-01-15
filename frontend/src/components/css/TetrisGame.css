@@ -1,0 +1,120 @@
+/**
+ * Copyright (c) 2024 - Indigen Solutions
+ * Authors:
+ *   - Nicolas Patron <nicolas.patron@indigen.com>
+ * NOTICE: All information contained herein is, and remains
+ * the property of Indigen Solutions and its suppliers, if any.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Indigen Solutions.
+ */
+
+ @font-face {
+	font-family: 'Cartoon2';
+	src: url('../../assets/game_on/Game_On_PersonalUseOnly.ttf') format('opentype');
+	font-weight: normal;
+	font-style: normal;
+  }
+
+ .principalContent {
+    box-shadow: 0 1px 30px 0 rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.5); /* Noir semi-transparent */
+    margin-top: 12vh;
+    width: 90vw;
+    height: 80vh;
+    margin-left: 10px;
+    margin-right: 10px;
+	border-radius: 50px;
+    overflow: hidden;
+    border: solid 3px #161719;
+    z-index: 0;
+}
+
+.playerName {
+
+    position: fixed;
+    top: 10vh;
+    left: 13vw;
+}
+
+.enemyName {
+
+    position: fixed;
+    top: 10vh;
+    right: 13vw;
+}
+
+.playerTetris {
+
+    height: 100%;
+    width: 40%;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.enemyTetris {
+
+    height: 100%;
+    width: 40%;
+    z-index: 1;
+}
+
+/* TETRIS */
+
+.tetris-grid-2
+{
+    position: fixed;
+    top: 56vh;
+    left: 24vw;
+    transform: translate(-50%, -50%);
+    display: flex;
+    display: grid;
+    grid-template-columns: repeat(10, 2.2vw);
+    grid-template-rows: repeat(20, 3.8vh);
+    background-color: #6e1423;
+    padding: 5px;
+    border: 3px solid #170d0e;
+    z-index: 1;
+}
+
+.tetris-cell {
+    width: 2.2vw;
+    height: 3.8vh;
+    background-color: #f8961e;
+    border: 1px solid #85182a;
+}
+
+.enemy-tetris-grid
+{
+    position: fixed;
+    top: 56vh;
+    right: 1vw;
+    transform: translate(-50%, -50%);
+    display: flex;
+    display: grid;
+    grid-template-columns: repeat(10, 2.2vw);
+    grid-template-rows: repeat(20, 3.8vh);
+    background-color: #0d1b2a;
+    padding: 5px;
+    border: 3px solid #170d0e;
+    z-index: 1;
+}
+
+.vs {
+
+    position: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: 50%;
+    left: 47.4vw;
+}
+
+.vsWrite {
+
+    font-family: "Cartoon2";
+    font-size: 80px;
+    color: #f0ebd8;
+}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   TetrisHome.jsx                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fpalumbo <fpalumbo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/27 17:41:53 by fpalumbo          #+#    #+#             */
-/*   Updated: 2024/12/28 19:42:15 by fpalumbo         ###   ########.fr       */
+/*   Updated: 2025/01/13 22:19:00 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ const TetrisGrid = () => {
 
     return (
         <>
+        <div className="principalContent">
             <div className="tetris-grid">
                 {grid.flat().map((cell) => (
                     <div key={cell} className="tetris-cell"></div>
@@ -52,6 +53,7 @@ const TetrisGrid = () => {
             <button className="buttonPlay">
                 <span className="writePlay" onClick={() => createGame()}>PLAY</span>
             </button>
+        </div>
         </>
     );
 };

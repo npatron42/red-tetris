@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HomePage.jsx                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fpalumbo <fpalumbo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/22 17:21:52 by npatron           #+#    #+#             */
-/*   Updated: 2024/12/27 18:30:48 by fpalumbo         ###   ########.fr       */
+/*   Updated: 2025/01/13 22:18:37 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ const HomePage = () => {
 		<div>
 			<Welcome />
 			<Logout />
-			<TetrisHome />
+			<TetrisHome />	
 		</div>
 	)
 

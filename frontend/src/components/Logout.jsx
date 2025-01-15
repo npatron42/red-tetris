@@ -25,7 +25,7 @@ const Logout = () => {
 
     return (
         <div className="logout">
-            <i class="bi bi-box-arrow-left" onClick={() => handleLogout()}></i>
+            <i className="bi bi-box-arrow-left" onClick={() => handleLogout()}></i>
         </div>
     )
 

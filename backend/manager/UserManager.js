@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   UserManager.js                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fpalumbo <fpalumbo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 10:24:03 by npatron           #+#    #+#             */
-/*   Updated: 2024/12/23 16:42:57 by fpalumbo         ###   ########.fr       */
+/*   Updated: 2025/01/14 09:36:15 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,12 @@ export class UserManager {
 			const user = await this.userDao.getUserByUsername(myUsername);
 			return user
 		}
+	}
+
+	getUserById = async (id) => {
+
+		const user = await this.userDao.getUser(id);
+		return user
 	}
 
 
