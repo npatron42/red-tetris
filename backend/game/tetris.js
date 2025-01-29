@@ -11,15 +11,21 @@
 
 
 import { TetrominoI, TetrominoJ, TetrominoL, TetrominoO, TetrominoS, TetrominoT, TetrominoZ, Tetrominos } from "./tetrominos.js";
+import { getRoom, sendToPlayer } from "../socket/socket.js";
+import "../socket/socket.js"
+import { allSockets } from "../socket/socket.js";
 
+
+const piecesInMovement = new Map()
 
 export class Game {
 
     constructor() {
-
         this.tetrominosGenerated = []
-        this.tetronimos = new Tetrominos;
+        this.tetrominos = new Tetrominos();
+
     }
+
 
     generateTetrominos() {
 
@@ -30,18 +36,12 @@ export class Game {
         for (let i = 0; i <= tetrominosGenerated; i++) {
             
             let pieceChoice = Math.floor(Math.random() * (max - min + 1)) + min;
-            const tetronimo = new this.tetronimos.pieces[pieceChoice];
+            const tetromino = new this.tetrominos.pieces[pieceChoice];
 
-            this.tetrominosGenerated.push(tetronimo.getName());
+            this.tetrominosGenerated.push(tetromino.getName());
         }
 
         return ;
-
-    }
-
-    printGenerator() {
-
-        console.log(this.tetrominosGenerated)
 
     }
 

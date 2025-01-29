@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/28 18:50:10 by fpalumbo          #+#    #+#             */
-/*   Updated: 2025/01/15 14:17:19 by npatron          ###   ########.fr       */
+/*   Updated: 2025/01/17 11:45:22 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,18 +14,18 @@ import { UserManager } from "../manager/UserManager.js";
 import { Game } from "../game/tetris.js";
 
 
-const allSockets = new Map();
+export const allSockets = new Map();
 
 const allRooms = new Map();
 
 const userManager = new UserManager();
 
-class Room {
+export class Room {
 	constructor(roomId) {
 	  	this.roomId = roomId;
 	  	this.leader = "nobody";
 		this.launched = false;
-	  	this.players = []; 
+	  	this.players = [];
 	}
   
 	addPlayer(player) {
@@ -50,15 +50,15 @@ class Room {
 	}
 }
 
-function addSocketId(socket) {
+export function addSocketId(socket) {
 	allSockets.set(socket.userId, socket.id);
 }
 
-function addRoom(id, room) {
+export function addRoom(id, room) {
 	allRooms.set(id, room)
 }
 
-function getRoom(id) {
+export function getRoom(id) {
 	return allRooms.get(id);
 }
 
@@ -66,7 +66,7 @@ function removeSocketId(socket) {
 	allSockets.delete(socket.userId)
 }
 
-function sendToPlayer(io, userId, string, json) {
+export function sendToPlayer(io, userId, string, json) {
 
 	const socket = allSockets.get(userId)
 
@@ -75,7 +75,7 @@ function sendToPlayer(io, userId, string, json) {
 	
 }
 
-function sendToPlayersInRoom(io, userId, string, json) {
+export function sendToPlayersInRoom(io, userId, string, json) {
 
 	const room = inWhatRoomIsMyPlayer(userId)
 	
@@ -94,7 +94,6 @@ function sendToPlayersInRoom(io, userId, string, json) {
 function handleRooms(userId, roomId) {
 
 	const room = getRoom(roomId)
-	console.log(`RoomId in handlerooms --> ${roomId}`)
 	
 	let output = "0"
 
@@ -159,7 +158,6 @@ function removePlayerFromRoom(io, userId, output) {
 		
 	}
 	else if (room.players.length == 1) {
-		console.log("Room deleted")
 		allRooms.delete(room.roomId)
 	}
 	else
@@ -190,11 +188,13 @@ async function launchGame(io, roomId) {
 	const playerTwo = await userManager.getUserById(Number(players[1]))
 	
 	const dataToSendToPlayerOne = {
-		"enemy": playerTwo.username
+		"enemy": playerTwo.username,
+		"leader": room.leader,
 	}
 	
 	const dataToSendToPlayerTwo = {
-		"enemy": playerOne.username
+		"enemy": playerOne.username,
+		"leader": room.leader,
 	}
 
 	sendToPlayer(io, players[0], 'enemyName', dataToSendToPlayerOne)
@@ -204,15 +204,10 @@ async function launchGame(io, roomId) {
 
 	myGame.generateTetrominos();
 
-
 	const dataToSend = {
 		
 		"tetrominos": myGame.tetrominosGenerated
 	}
-
-	console.log(myGame.tetrominosGenerated)
-
-	// const jsonToSend = JSON.stringify(dataToSend);
 		
 	sendToPlayersInRoom(io, players[0], 'tetrominosGenerated', dataToSend)
 	
@@ -239,14 +234,12 @@ export default async function socketLogic(io) {
 
 			if (output == "error: room full")
 				console.log("ROOM FUUUUULLLL")
-			// TODO --> send to socket error / launch game
 		}
-
-      	socket.on('message', (data) => {
-        	console.log('Message reçu :', data);
-        	socket.emit('response', 'Message reçu');
+		socket.on('move', () => {
+			
+			
       	});
-  
+		
       	socket.on('disconnect', () => {
 			removeSocketId(socket)
 			removePlayerFromRoom(io, userId, output)

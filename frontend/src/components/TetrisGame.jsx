@@ -6,13 +6,14 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/27 18:02:53 by fpalumbo          #+#    #+#             */
-/*   Updated: 2025/01/15 14:58:16 by npatron          ###   ########.fr       */
+/*   Updated: 2025/01/17 11:41:35 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import React, { useEffect, useState } from 'react';
 
 import { io } from 'socket.io-client';
+import { useRef } from 'react';
 import { useLocation, useParams } from 'react-router-dom'
 import { useAuth } from '../providers/UserAuthProvider'
 import { TetrominoI, TetrominoJ, TetrominoL, TetrominoO, TetrominoS, TetrominoT, TetrominoZ } from '../classes/Tetrominos';
@@ -21,40 +22,37 @@ import TetrominosGenerator from './TetrominosGenerator';
 import "./css/TetrisGame.css"
 
 const TetrisGame = () => {
-   
     const { myUser } = useAuth();
-    const {roomId} = useParams()
-    const location = useLocation()
-    const [enemyName, setEnemyName] = useState(undefined)
-    const [tetrominosGenerated, setTetrominosGenerated] = useState([])
+    const { roomId } = useParams();
+    const [enemyName, setEnemyName] = useState(undefined);
+    const [tetrominosGenerated, setTetrominosGenerated] = useState([]);
+    const tetrominosRef = useRef([]);
+    const [userTetrominosPlayed, setUserTetrominosPlayed] = useState(0);
+    const [buttonLaunchIsShown, setButtonLaunchIsShown] = useState(true);
 
-    const [userTetrominosPlayed, setUserTetrominosPlayed] = useState()
-    const [enemyTetrominosPlayed, setEnemyTetrominosPlayed] = useState()
-    const [isLoading, setIsLoading] = useState(true)
-    
     useEffect(() => {
-        
         const socket = io('http://localhost:8000', {
             query: { userId: myUser.id, roomId: roomId }
-          });
-        
-        socket.on("enemyName", function(data) {
-            setEnemyName(data.enemy)
         });
 
-        socket.on("enemyDisconnected", function(data) {
-            setEnemyName(data.enemy)
+        socket.on("enemyName", function (data) {
+            setEnemyName(data.enemy);
         });
 
-        socket.on("tetrominosGenerated", function(data) {
-            setTetrominosGenerated(data.tetrominos)
-            setIsLoading(false)
+        socket.on("enemyDisconnected", function (data) {
+            setEnemyName(data.enemy);
+        });
+
+        socket.on("tetrominosGenerated", function (data) {
+            setTetrominosGenerated(data.tetrominos);
+            tetrominosRef.current = data.tetrominos;
+            setIsLoading(false);
         });
 
         return () => {
             socket.disconnect();
         };
-    }, []);
+    }, []); 
 
     
     const rows = 20;
@@ -65,8 +63,6 @@ const TetrisGame = () => {
             id: `${rowIndex}-${colIndex}`,
         }))
     );
-
-
 
     return (
         <>
@@ -92,7 +88,7 @@ const TetrisGame = () => {
                 </div>
                 
                 )}
-                
+
             <div className="principalContent">
                 <div className="playerTetris">
                     <div className="tetris-grid-2">
@@ -106,19 +102,20 @@ const TetrisGame = () => {
                     </div>
                 </div>
                 
+                
                 <TetrominosGenerator 
                     tetrominosGenerated={tetrominosGenerated}
-                    it={1}
+                    it={userTetrominosPlayed}
                     userOrEnemy="user"
                 />
                 
-                <div className="vs">
-                    <span className="vsWrite">VS</span>
+                <div className="launchGame">
+                    <button className="buttonLaunch">LAUNCH GAME!</button>
                 </div>
 
                 <TetrominosGenerator 
                     tetrominosGenerated={tetrominosGenerated}
-                    it={1}
+                    it={userTetrominosPlayed}
                     userOrEnemy={"enemy"}
                 />
                 

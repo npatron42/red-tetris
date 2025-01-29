@@ -112,6 +112,38 @@
     left: 47.4vw;
 }
 
+.launchGame {
+
+    position: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: 50%;
+    left: 41.5vw;
+}
+
+.buttonLaunch {
+
+    border: 2px solid #170d0e;
+    border-radius: 25px;
+    height: 8vh;
+    background-color: transparent;
+    color: #f0ebd8;
+    font-family: Cartoon2;
+    font-size: 35px;
+}
+
+.buttonLaunch:hover {
+
+    border: 2px solid #170d0e;
+    border-radius: 25px;
+    height: 8vh;
+    background-color: transparent;
+    color: #f8961e;
+    font-family: Cartoon2;
+    font-size: 35px;
+}
+
 .vsWrite {
 
     font-family: "Cartoon2";

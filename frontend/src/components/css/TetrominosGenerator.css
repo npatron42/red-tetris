@@ -58,11 +58,66 @@
     height: 25px;
 }
 
-.tetromino-cell.active {
+/* TETROMINO J */
+
+
+.tetromino-cell.activeJ {
     background-color: blue;
-    border: 1px solid #ddd;
+    border: 1px solid #6e1423;
 }
 
 .tetromino-cell.inactive {
     background-color: transparent;
 }
+
+/* TETROMINO L */
+
+
+.tetromino-cell.activeL {
+    background-color: #7b2cbf;
+    border: 1px solid #6e1423;
+}
+
+/* TETROMINO O */
+
+
+.tetromino-cell.activeO {
+    background-color: #ad2831;
+    border: 1px solid #6e1423;
+}
+
+/* TETROMINO S */
+
+
+.tetromino-cell.activeS {
+    background-color: #c1121f;
+    border: 1px solid #6e1423;
+}
+
+/* TETROMINO T */
+
+
+.tetromino-cell.activeT {
+    background-color: #2a9d8f;
+    border: 1px solid #6e1423;
+}
+
+/* TETROMINO I */
+
+
+.tetromino-cell.activeI {
+    background-color: #588157;
+    border: 1px solid #6e1423;
+}
+
+
+
+
+/* TETROMINO Z */
+
+
+.tetromino-cell.activeZ {
+    background-color: #ffafcc;
+    border: 1px solid #6e1423;
+}
+

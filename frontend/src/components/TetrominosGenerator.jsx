@@ -53,6 +53,7 @@ const TetrominosGenerator = ({ tetrominosGenerated, it, userOrEnemy }) => {
             return null; 
 
         const rotation = tetrominoClass.form[0];
+        console.log(tetromino)
         return (
             <div className="tetromino">
                 {rotation.map((row, rowIndex) => (
@@ -61,7 +62,7 @@ const TetrominosGenerator = ({ tetrominosGenerated, it, userOrEnemy }) => {
                             <div
                                 key={cellIndex}
                                 className={`tetromino-cell ${
-                                    cell === 1 ? "active" : "inactive"
+                                    cell === 1 ? `active${tetromino}` : "inactive"
                                 }`}
                             ></div>
                         ))}
