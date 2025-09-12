@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 10:18:26 by npatron           #+#    #+#             */
-/*   Updated: 2024/12/23 11:35:31 by npatron          ###   ########.fr       */
+/*   Updated: 2025/09/12 15:46:53 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,21 +26,21 @@ export class UserDao {
 		))
 	};
 	
-	getUserByUsername = async (myUsername) => {
+	getUserByUsername = async (username) => {
 		
 		return (prisma.user.findFirst({
 			where: {
-				username: myUsername
+				username: username
 			}
 		}))
 	};
 
-	createUser = async (myUsername, myPassword) => {
-		const dataToSave = {
-			"username": myUsername,
-			"password": myPassword
+	createUser = async (username, password) => {
+		const userJson = {
+			"username": username,
+			"password": password
 		}
-		await prisma.user.create({data: dataToSave});
+		await prisma.user.create({data: userJson});
 	}
 	
 }

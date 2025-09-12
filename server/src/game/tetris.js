@@ -11,9 +11,9 @@
 
 
 import { TetrominoI, TetrominoJ, TetrominoL, TetrominoO, TetrominoS, TetrominoT, TetrominoZ, Tetrominos } from "./tetrominos.js";
-import { getRoom, sendToPlayer } from "../socket/socket.js";
-import "../socket/socket.js"
-import { allSockets } from "../socket/socket.js";
+import { getRoom, sendToPlayer } from "../../socket/socket.js";
+import "../../socket/socket.js"
+import { allSockets } from "../../socket/socket.js";
 
 
 const piecesInMovement = new Map()

@@ -2,41 +2,41 @@ services:
   db:
     container_name: postgresql
     build:
-      context: ./postgresql
+      context: ./hosting
       dockerfile: Dockerfile
     env_file:
-      - ./postgresql/.env
+      - ./hosting/.env
     networks:
       - app_network
 
-  backend:
-    container_name: backend
+  server:
+    container_name: server
     build:
-      context: ./backend
+      context: ./server
       dockerfile: Dockerfile
     restart: unless-stopped
     depends_on:
       - db
     volumes:
-      - ./backend:/app
+      - ./server:/app
       - /app/node_modules
     networks:
       - app_network
     ports:
       - "8000:8000"
     env_file:
-      - ./backend/.env
+      - ./server/.env
   
-  frontend:
-    container_name: frontend
+  webapp:
+    container_name: webapp
     build:
-      context: ./frontend
+      context: ./webapp
       dockerfile: ./docker/Dockerfile
     restart: unless-stopped
     depends_on:
-      - backend
+      - server
     volumes:
-      - ./frontend:/app
+      - ./webapp:/app
       - /app/node_modules
     networks:
       - app_network

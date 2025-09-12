@@ -6,7 +6,7 @@
 #    By: npatron <npatron@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/24 14:30:21 by npatron           #+#    #+#              #
-#    Updated: 2024/12/04 18:47:46 by npatron          ###   ########.fr        #
+#    Updated: 2025/09/12 15:50:54 by npatron          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,10 +17,6 @@ WORKDIR /app
 COPY package*.json ./
 
 RUN npm install
-
-RUN npm install i18next react-i18next 
-
-RUN npm install react-router-dom
 
 COPY . .
 

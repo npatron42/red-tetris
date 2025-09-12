@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   usersController.js                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fpalumbo <fpalumbo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/22 22:54:31 by npatron           #+#    #+#             */
-/*   Updated: 2024/12/28 18:58:48 by fpalumbo         ###   ########.fr       */
+/*   Updated: 2025/09/12 15:49:54 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import jwt from 'jsonwebtoken'
 
-import { UserManager } from "../manager/UserManager.js";
+import { UserManager } from "../../manager/UserManager.js";
 
 const userManager = new UserManager()
 
@@ -31,13 +31,13 @@ export const getUser = async (req, res) => {
   
 export const createUser = async (req, res) => {
 	
-	const myData = req.body;
+	const data = req.body;
 
-	if (myData.username && myData.password) {
+	if (data.username && data.password) {
 		
-		if (await userManager.userAlreadyExists(myData.username) == false) {
+		if (await userManager.userAlreadyExists(data.username) == false) {
 			
-			await userManager.createUser(myData.username, myData.password)
+			await userManager.create(data.username, data.password)
 			res.json({"success": "User added"});
 			return ;
 			
@@ -54,19 +54,19 @@ export const createUser = async (req, res) => {
 
 export const loginUser = async (req, res) => {
 	
-	const myData = req.body;
+	const data = req.body;
 	
-	if (myData.username && myData.password) {
+	if (data.username && data.password) {
 		
-		if (await userManager.userAlreadyExists(myData.username) == true) {
+		if (await userManager.userAlreadyExists(data.username) == true) {
 			
-			const result = await userManager.userCanLogin(myData.username, myData.password)
+			const result = await userManager.userCanLogin(data.username, data.password)
 			
 			console.log("result", result)
 			if (result == true) {
 
-				const token = generateToken({ username: myData.username }, 'momo', { expiresIn: '1h' });
-				console.log(`TOken de ${myData.username} = ${token}`);
+				const token = generateToken({ username: data.username }, 'momo', { expiresIn: '1h' });
+				console.log(`TOken de ${data.username} = ${token}`);
 				res.json({ 
                     success: "login", 
                     token 
