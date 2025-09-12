@@ -6,12 +6,11 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 10:24:03 by npatron           #+#    #+#             */
-/*   Updated: 2025/01/14 09:36:15 by npatron          ###   ########.fr       */
+/*   Updated: 2025/09/12 15:25:36 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import bcrypt from 'bcrypt'
-
 
 import { UserDao } from "../dao/UserDao.js";
 
@@ -21,11 +20,10 @@ export class UserManager {
         this.userDao = new UserDao();
     }
 
-	getUserByUsername = async (myUsername) => {
+	getUserByUsername = async (username) => {
+		if (username) {
 
-		if (myUsername) {
-
-			const user = await this.userDao.getUserByUsername(myUsername);
+			const user = await this.userDao.getUserByUsername(username);
 			return user
 		}
 	}
@@ -37,9 +35,9 @@ export class UserManager {
 	}
 
 
-	userAlreadyExists = async (myUsername) => {
+	userAlreadyExists = async (username) => {
 
-		const user = await this.userDao.getUserByUsername(myUsername);
+		const user = await this.userDao.getUserByUsername(username);
 		
 
 		if (user)
@@ -48,17 +46,17 @@ export class UserManager {
 			return false;
 	}
 
-	createUser = async (myUsername, myPassword) => {
+	createUser = async (username, password) => {
 		
 		try {
 			
-			if (myUsername.length <= 16 && myPassword.length <= 16) {
+			if (username.length <= 16 && password.length <= 16) {
 				
 				const saltRounds = 10;
 				
-    			const hashedPassword = await bcrypt.hash(myPassword, saltRounds);
+    			const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-				await this.userDao.createUser(myUsername, hashedPassword)
+				await this.userDao.createUser(username, hashedPassword)
 				return ;
 			}
 			else
@@ -69,13 +67,13 @@ export class UserManager {
 		}
 	}
 
-	userCanLogin = async (myUsername, myPassword) => {
+	userCanLogin = async (username, password) => {
 						
-		const user = await this.userDao.getUserByUsername(myUsername);
+		const user = await this.userDao.getUserByUsername(username);
 		
-		const isPasswordValid = await bcrypt.compare(myPassword, user.password);
+		const isValidPassword = await bcrypt.compare(password, user.password);
 
-        if (!isPasswordValid) {
+        if (!isValidPassword) {
             return false;
         }
 		
