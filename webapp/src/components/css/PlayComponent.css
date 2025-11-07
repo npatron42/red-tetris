@@ -1,0 +1,59 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   PlayComponent.css                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/11/06 17:03:16 by npatron           #+#    #+#             */
+/*   Updated: 2025/11/06 18:22:48 by npatron          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+.play-component-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  gap: 16px;
+  border-radius: 16px;
+  height: 280px;
+  width: 600px;
+  color: #ECF0F1;
+  border: 1px solid #12433D;
+  box-shadow: 12px 12px 24px rgba(0, 0, 0, 0.2);
+}
+
+.play-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    font-family: 'Bold', sans-serif;
+    width: 80%;
+    color: #FFFFFF;
+    border: none;
+    background-color: transparent;
+    border: 1px solid #0C2D29;
+    box-shadow: 12px 12px 24px rgba(0, 0, 0, 0.2);
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 24px;
+    border-radius: 9999px;
+    cursor: pointer;
+}
+
+.play-button:hover {
+    background-color: #0C2D29;
+}
+
+.play-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Arcade', sans-serif;
+    gap: 12px;
+    font-size: 36px;
+    color: #2A9D8F;
+}

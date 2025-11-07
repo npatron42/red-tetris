@@ -1,24 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   HomePage.jsx                                       :+:      :+:    :+:   */
+/*   HomePage.css                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/22 17:21:52 by npatron           #+#    #+#             */
-/*   Updated: 2025/11/06 17:03:36 by npatron          ###   ########.fr       */
+/*   Created: 2025/11/06 17:00:54 by npatron           #+#    #+#             */
+/*   Updated: 2025/11/06 17:00:59 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-import { PlayComponent } from "./PlayComponent";
-
-const HomePage = () => {
-
-	return (
-		<div className="home-page-container">
-			<PlayComponent />
-		</div>
-	)
+.home-page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  background-color: #1A6B5C;
+  font-family: 'Arcade', sans-serif;
+  color: #FFFFFF;
 }
-
-export default HomePage;
