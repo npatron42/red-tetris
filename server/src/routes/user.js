@@ -4,7 +4,6 @@ import { createUser, loginUser, getUser } from "../controllers/usersController.j
 
 var userRouter = express.Router();
 
-/* GET users listing. */
 userRouter.get('/', getUser);
 
 userRouter.post('/createUser', createUser);

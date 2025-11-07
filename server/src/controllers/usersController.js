@@ -6,13 +6,13 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/22 22:54:31 by npatron           #+#    #+#             */
-/*   Updated: 2025/09/12 15:49:54 by npatron          ###   ########.fr       */
+/*   Updated: 2025/09/12 15:56:19 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import jwt from 'jsonwebtoken'
 
-import { UserManager } from "../../manager/UserManager.js";
+import { UserManager } from "../manager/UserManager.js";
 
 const userManager = new UserManager()
 
@@ -23,33 +23,35 @@ function generateToken(payload, secretKey, options) {
 
 
 export const getUser = async (req, res) => {
-	
-	const data = await userManager.getUserByUsername(req.auth.username);
-	res.json(data);
+	try {
+		const data = await userManager.getUserByUsername(req.auth.username);
+		res.json(data);
+	}
+	catch (error) {
+		res.json({"failure": "No user found"})
+	}
 }
 
   
 export const createUser = async (req, res) => {
-	
-	const data = req.body;
-
-	if (data.username && data.password) {
-		
-		if (await userManager.userAlreadyExists(data.username) == false) {
-			
-			await userManager.create(data.username, data.password)
-			res.json({"success": "User added"});
-			return ;
-			
-		}
-		
-		else {
-			res.json({"failed": "User existing"});
-			return ;
+	try {
+		if (data.username && data.password) {
+			if (await userManager.userAlreadyExists(data.username) == false) {
+				
+				await userManager.create(data.username, data.password)
+				res.json({"success": "User added"});
+				return ;
+				
+			}
+			else {
+				res.json({"failed": "User existing"});
+				return ;
+			}
 		}
 	}
-	return ;
-
+	catch (error) {
+		res.json({"failure": "No champs"})
+	}
 };
 
 export const loginUser = async (req, res) => {

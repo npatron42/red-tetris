@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 10:24:03 by npatron           #+#    #+#             */
-/*   Updated: 2025/09/12 15:40:29 by npatron          ###   ########.fr       */
+/*   Updated: 2025/09/12 15:55:35 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,65 +25,45 @@ export class UserManager {
 			const user = await this.userDao.getUserByUsername(username);
 			return user
 		}
+		throw new Error("Username is required");
 	}
 
 	getUserById = async (id) => {
-		try {
-			const user = await this.userDao.getUser(id);
-			return user;			
-		}
-		catch(error) {
-			console.log(error)
-		}
+		const user = await this.userDao.getUser(id);
+		if (!user)
+			throw new Error("No user found");
+		return user;			
 	}
 
 	userAlreadyExists = async (username) => {
-		try {
-			const user = await this.userDao.getUserByUsername(username);
-			if (user)
-				return true;
-			else
-				return false;
-		}
-		catch(error) {
-			console.log(error)
-		}
+		const user = await this.userDao.getUserByUsername(username);
+		if (user)
+			return true;
+		return false;
 	}
 
 	create = async (username, password) => {
-		try {
+		if (username.length <= 16 && password.length <= 16) {
 			
-			if (username.length <= 16 && password.length <= 16) {
-				
-				const saltRounds = 10;
-				
-    			const hashedPassword = await bcrypt.hash(password, saltRounds);
+			const saltRounds = 10;
+			
+			const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-				await this.userDao.createUser(username, hashedPassword)
-				return ;
-			}
-			else
-				throw new Error("Invalid username/password")
-			
-		} catch(e) {
-			console.log(e)
+			await this.userDao.createUser(username, hashedPassword)
+			return ;
 		}
+		else
+			throw new Error("Invalid username/password");
 	}
 	login = async (username, password) => {
-		try {
-			const user = await this.userDao.getUserByUsername(username);
-			
-			const isValidPassword = await bcrypt.compare(password, user.password);
-	
-			if (!isValidPassword) {
-				return false;
-			}
-			return true;
+		const user = await this.userDao.getUserByUsername(username);
+		
+		const isValidPassword = await bcrypt.compare(password, user.password);
+
+		if (!isValidPassword) {
+			return false;
 		}
-		catch(error) {
-			console.log(error)
-			return false
-		}	
+		return true;
 	}
 	
 }

@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/22 18:00:08 by npatron           #+#    #+#             */
-/*   Updated: 2025/11/07 10:57:29 by npatron          ###   ########.fr       */
+/*   Updated: 2025/11/07 17:12:19 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,9 +90,9 @@ body, html, #root {
 }
 
 .header-write {
-  font-family: "Bold", sans-serif;
+  font-family: "Arcade", sans-serif;
   font-size: 80px;
-  color: #2A9D8F;
+  color: #C2E3DF;
   text-shadow: 
   -2px -2px 0 #000,
   2px -2px 0 #000, 
