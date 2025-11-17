@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/07 16:54:59 by npatron           #+#    #+#             */
-/*   Updated: 2025/11/07 17:10:41 by npatron          ###   ########.fr       */
+/*   Updated: 2025/11/07 17:14:25 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ export default function JoinRoom() {
                     onChange={(event) => setRoomCode(event.target.value)}
                     maxLength={32}
                     minLength={1}
-                    className="play-button"
+                    className="input-button"
                 />
                 <button className="play-button" type="submit" disabled={roomCode.trim().length < 1}>
                     Join

@@ -50,7 +50,7 @@ const CreateRoom = () => {
                     onChange={(event) => setRoomName(event.target.value)}
                     maxLength={32}
                     minLength={1}
-                    className="play-button"
+                    className="input-button"
                 />
                 <button className="play-button" type="submit" disabled={roomName.trim().length < 1}>
                     Create
