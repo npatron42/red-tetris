@@ -4,24 +4,29 @@ import { BadgePlus, ArrowLeft } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useUser } from '../../providers/UserProvider'
+import { useRoom } from '../../composables/useRoom'
 
 const CreateRoom = () => {
     const [roomName, setRoomName] = useState('')
     const navigate = useNavigate()
     const { user } = useUser()
+    const { createRoom, isLoading, error } = useRoom()
 
     if (!user) {
         return null
     }
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault()
         const trimmedRoomName = roomName.trim()
         if (trimmedRoomName.length < 1) {
             return
         }
-        localStorage.setItem('room', trimmedRoomName)
-        navigate('/')
+        const result = await createRoom({ name: trimmedRoomName, username: user })
+        if (result.success) {
+            localStorage.setItem('room', trimmedRoomName)
+            navigate('/')
+        }
     }
 
     return (
@@ -44,10 +49,11 @@ const CreateRoom = () => {
                     minLength={1}
                     className="input-button"
                 />
-                <button className="play-button" type="submit" disabled={roomName.trim().length < 1}>
-                    Create
+                <button className="play-button" type="submit" disabled={roomName.trim().length < 1 || isLoading}>
+                    {isLoading ? 'Creating...' : 'Create'}
                     <BadgePlus size={16} />
                 </button>
+                {error && <div style={{ color: 'red', marginTop: '10px' }}>{error}</div>}
             </form>
         </div>
     )
