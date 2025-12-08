@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 12:58:25 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/08 13:01:25 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/08 13:03:32 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,14 @@ export class MatchHistoryManager {
 			winner,
 			timestamp: new Date().toISOString()
 		};
-		const data = fs.readFileSync(dbPath, "utf8");
-		const trimmedData = data.trim();
-		const userData = trimmedData ? JSON.parse(trimmedData) : [];
+		const trimmedData = await this._getTrimmedData();
+		if (!trimmedData) {
+			return [];
+		}
+		const userData = JSON.parse(trimmedData);
+		if (!Array.isArray(userData)) {
+			return [];
+		}
 		for (const player of players) {
 			const user = userData.find((u) => u.username === player);
 			if (user) {
@@ -53,8 +58,7 @@ export class MatchHistoryManager {
 		if (!username) {
 			throw new Error("Username is required");
 		}
-		const data = fs.readFileSync(dbPath, "utf8");
-		const trimmedData = data.trim();
+		const trimmedData = await this._getTrimmedData();
 		if (!trimmedData) {
 			return [];
 		}
@@ -67,5 +71,13 @@ export class MatchHistoryManager {
 			return [];
 		}
 		return user.matchHistory;
+	};
+
+	_getTrimmedData = async () => {
+		const data = fs.readFileSync(dbPath, "utf8");
+		if (!data) {
+			return [];
+		}
+		return data.trim();
 	};
 }
