@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 13:08:55 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/08 13:08:57 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/08 13:10:21 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ const CreateRoom = () => {
         return null
     }
 
-    const handleSubmit = async (event) => {
+    const handleRoomCreation = async (event) => {
         event.preventDefault()
         const trimmedRoomName = roomName.trim()
         if (trimmedRoomName.length < 1) {
@@ -51,7 +51,7 @@ const CreateRoom = () => {
                     <span>CREATE ROOM</span>
                 </div>
             </div>
-            <form className="play-button-container" onSubmit={handleSubmit}>
+            <form className="play-button-container" onSubmit={handleRoomCreation}>
                 <input
                     type="text"
                     placeholder="Room name"
