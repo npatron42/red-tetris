@@ -22,6 +22,7 @@ import { Server } from 'socket.io';
 
 import principalRouter from './src/routes/index.js';
 import userRouter from './src/routes/userRoutes.js';
+import matchHistoryRouter from './src/routes/matchHistoryController.js';
 import socketsServer from './src/socket/socket.js';
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
@@ -99,5 +100,6 @@ function onListening() {
 
 app.use('/', principalRouter);
 app.use('/user', userRouter);
+app.use('/match-history', matchHistoryRouter);
 
 export default app;
