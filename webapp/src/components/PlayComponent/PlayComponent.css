@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 17:03:16 by npatron           #+#    #+#             */
-/*   Updated: 2025/11/07 17:14:13 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/08 11:47:02 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,18 +30,15 @@
     align-items: center;
     justify-content: center;
     gap: 12px;
-    font-family: 'Bold', sans-serif;
-    width: 50%;
-    color: #FFFFFF;
-    border: none;
-    background-color: transparent;
-    border: 1px solid #0C2D29;
-    box-shadow: 12px 12px 24px rgba(0, 0, 0, 0.2);
-    padding: 12px;
-    border-radius: 8px;
-    font-size: 24px;
-    border-radius: 9999px;
+    width: 200px;
+    padding: 12px 18px;
+    border-radius: 999px;
+    border: 2px solid #c8c8dd;
+    background: transparent;
+    color: #c8c8dd;
+    font-weight: 600;
     cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease;
 }
 
 .input-button {
@@ -49,7 +46,8 @@
 }
 
 .play-button:hover {
-    background-color: #0C2D29;
+    border-color: #2a9d8f;
+    color: #2a9d8f;
 }
 
 .play-header-center {

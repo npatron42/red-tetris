@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+.login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    gap: 16px;
+    border-radius: 16px;
+    height: 280px;
+    width: 600px;
+    color: #ECF0F1;
+    border: 1px solid #12433D;
+    box-shadow: 12px 12px 24px rgba(0, 0, 0, 0.2);
+  }
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+    max-width: 420px;
+    padding: 32px;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+}
+
+.login-title {
+    margin: 0;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 18px;
+    text-align: center;
+    color: #e9c46a;
+}
+
+.login-input {
+    padding: 14px 18px;
+    border-radius: 999px;
+    border: 2px solid transparent;
+    font-size: 16px;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.login-input:focus {
+    border-color: #2a9d8f;
+    box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.2);
+}
+
+.login-submit {
+    padding: 14px 18px;
+    border-radius: 999px;
+    border: none;
+    background: linear-gradient(120deg, #2a9d8f, #264653);
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.login-submit:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.login-helper {
+    padding: 12px 18px;
+    border-radius: 999px;
+    border: 2px solid #c8c8dd;
+    background: transparent;
+    color: #c8c8dd;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.login-helper:hover {
+    border-color: #2a9d8f;
+    color: #2a9d8f;
+}
+

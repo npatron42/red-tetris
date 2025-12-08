@@ -1,22 +1,14 @@
 import './PlayComponent.css'
 
-import { BadgePlus, Joystick, ArrowLeft } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { BadgePlus, ArrowLeft } from 'lucide-react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useUser } from '../../providers/UserProvider'
 
 const CreateRoom = () => {
     const [roomName, setRoomName] = useState('')
-    const [user, setUser] = useState(null)
     const navigate = useNavigate()
-
-    useEffect(() => {
-        const storedUser = localStorage.getItem('user')
-        if (!storedUser) {
-            navigate('/')
-            return
-        }
-        setUser(storedUser)
-    }, [navigate])
+    const { user } = useUser()
 
     if (!user) {
         return null

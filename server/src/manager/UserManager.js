@@ -6,65 +6,99 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 10:24:03 by npatron           #+#    #+#             */
-/*   Updated: 2025/09/12 15:55:35 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/08 12:52:22 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-import bcrypt from 'bcrypt'
+import { v4 as uuidv4 } from "uuid";
+import fs from "fs";
 
-import { UserDao } from "../dao/UserDao.js";
+const dbPath = "./src/db/db.json";
+
+const userStructure = {
+	id: "string",
+	username: "string",
+	numberOfWins: "number",
+	numberOfLosses: "number",
+	totalGames: "number"
+};
 
 export class UserManager {
-
 	constructor() {
-        this.userDao = new UserDao();
-    }
+		this.db = fs.readFileSync(dbPath, "utf8");
+	}
 
 	getUserByUsername = async (username) => {
 		if (username) {
-			const user = await this.userDao.getUserByUsername(username);
-			return user
+			const data = fs.readFileSync(dbPath, "utf8");
+			const trimmedData = data.trim();
+			if (!trimmedData) {
+				throw new Error("User not found");
+			}
+			const userData = JSON.parse(trimmedData);
+			if (!Array.isArray(userData)) {
+				throw new Error("User not found");
+			}
+			const user = userData.find((user) => user.username === username);
+			if (!user) throw new Error("User not found");
+			return user;
 		}
 		throw new Error("Username is required");
-	}
-
-	getUserById = async (id) => {
-		const user = await this.userDao.getUser(id);
-		if (!user)
-			throw new Error("No user found");
-		return user;			
-	}
+	};
 
 	userAlreadyExists = async (username) => {
-		const user = await this.userDao.getUserByUsername(username);
-		if (user)
-			return true;
-		return false;
-	}
-
-	create = async (username, password) => {
-		if (username.length <= 16 && password.length <= 16) {
-			
-			const saltRounds = 10;
-			
-			const hashedPassword = await bcrypt.hash(password, saltRounds);
-
-			await this.userDao.createUser(username, hashedPassword)
-			return ;
+		try {
+			const data = fs.readFileSync(dbPath, "utf8");
+			const trimmedData = data.trim();
+			if (!trimmedData) {
+				return false;
+			}
+			const userData = JSON.parse(trimmedData);
+			if (!Array.isArray(userData)) {
+				return false;
+			}
+			const user = userData.find((user) => user.username === username);
+			return !!user;
+		} catch (error) {
+			throw new Error("Error checking if user exists");
 		}
-		else
+	};
+
+	create = async (username) => {
+		console.log("create user", username);
+		if (username.length <= 16) {
+			const id = uuidv4();
+			const data = fs.readFileSync(dbPath, "utf8");
+			const trimmedData = data.trim();
+			const userData = trimmedData ? JSON.parse(trimmedData) : [];
+			userData.push({ id, username, numberOfWins: 0, numberOfLosses: 0, totalGames: 0, matchHistory: [] });
+			fs.writeFileSync(dbPath, JSON.stringify(userData, null, 2));
+
+			return id;
+		} else {
+			console.log("Invalid username/password");
 			throw new Error("Invalid username/password");
-	}
-	login = async (username, password) => {
-		const user = await this.userDao.getUserByUsername(username);
-		
-		const isValidPassword = await bcrypt.compare(password, user.password);
-
-		if (!isValidPassword) {
-			return false;
 		}
-		return true;
-	}
-	
-}
+	};
 
+	createHistoryMatch = async (username, historyMatch) => {
+		if (username && historyMatch) {
+			const data = fs.readFileSync(dbPath, "utf8");
+			const trimmedData = data.trim();
+			const userData = trimmedData ? JSON.parse(trimmedData) : [];
+			userData.push({ id, username, numberOfWins: 0, numberOfLosses: 0, totalGames: 0, matchHistory: [] });
+			fs.writeFileSync(dbPath, JSON.stringify(userData, null, 2));
+		}
+		throw new Error("Username and historyMatch are required");
+	};
+
+	getHistoryMatchByUsername = async (username) => {
+		if (username) {
+			const data = fs.readFileSync(dbPath, "utf8");
+			const trimmedData = data.trim();
+			const userData = trimmedData ? JSON.parse(trimmedData) : [];
+			return userData.find((user) => user.username === username).matchHistory;
+		}
+		throw new Error("Username is required");
+	};
+}

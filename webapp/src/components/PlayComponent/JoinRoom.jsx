@@ -6,29 +6,21 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/07 16:54:59 by npatron           #+#    #+#             */
-/*   Updated: 2025/11/07 17:14:25 by npatron          ###   ########.fr       */
+/*   Updated: 2025/11/17 16:27:17 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import './PlayComponent.css'
 
-import { Joystick, MoveRight, ArrowLeft } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { MoveRight, ArrowLeft } from 'lucide-react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useUser } from '../../providers/UserProvider'
 
 export default function JoinRoom() {
     const [roomCode, setRoomCode] = useState('')
-    const [user, setUser] = useState(null)
     const navigate = useNavigate()
-
-    useEffect(() => {
-        const storedUser = localStorage.getItem('user')
-        if (!storedUser) {
-            navigate('/')
-            return
-        }
-        setUser(storedUser)
-    }, [navigate])
+    const { user } = useUser()
 
     if (!user) {
         return null

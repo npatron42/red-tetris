@@ -1,23 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   index.js                                           :+:      :+:    :+:   */
+/*   matchHistoryController.js                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/17 15:28:51 by npatron           #+#    #+#             */
-/*   Updated: 2025/11/17 16:35:28 by npatron          ###   ########.fr       */
+/*   Created: 2025/12/08 12:57:19 by npatron           #+#    #+#             */
+/*   Updated: 2025/12/08 12:57:39 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import express from "express";
-import userRouter from "./userRoutes.js";
-var principalRouter = express.Router();
 
-principalRouter.get("/", function (req, res, next) {
-	res.json({ test: "qwdqwdqwdqwdqwdqwdd" });
-});
+import { createHistoryMatch, getHistoryMatchByUsername } from "../controllers/matchHistoryController.js";
 
-principalRouter.use("/user", userRouter);
+const matchHistoryRouter = express.Router();
 
-export default principalRouter;
+matchHistoryRouter.post("/create-history-match", createHistoryMatch);
+
+matchHistoryRouter.get("/get-history-match", getHistoryMatchByUsername);
+
+export default matchHistoryRouter;
