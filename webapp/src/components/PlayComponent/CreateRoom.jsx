@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 13:08:55 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/08 13:10:21 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/08 13:19:13 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useUser } from '../../providers/UserProvider'
 import { useRoom } from '../../composables/useRoom'
+
+import { ToastContainer, toast, Bounce } from 'react-toastify';
 
 const CreateRoom = () => {
     const [roomName, setRoomName] = useState('')
@@ -38,6 +40,17 @@ const CreateRoom = () => {
         if (result.success) {
             localStorage.setItem('room', trimmedRoomName)
             navigate('/')
+        }
+        else {
+            toast.error(result.error, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                theme: "dark"
+            })
         }
     }
 
@@ -65,8 +78,20 @@ const CreateRoom = () => {
                     {isLoading ? 'Creating...' : 'Create'}
                     <BadgePlus size={16} />
                 </button>
-                {error && <div style={{ color: 'red', marginTop: '10px' }}>{error}</div>}
             </form>
+            <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick={false}
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+                transition={Bounce}
+            />
         </div>
     )
 }

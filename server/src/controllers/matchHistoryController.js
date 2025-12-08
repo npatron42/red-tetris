@@ -6,13 +6,11 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 12:56:35 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/08 13:01:25 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/08 15:56:19 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-import { MatchHistoryManager } from "../manager/matchHistoryManager.js";
-
-const matchHistoryManager = new MatchHistoryManager();
+import matchHistoryService from "../services/matchHistoryService.js";
 
 export const createHistoryMatch = async (req, res) => {
 	try {
@@ -21,7 +19,7 @@ export const createHistoryMatch = async (req, res) => {
 			res.json({ failure: "Players and winner are required" });
 			return;
 		}
-		const match = await matchHistoryManager.createMatchHistory(players, winner);
+		const match = await matchHistoryService.createMatchHistory(players, winner);
 		res.json({ success: "Match history created", match });
 	} catch (error) {
 		res.json({ failure: error.message || "Error creating history match" });
@@ -35,7 +33,7 @@ export const getHistoryMatchByUsername = async (req, res) => {
 			res.json({ failure: "Username is required" });
 			return;
 		}
-		const matchHistory = await matchHistoryManager.getMatchHistoryByUsername(username);
+		const matchHistory = await matchHistoryService.getMatchHistoryByUsername(username);
 		res.json({ success: "Match history retrieved", matchHistory });
 	} catch (error) {
 		res.json({ failure: error.message || "Error getting history match by username" });

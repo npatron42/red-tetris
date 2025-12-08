@@ -6,11 +6,11 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 15:20:41 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/08 12:55:14 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/08 14:40:35 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-import axios from 'axios';
+import axios from "axios";
 
 export const getUser = async () => {
 	try {
@@ -26,7 +26,7 @@ export const getHistoryMatchByUsername = async (username) => {
 	try {
 		const body = {
 			username: username
-		}
+		};
 		const response = await axios.post(`http://localhost:8000/user/get-history-match`, body);
 		return response.data;
 	} catch (error) {
@@ -66,4 +66,3 @@ export const createRoom = async (roomData) => {
 		throw error;
 	}
 };
-

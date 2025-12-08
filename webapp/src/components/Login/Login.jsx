@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 16:28:20 by npatron           #+#    #+#             */
-/*   Updated: 2025/11/17 17:36:05 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/08 13:11:00 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ const Login = () => {
         console.log(response)
         if (response.success) {
             login(username)
-            toast('🦄 Wow so easy!', {
+            toast('Wow so easy!', {
                 position: "top-right",
                 autoClose: 5000,
                 hideProgressBar: false,
@@ -62,7 +62,6 @@ const Login = () => {
                 theme: "light",
                 transition: Bounce,
                 });
-            // navigate(redirectPath, { replace: true })
         }
         else {
             console.log(response.error)

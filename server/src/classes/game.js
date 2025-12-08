@@ -1,23 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   userRoutes.js                                      :+:      :+:    :+:   */
+/*   game.js                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/17 15:28:46 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/08 15:56:30 by npatron          ###   ########.fr       */
+/*   Created: 2025/12/08 16:11:25 by npatron           #+#    #+#             */
+/*   Updated: 2025/12/08 16:11:26 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-import express from "express";
-
-import { createUser, getUser } from "../controllers/userController.js";
-
-const userRouter = express.Router();
-
-userRouter.get("/get", getUser);
-
-userRouter.post("/create", createUser);
-
-export default userRouter;

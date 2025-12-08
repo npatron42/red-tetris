@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/12/08 13:04:10 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/08 13:08:23 by npatron          ###   ########.fr       */
+/*   Created: 2025/12/08 14:20:43 by npatron           #+#    #+#             */
+/*   Updated: 2025/12/08 14:21:00 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,8 @@ export const useRoom = () => {
 			const response = await createRoom(roomData);
 			return { success: true, data: response };
 		} catch (err) {
-			setError("Failed to create room", err.message);
-			return { success: false, error: errorMessage };
+			setError("Failed to create room", err);
+			return { success: false, error: err.message };
 		} finally {
 			setIsLoading(false);
 		}

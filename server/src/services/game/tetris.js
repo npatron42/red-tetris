@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 15:31:01 by npatron           #+#    #+#             */
-/*   Updated: 2025/11/17 16:01:07 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/08 13:33:40 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,9 @@ import {
 	Tetrominos,
 } from './tetrominos.js';
 
-import { getRoom, sendToPlayer } from '../socket/socket.js';
+import { getRoom, sendToPlayer } from '../socket/socket.service.js';
 
-import { allSockets } from '../socket/socket.js';
+import { allSockets } from '../socket/socket.service.js';
 
 const piecesInMovement = new Map();
 
