@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/22 18:00:08 by npatron           #+#    #+#             */
-/*   Updated: 2025/11/07 17:12:19 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/09 13:32:52 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,20 +54,12 @@ body, html, #root {
   overflow-x: hidden;
 }
 
-body, html, #root {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  width: 100%;
-  overflow-x: hidden;
-} 
-
 #background-container {
   height: 100vh;
   width: 100vw;
   margin: 0;
   padding: 24px;
-  background-color: #061614;
+  z-index: 0;
   display: flex;
   justify-content: center;
   align-items: center;

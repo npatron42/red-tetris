@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 13:08:55 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/08 13:19:13 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/08 16:36:51 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ const CreateRoom = () => {
     const [roomName, setRoomName] = useState('')
     const navigate = useNavigate()
     const { user } = useUser()
-    const { createRoom, isLoading, error } = useRoom()
+    const { handleCreateRoom, isLoading, error } = useRoom()
 
     if (!user) {
         return null
@@ -32,14 +32,14 @@ const CreateRoom = () => {
 
     const handleRoomCreation = async (event) => {
         event.preventDefault()
-        const trimmedRoomName = roomName.trim()
-        if (trimmedRoomName.length < 1) {
+        const parsedRoomName = roomName.trim()
+        if (parsedRoomName.length < 1) {
             return
         }
-        const result = await createRoom({ name: trimmedRoomName, username: user })
+        const result = await handleCreateRoom({ name: parsedRoomName, leaderUsername: user })
+        console.log(result)
         if (result.success) {
-            localStorage.setItem('room', trimmedRoomName)
-            navigate('/')
+            navigate(`/${parsedRoomName}/${user}`)
         }
         else {
             toast.error(result.error, {
