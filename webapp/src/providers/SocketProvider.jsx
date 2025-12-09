@@ -130,13 +130,11 @@ export const SocketProvider = ({ children }) => {
 		if (socket) {
 			socket.on("connect", () => {
 				setIsConnected(true);
-				console.log("Connected to socket");
 			});
 
 			socket.on("disconnect", () => {
 				setIsConnected(false);
 				setRoomId(null);
-				console.log("Disconnected from socket");
 			});
 		}
 
