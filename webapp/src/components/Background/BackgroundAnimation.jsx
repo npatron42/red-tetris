@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/09 11:58:20 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/09 13:44:13 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/09 13:46:03 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,10 @@ const SHAPES = [
         color: '#2f4858',
         path: (
             <>
-                <rect x="0" y="10" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="1" />
-                <rect x="10" y="10" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="1" />
-                <rect x="20" y="10" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="1" />
-                <rect x="30" y="10" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="1" />
+                <rect x="0" y="10" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="0.5" />
+                <rect x="10" y="10" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="0.5" />
+                <rect x="20" y="10" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="0.5" />
+                <rect x="30" y="10" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="0.5" />
             </>
         )
     },
@@ -31,10 +31,10 @@ const SHAPES = [
         color: '#254f5e',
         path: (
             <>
-                <rect x="0" y="20" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="1" />
-                <rect x="10" y="0" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="1" />
-                <rect x="10" y="10" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="1" />
-                <rect x="10" y="20" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="1" />
+                <rect x="0" y="20" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="0.5" />
+                <rect x="10" y="0" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="0.5" />
+                <rect x="10" y="10" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="0.5" />
+                <rect x="10" y="20" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="0.5" />
             </>
         )
     },
@@ -43,10 +43,10 @@ const SHAPES = [
         color: '#195760',
         path: (
             <>
-                <rect x="10" y="0" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="1" />
-                <rect x="10" y="10" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="1" />
-                <rect x="10" y="20" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="1" />
-                <rect x="20" y="20" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="1" />
+                <rect x="10" y="0" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="0.5" />
+                <rect x="10" y="10" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="0.5" />
+                <rect x="10" y="20" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="0.5" />
+                <rect x="20" y="20" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="0.5" />
             </>
         )
     },
@@ -55,10 +55,10 @@ const SHAPES = [
         color: '#135e5e',
         path: (
             <>
-                <rect x="10" y="10" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="1" />
-                <rect x="10" y="20" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="1" />
-                <rect x="20" y="10" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="1" />
-                <rect x="20" y="20" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="1" />
+                <rect x="10" y="10" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="0.5" />
+                <rect x="10" y="20" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="0.5" />
+                <rect x="20" y="10" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="0.5" />
+                <rect x="20" y="20" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="0.5" />
             </>
         )
     },
@@ -67,10 +67,10 @@ const SHAPES = [
         color: '#1c6458',
         path: (
             <>
-                <rect x="10" y="10" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="1" />
-                <rect x="20" y="10" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="1" />
-                <rect x="0" y="20" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="1" />
-                <rect x="10" y="20" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="1" />
+                <rect x="10" y="10" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="0.5" />
+                <rect x="20" y="10" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="0.5" />
+                <rect x="0" y="20" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="0.5" />
+                <rect x="10" y="20" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="0.5" />
             </>
         )
     },
@@ -79,10 +79,10 @@ const SHAPES = [
         color: '#2d6a4f',
         path: (
             <>
-                <rect x="10" y="10" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="1" />
-                <rect x="0" y="20" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="1" />
-                <rect x="10" y="20" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="1" />
-                <rect x="20" y="20" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="1" />
+                <rect x="10" y="10" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="0.5" />
+                <rect x="0" y="20" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="0.5" />
+                <rect x="10" y="20" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="0.5" />
+                <rect x="20" y="20" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="0.5" />
             </>
         )
     },
@@ -91,10 +91,10 @@ const SHAPES = [
         color: '#ffc300',
         path: (
             <>
-                <rect x="0" y="10" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="1" />
-                <rect x="10" y="10" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="1" />
-                <rect x="10" y="20" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="1" />
-                <rect x="20" y="20" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="1" />
+                <rect x="0" y="10" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="0.5" />
+                <rect x="10" y="10" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="0.5" />
+                <rect x="10" y="20" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="0.5" />
+                <rect x="20" y="20" width="10" height="10" fill="currentColor" stroke="#000" strokeWidth="0.5" />
             </>
         )
     },
