@@ -6,18 +6,18 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 13:08:55 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/09 15:35:24 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/09 17:20:49 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import './PlayComponent.css'
 
-import { BadgePlus, ArrowLeft } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useUser } from '../../providers/UserProvider'
 import { useRoom } from '../../composables/useRoom'
 
+import { BadgePlus, ArrowLeft } from 'lucide-react'
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 
 const CreateRoom = () => {
