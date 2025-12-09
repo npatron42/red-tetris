@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 16:28:20 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/09 11:49:39 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/09 15:53:29 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ import { useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import { useUser } from '../../providers/UserProvider'
-import { createUser } from '../../composables/useApi'
 
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 

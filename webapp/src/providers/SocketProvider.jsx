@@ -24,6 +24,7 @@ export const SocketProvider = ({ children }) => {
 		enemyName: null,
 		enemyDisconnected: null,
 		tetrominosGenerated: null,
+		roomUpdated: null,
 	});
 
 	useEffect(() => {
@@ -39,14 +40,20 @@ export const SocketProvider = ({ children }) => {
 			setRoomEvents((prev) => ({ ...prev, tetrominosGenerated: data }));
 		};
 
+		const handleRoomUpdated = (data) => {
+			setRoomEvents((prev) => ({ ...prev, roomUpdated: data }));
+		};
+
 		socketService.on("enemyName", handleEnemyName);
 		socketService.on("enemyDisconnected", handleEnemyDisconnected);
 		socketService.on("tetrominosGenerated", handleTetrominosGenerated);
+		socketService.on("roomUpdated", handleRoomUpdated);
 
 		return () => {
 			socketService.off("enemyName", handleEnemyName);
 			socketService.off("enemyDisconnected", handleEnemyDisconnected);
 			socketService.off("tetrominosGenerated", handleTetrominosGenerated);
+			socketService.off("roomUpdated", handleRoomUpdated);
 		};
 	}, []);
 
@@ -144,6 +151,7 @@ export const SocketProvider = ({ children }) => {
 			enemyName: null,
 			enemyDisconnected: null,
 			tetrominosGenerated: null,
+			roomUpdated: null,
 		});
 	}, []);
 
@@ -174,4 +182,3 @@ export const useSocket = () => {
 	}
 	return context;
 };
-

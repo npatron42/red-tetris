@@ -1,56 +1,51 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   CreateRoom.jsx                                     :+:      :+:    :+:   */
+/*   JoinRoom.jsx                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/12/08 13:08:55 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/08 16:36:51 by npatron          ###   ########.fr       */
+/*   Created: 2025/11/07 16:54:59 by npatron           #+#    #+#             */
+/*   Updated: 2025/12/09 16:52:30 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import './PlayComponent.css'
 
-import { BadgePlus, ArrowLeft } from 'lucide-react'
+import { MoveRight, ArrowLeft } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useUser } from '../../providers/UserProvider'
 import { useRoom } from '../../composables/useRoom'
+import { toast, ToastContainer, Bounce } from 'react-toastify'
 
-import { ToastContainer, toast, Bounce } from 'react-toastify';
 
-const CreateRoom = () => {
-    const [roomName, setRoomName] = useState('')
+export default function JoinRoom() {
+    const [roomName, setroomName] = useState('')
     const navigate = useNavigate()
     const { user } = useUser()
-    const { handleCreateRoom, isLoading, error } = useRoom()
-
+    const { handleJoinRoom } = useRoom()
     if (!user) {
         return null
     }
 
-    const handleRoomCreation = async (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault()
-        const parsedRoomName = roomName.trim()
-        if (parsedRoomName.length < 1) {
+        const trimmedRoomName = roomName.trim()
+        if (trimmedRoomName.length < 1) {
             return
         }
-        const result = await handleCreateRoom({ name: parsedRoomName, leaderUsername: user })
-        console.log(result)
-        if (result.success) {
-            navigate(`/${parsedRoomName}/${user}`)
+        const roomData = {
+            roomName: trimmedRoomName,
+            username: user
+        }
+        const response = await handleJoinRoom(roomData)
+        if (response.success && response.data?.success) {
+            navigate(`/${trimmedRoomName}/${response.data.room.leaderUsername}`)
         }
         else {
-            toast.error(result.error, {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: false,
-                pauseOnHover: true,
-                draggable: true,
-                theme: "dark"
-            })
+            const errorMessage = response.error || response.data?.failure || 'Failed to join room'
+            toast.error(errorMessage)
         }
     }
 
@@ -61,22 +56,22 @@ const CreateRoom = () => {
                     <ArrowLeft size={24} onClick={() => navigate(-1)} />
                 </div>
                 <div className='play-header-center'>
-                    <span>CREATE ROOM</span>
+                    <span>JOIN ROOM</span>
                 </div>
             </div>
-            <form className="play-button-container" onSubmit={handleRoomCreation}>
+            <form className="play-button-container" onSubmit={handleSubmit}>
                 <input
                     type="text"
-                    placeholder="Room name"
+                    placeholder="Room code"
                     value={roomName}
-                    onChange={(event) => setRoomName(event.target.value)}
+                    onChange={(event) => setroomName(event.target.value)}
                     maxLength={32}
                     minLength={1}
                     className="input-button"
                 />
-                <button className="play-button" type="submit" disabled={roomName.trim().length < 1 || isLoading}>
-                    {isLoading ? 'Creating...' : 'Create'}
-                    <BadgePlus size={16} />
+                <button className="play-button" type="submit" disabled={roomName.trim().length < 1}>
+                    Join
+                    <MoveRight size={16} />
                 </button>
             </form>
             <ToastContainer
@@ -84,17 +79,13 @@ const CreateRoom = () => {
                 autoClose={5000}
                 hideProgressBar={false}
                 newestOnTop={false}
-                closeOnClick={false}
+                closeOnClick
                 rtl={false}
                 pauseOnFocusLoss
                 draggable
                 pauseOnHover
                 theme="light"
-                transition={Bounce}
             />
         </div>
     )
 }
-
-export default CreateRoom
-

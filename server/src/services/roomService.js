@@ -6,11 +6,12 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:10:49 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/08 16:27:35 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/09 16:52:30 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import roomRepository from "../repositories/roomRepository.js";
+import socketService from "./socket/socketService.js";
 import pino from "pino";
 
 const logger = pino({
@@ -24,7 +25,6 @@ export class RoomService {
 	}
 
 	createRoom(roomName, leaderUsername) {
-		logger.info("Creating room", { roomName, leaderUsername });
 		if (!roomName || !leaderUsername) {
 			throw new Error("Room name and leader username are required");
 		}
@@ -32,7 +32,6 @@ export class RoomService {
 		if (existingRoom) {
 			throw new Error("Room already exists");
 		}
-        logger.info("Leader username", { leaderUsername: leaderUsername.toLowerCase() });
 		const room = {
 			name: roomName,
 			leaderUsername: leaderUsername.toLowerCase(),
@@ -40,24 +39,43 @@ export class RoomService {
 			players: [leaderUsername.toLowerCase()],
 			gameOnGoing: false
 		};
-        logger.info("Room", { room });
 		const savedRoom = roomRepository.create(room);
 		this.activeRooms.set(savedRoom.roomName, savedRoom);
-		logger.info("Room created", { savedRoom });
-        console.log("Active rooms", this.activeRooms);
 		return savedRoom;
 	}
 
+	joinRoom(roomName, username) {
+		const room = this.getRoomByName(roomName);
+		if (!room) {
+			throw new Error("Room not found");
+		}
+		const normalizedUsername = username.toLowerCase();
+		const updatedRoom = this.addPlayer(roomName, normalizedUsername);
+		this.notifyPlayersRoomUpdated(updatedRoom);
+		return updatedRoom;
+	}
+
 	getRoomByName(roomName) {
+		logger.info("Getting room by name", { roomName });
 		const inMemoryRoom = this.activeRooms.get(roomName);
 		if (inMemoryRoom) {
-			return inMemoryRoom;
+			const cleanedRoom = {
+				...inMemoryRoom,
+				players: inMemoryRoom.players.filter((player) => player !== null && player !== undefined)
+			};
+			return cleanedRoom;
 		}
 		const persistedRoom = roomRepository.findByName(roomName);
 		if (persistedRoom) {
-			this.activeRooms.set(roomName, persistedRoom);
-			return persistedRoom;
+			const cleanedRoom = {
+				...persistedRoom,
+				players: persistedRoom.players.filter((player) => player !== null && player !== undefined)
+			};
+			this.activeRooms.set(roomName, cleanedRoom);
+			logger.info("Room found in persisted rooms", { persistedRoom });
+			return cleanedRoom;
 		}
+		logger.info("Room not found", { roomName });
 		return null;
 	}
 
@@ -65,10 +83,17 @@ export class RoomService {
 		const persistedRooms = roomRepository.findAll();
 		persistedRooms.forEach((room) => {
 			if (!this.activeRooms.has(room.name)) {
-				this.activeRooms.set(room.name, room);
+				const cleanedRoom = {
+					...room,
+					players: room.players.filter((player) => player !== null && player !== undefined)
+				};
+				this.activeRooms.set(room.name, cleanedRoom);
 			}
 		});
-		return Array.from(this.activeRooms.values());
+		return Array.from(this.activeRooms.values()).map((room) => ({
+			...room,
+			players: room.players.filter((player) => player !== null && player !== undefined)
+		}));
 	}
 
 	addPlayer(roomName, username) {
@@ -77,12 +102,14 @@ export class RoomService {
 		if (!room) {
 			throw new Error("Room not found");
 		}
-		if (room.players.includes(username)) {
+		const filteredPlayers = room.players.filter((player) => player !== null && player !== undefined);
+		if (filteredPlayers.includes(username)) {
 			return room;
 		}
-		room.players.push(username);
+		filteredPlayers.push(username);
+		room.players = filteredPlayers;
 		this.activeRooms.set(roomName, room);
-		roomRepository.update(roomName, { players: room.players });
+		roomRepository.update(roomName, { players: filteredPlayers });
 		logger.info("Player added to room", { roomName, username });
 		logger.info("Active rooms", { activeRooms: this.activeRooms });
 		return room;
@@ -127,6 +154,18 @@ export class RoomService {
 		this.activeRooms.set(roomName, room);
 		roomRepository.update(roomName, { gameOnGoing: false });
 		return room;
+	}
+
+	notifyPlayersRoomUpdated(room) {
+		if (!room || !room.players || !socketService.launched) {
+			return;
+		}
+		const payload = {
+			roomName: room.name,
+			leaderUsername: room.leaderUsername,
+			players: room.players.filter((player) => player !== null && player !== undefined)
+		};
+		socketService.emitToUsers(payload.players, "roomUpdated", payload);
 	}
 }
 

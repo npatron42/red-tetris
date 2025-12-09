@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 17:03:16 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/09 13:45:36 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/09 14:07:15 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
   height: 280px;
   width: 600px;
   color: #ECF0F1;
-  border: 1px solid #12433D;
+  border: 1px solid #039BE5;
   box-shadow: 12px 12px 24px rgba(0, 0, 0, 0.2);
   background-color: #061614;
 }
@@ -47,8 +47,7 @@
 }
 
 .play-button:hover {
-    border-color: #2a9d8f;
-    color: #2a9d8f;
+    border-color: #FDD835;
 }
 
 .play-header-center {
@@ -68,7 +67,7 @@
     font-family: 'Arcade', sans-serif;
     gap: 12px;
     font-size: 36px;
-    color: #2A9D8F;
+    color: #FDD835;
 }
 
 .play-username-input {

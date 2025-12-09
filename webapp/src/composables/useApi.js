@@ -1,16 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   api.js                                             :+:      :+:    :+:   */
+/*   useApi.js                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 15:20:41 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/08 14:40:35 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/09 16:11:36 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import axios from "axios";
+
+// GET METHODS
 
 export const getUser = async () => {
 	try {
@@ -27,10 +29,21 @@ export const getHistoryMatchByUsername = async (username) => {
 		const body = {
 			username: username
 		};
-		const response = await axios.post(`http://localhost:8000/user/get-history-match`, body);
+		const response = await axios.get(`http://localhost:8000/user/get-history-match/${username}`);
 		return response.data;
 	} catch (error) {
 		console.error(`Error getting history match by username:`, error);
+		throw error;
+	}
+};
+
+export const getRoomByName = async (roomName) => {
+	try {
+		const response = await axios.get(`http://localhost:8000/room/${roomName}`);
+		console.log(response.data)
+		return response.data;
+	} catch (error) {
+		console.error(`Error getting room:`, error);
 		throw error;
 	}
 };
@@ -43,6 +56,16 @@ export const createUser = async (username) => {
 		return response.data;
 	} catch (error) {
 		console.error(`Error fetching user data:`, error);
+		throw error;
+	}
+};
+
+export const joinRoom = async (roomData) => {
+	try {
+		const response = await axios.post("http://localhost:8000/room/join", roomData);
+		return response.data;
+	} catch (error) {
+		console.error(`Error joining room:`, error);
 		throw error;
 	}
 };

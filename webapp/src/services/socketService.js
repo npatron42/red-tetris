@@ -21,7 +21,8 @@ const connect = (username) => {
 		disconnect();
 	}
 
-	const query = { username: username };
+	const normalizedUsername = username?.toString().toLowerCase() || "";
+	const query = { username: normalizedUsername };
 
 	socket = io("http://localhost:8000", {
 		query: query,
@@ -48,6 +49,10 @@ const connect = (username) => {
 
 	socket.on("tetrominosGenerated", (data) => {
 		emit("tetrominosGenerated", data);
+	});
+
+	socket.on("roomUpdated", (data) => {
+		emit("roomUpdated", data);
 	});
 
 	return socket;

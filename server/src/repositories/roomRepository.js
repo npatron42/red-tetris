@@ -37,6 +37,9 @@ export class RoomRepository {
 		if (index === -1) {
 			return null;
 		}
+		if (updates.players) {
+			updates.players = updates.players.filter(player => player !== null && player !== undefined);
+		}
 		rooms[index] = { ...rooms[index], ...updates };
 		writeJsonFile(dbPath, rooms);
 		return rooms[index];
