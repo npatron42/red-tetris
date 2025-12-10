@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:10:49 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/09 17:58:35 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/10 14:16:26 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,7 +134,6 @@ export class RoomService {
 		if (filteredPlayers.length === 0) {
 			this.activeRooms.delete(roomName);
 			roomDao.delete(roomName);
-			logger.info("Room deleted because it has no more players", { roomName });
 			return null;
 		}
 
@@ -151,8 +150,6 @@ export class RoomService {
 
 		this.activeRooms.set(roomName, updatedRoom);
 		roomDao.update(roomName, { players: filteredPlayers, leaderUsername: newLeaderUsername });
-		logger.info("Player removed from room", { roomName, username, newLeaderUsername });
-		logger.info("Active rooms", { activeRooms: this.activeRooms });
 		this.notifyPlayersRoomUpdated(updatedRoom);
 		return updatedRoom;
 	}

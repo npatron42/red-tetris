@@ -6,25 +6,26 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:39:24 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/10 13:18:13 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/10 14:26:05 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import { useEffect, useMemo, useState, useCallback, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 import { useUser } from '../../providers/UserProvider';
 import { useSocket } from '../../providers/SocketProvider';
 import { useRoom } from '../../composables/useRoom';
-import { UserIcon } from 'lucide-react';
+import { LogOutIcon, PlayIcon, UserIcon } from 'lucide-react';
 
 import './GameRoom.css';
 
 const GameRoom = () => {
+    const navigate = useNavigate();
     const { roomName } = useParams();
     const { user } = useUser();
     const { roomEvents } = useSocket();
-    const { isUserAllowedToJoinARoom, isLoading, error } = useRoom()
+    const { isUserAllowedToJoinARoom, handleLeaveRoom, isLoading, error } = useRoom()
 
     const [isUserAuthorized, setIsUserAuthorized] = useState(false)
     const [roomInfo, setRoomInfo] = useState(null)
@@ -50,6 +51,22 @@ const GameRoom = () => {
     useEffect(() => {
         fetchRoomDetails();
     }, [fetchRoomDetails]);
+
+	const startGame = useCallback(() => {
+		console.log("Starting game");
+	}, []);
+
+	const leaveRoom = async () => {
+		try {
+			const result = await handleLeaveRoom({ roomName: normalizedRouteRoomName, username: normalizedUser });
+			console.log(result);
+			if (result.data.success) {
+				navigate('/');
+			}
+		} catch (error) {
+			console.error(error);
+		}
+	}
 
     useEffect(() => {
         if (!roomEvents.roomUpdated || !roomEvents.roomUpdated.roomName) {
@@ -102,14 +119,19 @@ const GameRoom = () => {
 									<UserIcon size={24} color="#ffffff" />
 								</div>
 								<span className="player-name">{player}</span>
-								{player === roomInfo.leaderUsername && (
-									<span className="leader-badge">Leader</span>
-								)}
 							</div>
 						))}
 					</div>
 				</div>
             </div>
+			<button className="custom-button-play" onClick={startGame}>
+				<PlayIcon size={24} color="#039BE5" />
+				Start Game
+			</button>
+			<button className="custom-button-leave" onClick={leaveRoom}>
+				<LogOutIcon size={24} color="#E53935" />
+				Leave Room
+			</button>
         </div>
     );
 };

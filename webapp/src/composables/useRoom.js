@@ -6,12 +6,12 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 14:20:43 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/09 16:52:23 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/10 13:45:22 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import { useCallback, useState } from "react";
-import { createRoom, getRoomByName, joinRoom, leaveRoom as leaveRoomApi } from "./useApi";
+import { createRoom, getRoomByName, joinRoom, leaveRoom } from "./useApi";
 
 export const useRoom = () => {
 	const [isLoading, setIsLoading] = useState(false);
@@ -73,27 +73,14 @@ export const useRoom = () => {
 	}, []);
 
 	const handleLeaveRoom = useCallback(
-		async (roomData, options = {}) => {
-			const { useBeacon = false } = options;
+		async (roomData) => {
 			if (!roomData?.roomName || !roomData?.username) {
 				return { success: false, error: "Room name and username are required" };
 			}
-
-			if (useBeacon && typeof navigator !== "undefined" && navigator.sendBeacon) {
-				try {
-					const payload = JSON.stringify(roomData);
-					const blob = new Blob([payload], { type: "application/json" });
-					const sent = navigator.sendBeacon("http://localhost:8000/room/leave", blob);
-					return sent ? { success: true } : { success: false, error: "Failed to send leave beacon" };
-				} catch (err) {
-					return { success: false, error: err.message || "Failed to send leave beacon" };
-				}
-			}
-
 			setIsLoading(true);
 			setError(null);
 			try {
-				const response = await leaveRoomApi(roomData);
+				const response = await leaveRoom(roomData);
 				if (response.success) {
 					return { success: true, data: response };
 				}

@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 17:41:02 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/08 11:53:33 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/10 14:19:07 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ export const Profile = () => {
     return (
         <div className="profile-container">
             <div className="profile-icon-circle">
-                <User size={28} color="#2A9D8F" />
+                <User size={28} color="#039BE5" />
             </div>
             <span className="profile-username">{user}</span>
         </div>
