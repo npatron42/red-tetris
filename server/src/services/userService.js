@@ -6,19 +6,19 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:11:03 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/08 16:11:05 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/09 17:59:00 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import { v4 as uuidv4 } from "uuid";
-import userRepository from "../repositories/userRepository.js";
+import userDao from "../dao/UserDao.js";
 
 export class UserService {
 	async getUserByUsername(username) {
 		if (!username) {
 			throw new Error("Username is required");
 		}
-		const user = userRepository.findByUsername(username);
+		const user = userDao.findByUsername(username);
 		if (!user) {
 			throw new Error("User not found");
 		}
@@ -29,7 +29,7 @@ export class UserService {
 		if (!username) {
 			return false;
 		}
-		const user = userRepository.findByUsername(username);
+		const user = userDao.findByUsername(username);
 		return !!user;
 	}
 
@@ -49,7 +49,7 @@ export class UserService {
 			totalGames: 0,
 			matchHistory: []
 		};
-		userRepository.create(user);
+		userDao.create(user);
 		return user.id;
 	}
 
@@ -57,7 +57,7 @@ export class UserService {
 		if (!username || !match) {
 			throw new Error("Username and match are required");
 		}
-		const user = userRepository.findByUsername(username);
+		const user = userDao.findByUsername(username);
 		if (!user) {
 			throw new Error("User not found");
 		}
@@ -65,7 +65,7 @@ export class UserService {
 			user.matchHistory = [];
 		}
 		user.matchHistory.push(match);
-		userRepository.update(username, { matchHistory: user.matchHistory });
+		userDao.update(username, { matchHistory: user.matchHistory });
 		return match;
 	}
 
@@ -73,7 +73,7 @@ export class UserService {
 		if (!username) {
 			throw new Error("Username is required");
 		}
-		const user = userRepository.findByUsername(username);
+		const user = userDao.findByUsername(username);
 		if (!user || !user.matchHistory) {
 			return [];
 		}
@@ -81,7 +81,7 @@ export class UserService {
 	}
 
 	async updateStats(username, isWinner) {
-		const user = userRepository.findByUsername(username);
+		const user = userDao.findByUsername(username);
 		if (!user) {
 			throw new Error("User not found");
 		}
@@ -90,7 +90,7 @@ export class UserService {
 			numberOfWins: isWinner ? (user.numberOfWins || 0) + 1 : user.numberOfWins || 0,
 			numberOfLosses: !isWinner ? (user.numberOfLosses || 0) + 1 : user.numberOfLosses || 0
 		};
-		return userRepository.update(username, updates);
+		return userDao.update(username, updates);
 	}
 }
 

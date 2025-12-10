@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 import { useCallback, useState } from "react";
-import { createRoom, getRoomByName, joinRoom } from "./useApi";
+import { createRoom, getRoomByName, joinRoom, leaveRoom as leaveRoomApi } from "./useApi";
 
 export const useRoom = () => {
 	const [isLoading, setIsLoading] = useState(false);
@@ -72,10 +72,47 @@ export const useRoom = () => {
 		}
 	}, []);
 
+	const handleLeaveRoom = useCallback(
+		async (roomData, options = {}) => {
+			const { useBeacon = false } = options;
+			if (!roomData?.roomName || !roomData?.username) {
+				return { success: false, error: "Room name and username are required" };
+			}
+
+			if (useBeacon && typeof navigator !== "undefined" && navigator.sendBeacon) {
+				try {
+					const payload = JSON.stringify(roomData);
+					const blob = new Blob([payload], { type: "application/json" });
+					const sent = navigator.sendBeacon("http://localhost:8000/room/leave", blob);
+					return sent ? { success: true } : { success: false, error: "Failed to send leave beacon" };
+				} catch (err) {
+					return { success: false, error: err.message || "Failed to send leave beacon" };
+				}
+			}
+
+			setIsLoading(true);
+			setError(null);
+			try {
+				const response = await leaveRoomApi(roomData);
+				if (response.success) {
+					return { success: true, data: response };
+				}
+				return { success: false, error: response.failure || "Failed to leave room" };
+			} catch (err) {
+				setError("Failed to leave room", err);
+				return { success: false, error: err.response?.data?.failure || err.message || "Failed to leave room" };
+			} finally {
+				setIsLoading(false);
+			}
+		},
+		[]
+	);
+
 	return {
 		handleCreateRoom,
 		isUserAllowedToJoinARoom,
 		handleJoinRoom,
+		handleLeaveRoom,
 		isLoading,
 		error
 	};

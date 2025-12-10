@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 13:57:35 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/08 15:42:58 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/09 18:04:22 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,11 @@ const connect = (username) => {
 
 	socket.on("connect", () => {
 		isConnected = true;
-		console.log("Connected to socket");
 	});
 
 	socket.on("disconnect", () => {
 		isConnected = false;
+		console.log("Disconnected from socket");
 	});
 
 	socket.on("enemyName", (data) => {
@@ -52,6 +52,7 @@ const connect = (username) => {
 	});
 
 	socket.on("roomUpdated", (data) => {
+		console.log("Room updated", data);
 		emit("roomUpdated", data);
 	});
 

@@ -70,6 +70,16 @@ export const joinRoom = async (roomData) => {
 	}
 };
 
+export const leaveRoom = async (roomData) => {
+	try {
+		const response = await axios.post("http://localhost:8000/room/leave", roomData);
+		return response.data;
+	} catch (error) {
+		console.error(`Error leaving room:`, error);
+		throw error;
+	}
+};
+
 export const createHistoryMatch = async (historyMatch) => {
 	try {
 		const response = await axios.post("http://localhost:8000/match/create-history-match", historyMatch);

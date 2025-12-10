@@ -6,11 +6,11 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:10:49 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/09 16:52:30 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/09 17:58:35 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-import roomRepository from "../repositories/roomRepository.js";
+import roomDao from "../dao/roomDao.js";
 import socketService from "./socket/socketService.js";
 import pino from "pino";
 
@@ -28,7 +28,7 @@ export class RoomService {
 		if (!roomName || !leaderUsername) {
 			throw new Error("Room name and leader username are required");
 		}
-		const existingRoom = roomRepository.findByName(roomName);
+		const existingRoom = roomDao.findByName(roomName);
 		if (existingRoom) {
 			throw new Error("Room already exists");
 		}
@@ -39,7 +39,7 @@ export class RoomService {
 			players: [leaderUsername.toLowerCase()],
 			gameOnGoing: false
 		};
-		const savedRoom = roomRepository.create(room);
+		const savedRoom = roomDao.create(room);
 		this.activeRooms.set(savedRoom.roomName, savedRoom);
 		return savedRoom;
 	}
@@ -65,7 +65,7 @@ export class RoomService {
 			};
 			return cleanedRoom;
 		}
-		const persistedRoom = roomRepository.findByName(roomName);
+		const persistedRoom = roomDao.findByName(roomName);
 		if (persistedRoom) {
 			const cleanedRoom = {
 				...persistedRoom,
@@ -80,7 +80,7 @@ export class RoomService {
 	}
 
 	getAllRooms() {
-		const persistedRooms = roomRepository.findAll();
+		const persistedRooms = roomDao.findAll();
 		persistedRooms.forEach((room) => {
 			if (!this.activeRooms.has(room.name)) {
 				const cleanedRoom = {
@@ -109,7 +109,7 @@ export class RoomService {
 		filteredPlayers.push(username);
 		room.players = filteredPlayers;
 		this.activeRooms.set(roomName, room);
-		roomRepository.update(roomName, { players: filteredPlayers });
+		roomDao.update(roomName, { players: filteredPlayers });
 		logger.info("Player added to room", { roomName, username });
 		logger.info("Active rooms", { activeRooms: this.activeRooms });
 		return room;
@@ -121,17 +121,40 @@ export class RoomService {
 		if (!room) {
 			return null;
 		}
-		room.players = room.players.filter((player) => player !== username);
-		if (room.players.length === 0) {
+		const normalizedUsername = username.toLowerCase();
+		const filteredPlayers = room.players
+			.filter((player) => player !== null && player !== undefined)
+			.filter((player) => player.toLowerCase() !== normalizedUsername);
+
+		if (filteredPlayers.length === room.players.length) {
+			logger.info("Player not found in room", { roomName, username });
+			return room;
+		}
+
+		if (filteredPlayers.length === 0) {
 			this.activeRooms.delete(roomName);
-			roomRepository.delete(roomName);
+			roomDao.delete(roomName);
+			logger.info("Room deleted because it has no more players", { roomName });
 			return null;
 		}
-		this.activeRooms.set(roomName, room);
-		roomRepository.update(roomName, { players: room.players });
-		logger.info("Player removed from room", { roomName, username });
+
+		const newLeaderUsername =
+			room.leaderUsername && room.leaderUsername.toLowerCase() === normalizedUsername
+				? filteredPlayers[0]
+				: room.leaderUsername;
+
+		const updatedRoom = {
+			...room,
+			leaderUsername: newLeaderUsername,
+			players: filteredPlayers
+		};
+
+		this.activeRooms.set(roomName, updatedRoom);
+		roomDao.update(roomName, { players: filteredPlayers, leaderUsername: newLeaderUsername });
+		logger.info("Player removed from room", { roomName, username, newLeaderUsername });
 		logger.info("Active rooms", { activeRooms: this.activeRooms });
-		return room;
+		this.notifyPlayersRoomUpdated(updatedRoom);
+		return updatedRoom;
 	}
 
 	startGame(roomName) {
@@ -141,7 +164,7 @@ export class RoomService {
 		}
 		room.gameOnGoing = true;
 		this.activeRooms.set(roomName, room);
-		roomRepository.update(roomName, { gameOnGoing: true });
+		roomDao.update(roomName, { gameOnGoing: true });
 		return room;
 	}
 
@@ -152,7 +175,7 @@ export class RoomService {
 		}
 		room.gameOnGoing = false;
 		this.activeRooms.set(roomName, room);
-		roomRepository.update(roomName, { gameOnGoing: false });
+		roomDao.update(roomName, { gameOnGoing: false });
 		return room;
 	}
 

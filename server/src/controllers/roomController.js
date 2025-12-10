@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 15:57:50 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/09 16:22:29 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/09 18:07:36 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,25 @@ export const joinRoomByName  = async (req, res) => {
 	} catch (error) {
 		logger.error("Error joining room", { error });
 		res.json({ failure: error.message || "Error joining room" });
+	}
+};
+
+export const leaveRoom = async (req, res) => {
+	try {
+		
+		logger.info("Leaving room", { body: req.body });
+		const { roomName, username } = req.body;
+		if (!roomName || !username) {
+			logger.error("Room name and username are required to leave", { roomName, username });
+			res.json({ success: false, failure: "Room name and username are required" });
+			return;
+		}
+		logger.info("Leaving room", { roomName, username });
+		const room = roomService.removePlayer(roomName, username);
+		res.json({ success: true, room });
+	} catch (error) {
+		logger.error("Error leaving room", { error });
+		res.json({ success: false, failure: error.message || "Error leaving room" });
 	}
 };
 

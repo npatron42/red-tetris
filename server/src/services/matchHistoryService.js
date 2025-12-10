@@ -6,12 +6,12 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:10:54 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/08 16:10:56 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/09 17:59:44 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import { v4 as uuidv4 } from "uuid";
-import matchHistoryRepository from "../repositories/matchHistoryRepository.js";
+import matchHistoryDao from "../dao/matchHistoryDao.js";
 import userService from "./userService.js";
 
 export class MatchHistoryService {
@@ -28,7 +28,7 @@ export class MatchHistoryService {
 			winner,
 			timestamp: new Date().toISOString()
 		};
-		matchHistoryRepository.create(match);
+		matchHistoryDao.create(match);
 		for (const player of players) {
 			await userService.updateStats(player, player === winner);
 		}
@@ -39,7 +39,7 @@ export class MatchHistoryService {
 		if (!username) {
 			throw new Error("Username is required");
 		}
-		return matchHistoryRepository.findByUsername(username);
+		return matchHistoryDao.findByUsername(username);
 	}
 }
 

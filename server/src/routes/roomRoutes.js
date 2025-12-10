@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 import express from "express";
-import { create, getAll, getByName, joinRoomByName } from "../controllers/roomController.js";
+import { create, getAll, getByName, joinRoomByName, leaveRoom } from "../controllers/roomController.js";
 
 const roomRouter = express.Router();
 
@@ -19,5 +19,6 @@ roomRouter.post("/create", create);
 roomRouter.get("/", getAll);
 roomRouter.get("/:roomName", getByName);
 roomRouter.post("/join", joinRoomByName);
+roomRouter.post("/leave", leaveRoom);
 
 export default roomRouter;

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   matchHistoryRepository.js                          :+:      :+:    :+:   */
+/*   matchHistoryDao.js                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:00:15 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/08 16:04:24 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/09 18:00:02 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@ import { readJsonFile, writeJsonFile } from "../utils/fileStorage.js";
 
 const dbPath = "./src/db/matchs.json";
 
-export class MatchHistoryRepository {
+export class MatchHistoryDao {
 	findAll() {
 		return readJsonFile(dbPath);
 	}
@@ -56,4 +56,4 @@ export class MatchHistoryRepository {
 
 }
 
-export default new MatchHistoryRepository();
+export default new MatchHistoryDao();

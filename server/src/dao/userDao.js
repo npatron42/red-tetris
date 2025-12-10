@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   userRepository.js                                  :+:      :+:    :+:   */
+/*   UserDao.js                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 15:58:08 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/08 16:05:12 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/09 17:59:55 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@ import { readJsonFile, writeJsonFile } from "../utils/fileStorage.js";
 
 const dbPath = "./src/db/users.json";
 
-export class UserRepository {
+export class UserDao {
 	findAll() {
 		return readJsonFile(dbPath);
 	}
@@ -47,4 +47,4 @@ export class UserRepository {
 	}
 }
 
-export default new UserRepository();
+export default new UserDao();

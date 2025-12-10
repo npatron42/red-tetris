@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 17:03:16 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/09 14:07:15 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/09 17:48:22 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
   height: 280px;
   width: 600px;
   color: #ECF0F1;
-  border: 1px solid #039BE5;
+  border: 1px solid #403d39;
   box-shadow: 12px 12px 24px rgba(0, 0, 0, 0.2);
   background-color: #061614;
 }

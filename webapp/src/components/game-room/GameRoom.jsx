@@ -6,11 +6,11 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:39:24 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/09 17:37:17 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/10 13:18:13 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-import { useEffect, useMemo, useState, useCallback } from 'react';
+import { useEffect, useMemo, useState, useCallback, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { useUser } from '../../providers/UserProvider';
@@ -28,6 +28,7 @@ const GameRoom = () => {
 
     const [isUserAuthorized, setIsUserAuthorized] = useState(false)
     const [roomInfo, setRoomInfo] = useState(null)
+    const hasLeftRoom = useRef(false)
 
     const normalizedRouteRoomName = useMemo(() => roomName?.toString().toLowerCase() || "", [roomName]);
     const normalizedUser = useMemo(() => user?.toString().toLowerCase() || "", [user]);
@@ -101,7 +102,9 @@ const GameRoom = () => {
 									<UserIcon size={24} color="#ffffff" />
 								</div>
 								<span className="player-name">{player}</span>
-								{player === roomInfo.leaderUsername}
+								{player === roomInfo.leaderUsername && (
+									<span className="leader-badge">Leader</span>
+								)}
 							</div>
 						))}
 					</div>
