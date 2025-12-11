@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/07 16:54:59 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/09 16:52:30 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/11 14:17:30 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ export default function JoinRoom() {
             <form className="play-button-container" onSubmit={handleSubmit}>
                 <input
                     type="text"
-                    placeholder="Room code"
+                    placeholder="Room name"
                     value={roomName}
                     onChange={(event) => setroomName(event.target.value)}
                     maxLength={32}
