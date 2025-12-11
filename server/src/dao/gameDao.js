@@ -1,56 +1,53 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   roomDao.js                                         :+:      :+:    :+:   */
+/*   gameDao.js                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 15:57:54 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/11 18:52:51 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/11 18:49:46 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import { readJsonFile, writeJsonFile } from "../utils/fileStorage.js";
 
-const dbPath = "./src/db/rooms.json";
+const dbPath = "./src/db/games.json";
 
-export class RoomDao {
+export class GameDao {
 	findAll() {
 		return readJsonFile(dbPath);
 	}
 
 	findByName(name) {
-		const rooms = readJsonFile(dbPath);
-		return rooms.find((room) => room.name === name) || null;
+		const games = readJsonFile(dbPath);
+		return games.find((game) => game.name === name) || null;
 	}
 
-	create(room) {
-		const rooms = readJsonFile(dbPath);
-		rooms.push(room);
-		writeJsonFile(dbPath, rooms);
-		return room;
+	create(game) {
+		const games = readJsonFile(dbPath);
+		games.push(game);
+		writeJsonFile(dbPath, games);
+		return game;
 	}
 
 	update(name, updates) {
-		const rooms = readJsonFile(dbPath);
-		const index = rooms.findIndex((room) => room.name === name);
+		const games = readJsonFile(dbPath);
+		const index = games.findIndex((game) => game.name === name);
 		if (index === -1) {
 			return null;
 		}
-		if (updates.players) {
-			updates.players = updates.players.filter(player => player !== null && player !== undefined);
-		}
-		rooms[index] = { ...rooms[index], ...updates };
-		writeJsonFile(dbPath, rooms);
-		return rooms[index];
+		games[index] = { ...games[index], ...updates };
+		writeJsonFile(dbPath, games);
+		return games[index];
 	}
 
 	delete(name) {
-		const rooms = readJsonFile(dbPath);
-		const filtered = rooms.filter((room) => room.name !== name);
+		const games = readJsonFile(dbPath);
+		const filtered = games.filter((game) => game.name !== name);
 		writeJsonFile(dbPath, filtered);
 		return true;
 	}
 }
 
-export default new RoomDao();
+export default new GameDao();

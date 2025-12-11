@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 15:57:50 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/11 12:46:39 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/11 14:19:57 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,7 @@ export const getAll = async (req, res) => {
 
 export const startGame = async (req, res) => {
 	try {
+		logger.info("Starting game", { body: req.body });
 		const { roomName } = req.body;
 		const room = roomService.startGame(roomName);
 		res.json({ success: true, room });

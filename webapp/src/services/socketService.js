@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 13:57:35 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/09 18:04:22 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/11 18:46:29 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ const connect = (username) => {
 	const normalizedUsername = username?.toString().toLowerCase() || "";
 	const query = { username: normalizedUsername };
 
-	socket = io("http://localhost:8000", {
+	socket = io("http://localhost:4000", {
 		query: query,
 		transports: ["websocket"],
 		closeOnBeforeunload: true
@@ -36,7 +36,6 @@ const connect = (username) => {
 
 	socket.on("disconnect", () => {
 		isConnected = false;
-		console.log("Disconnected from socket");
 	});
 
 	socket.on("enemyName", (data) => {
@@ -52,8 +51,15 @@ const connect = (username) => {
 	});
 
 	socket.on("roomUpdated", (data) => {
-		console.log("Room updated", data);
 		emit("roomUpdated", data);
+	});
+
+	socket.on("gridUpdate", (data) => {
+		emit("gridUpdate", data);
+	});
+
+	socket.on("soloGameUpdated", (data) => {
+		emit("soloGameUpdated", data);
 	});
 
 	return socket;
@@ -92,9 +98,15 @@ const emit = (event, data) => {
 	}
 };
 
-const sendMove = (moveData) => {
+const sendMoveMultiplayer = (moveData) => {
 	if (socket?.connected) {
-		socket.emit("move", moveData);
+		socket.emit("movePieceMultiplayer", moveData);
+	}
+};
+
+const sendMoveSolo = (moveData) => {
+	if (socket?.connected) {
+		socket.emit("movePieceSolo", moveData);
 	}
 };
 
@@ -108,6 +120,7 @@ export const socketService = {
 	on,
 	off,
 	emit,
-	sendMove,
+	sendMoveMultiplayer,
+	sendMoveSolo,
 	getSocket
 };

@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:39:24 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/11 14:16:12 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/11 17:45:53 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ import { useUser } from '../../providers/UserProvider';
 import { useSocket } from '../../providers/SocketProvider';
 import { useRoom } from '../../composables/useRoom';
 import { GameResults } from '../game-results/GameResults';
-import { TetrisGame } from '../tetris-game/TetrisGame';
+import { TetrisGameMultiplayer } from '../tetris-game-multiplayer/TetrisGameMultiplayer';
 
 import './GameRoom.css';	
 
@@ -28,7 +28,7 @@ const GameRoom = () => {
     const { roomName } = useParams();
     const { user } = useUser();
     const { roomEvents, socket } = useSocket();
-    const { isUserAllowedToJoinARoom, handleLeaveRoom, isLoading, error } = useRoom();
+    const { isUserAllowedToJoinARoom, handleLeaveRoom, handleStartGame, isLoading, error } = useRoom();
 
     const [isUserAuthorized, setIsUserAuthorized] = useState(false);
     const [roomInfo, setRoomInfo] = useState(null);
@@ -55,14 +55,7 @@ const GameRoom = () => {
 
 
     const startGame = async () => {
-        try {
-            const result = await handleStartGame({ roomName: normalizedRouteRoomName });
-            if (result.data.success) {
-                navigate('/');
-            }
-        } catch (error) {
-            console.error(error);
-        }
+        await handleStartGame({ roomName: normalizedRouteRoomName });
     };
 
     const leaveRoom = async () => {
@@ -83,7 +76,6 @@ const GameRoom = () => {
         if (incomingRoomName !== normalizedRouteRoomName) return;
 
         fetchRoomDetails();
-        console.log("Room updated via socket:", roomEvents);
     }, [roomEvents.roomUpdated, normalizedRouteRoomName, fetchRoomDetails]);
 
 
@@ -102,11 +94,11 @@ const GameRoom = () => {
     if (!roomInfo) return <div className="room-loading">Loading room...</div>;
 
 	    const renderContent = () => {
-        const status = roomInfo.status || 'waiting'; 
+        const status = roomInfo.gameStatus || 'waiting'; 
 
         switch (status) {
-            case 'playing':
-                return <TetrisGame roomInfo={roomInfo} currentUser={normalizedUser} />;
+            case 'PLAYING':
+                return <TetrisGameMultiplayer roomInfo={roomInfo} currentUser={normalizedUser} />;
             
             case 'finished':
                 return <GameResults 

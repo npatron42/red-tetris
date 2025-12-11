@@ -21,39 +21,35 @@ export const SocketProvider = ({ children }) => {
 	const [isConnected, setIsConnected] = useState(false);
 	const [roomId, setRoomId] = useState(null);
 	const [roomEvents, setRoomEvents] = useState({
-		enemyName: null,
-		enemyDisconnected: null,
-		tetrominosGenerated: null,
 		roomUpdated: null,
+		gridUpdated: null,
+	});
+
+	const [soloGameEvents, setSoloGameEvents] = useState({
+		gridUpdated: null,
 	});
 
 	useEffect(() => {
-		const handleEnemyName = (data) => {
-			setRoomEvents((prev) => ({ ...prev, enemyName: data }));
-		};
-
-		const handleEnemyDisconnected = (data) => {
-			setRoomEvents((prev) => ({ ...prev, enemyDisconnected: data }));
-		};
-
-		const handleTetrominosGenerated = (data) => {
-			setRoomEvents((prev) => ({ ...prev, tetrominosGenerated: data }));
-		};
 
 		const handleRoomUpdated = (data) => {
 			setRoomEvents((prev) => ({ ...prev, roomUpdated: data }));
 		};
 
-		socketService.on("enemyName", handleEnemyName);
-		socketService.on("enemyDisconnected", handleEnemyDisconnected);
-		socketService.on("tetrominosGenerated", handleTetrominosGenerated);
-		socketService.on("roomUpdated", handleRoomUpdated);
+		const handleSoloGameUpdated = (data) => {
+			setSoloGameEvents((prev) => ({ ...prev, gridUpdated: data }));
+		};
 
+		const handleGridUpdated = (data) => {
+			setRoomEvents((prev) => ({ ...prev, gridUpdated: data }));
+		};
+
+		socketService.on("roomUpdated", handleRoomUpdated);
+		socketService.on("gridUpdated", handleGridUpdated);
+		socketService.on("soloGameUpdated", handleSoloGameUpdated);
 		return () => {
-			socketService.off("enemyName", handleEnemyName);
-			socketService.off("enemyDisconnected", handleEnemyDisconnected);
-			socketService.off("tetrominosGenerated", handleTetrominosGenerated);
 			socketService.off("roomUpdated", handleRoomUpdated);
+			socketService.off("gridUpdated", handleGridUpdated);
+			socketService.off("soloGameUpdated", handleSoloGameUpdated);
 		};
 	}, []);
 
@@ -64,13 +60,11 @@ export const SocketProvider = ({ children }) => {
 			if (socket) {
 				socket.on("connect", () => {
 					setIsConnected(true);
-					console.log("Connected to socket");
 				});
 
 				socket.on("disconnect", () => {
 					setIsConnected(false);
 					setRoomId(null);
-					console.log("Disconnected from socket");
 				});
 			}
 		} else {
@@ -146,15 +140,13 @@ export const SocketProvider = ({ children }) => {
 		setIsConnected(false);
 		setRoomId(null);
 		setRoomEvents({
-			enemyName: null,
-			enemyDisconnected: null,
-			tetrominosGenerated: null,
 			roomUpdated: null,
+			gridUpdated: null,
 		});
 	}, []);
 
-	const sendMove = useCallback((moveData) => {
-		socketService.sendMove(moveData);
+	const sendMove = useCallback((event, moveData) => {
+		socketService.sendMove(event, moveData);
 	}, []);
 
 	const value = useMemo(

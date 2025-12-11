@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 15:26:42 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/08 15:48:28 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/11 18:26:15 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,8 @@ import { Server } from "socket.io";
 
 import principalRouter from "./src/routes/index.js";
 import userRouter from "./src/routes/userRoutes.js";
-import matchHistoryRouter from "./src/routes/matchHistoryController.js";
 import roomRouter from "./src/routes/roomRoutes.js";
+import soloGameRouter from "./src/routes/soloGameRoutes.js";
 import socketService from "./src/services/socket/socketService.js";
 
 const logger = pino({
@@ -40,7 +40,7 @@ app.use(express.json());
 
 app.use(express.static(path.join(__dirname, "public")));
 
-const port = normalizePort(process.env.PORT || "8000");
+const port = normalizePort(process.env.PORT || "4000");
 app.set("port", port);
 
 const server = http.createServer(app);
@@ -102,7 +102,7 @@ function onListening() {
 
 app.use("/", principalRouter);
 app.use("/user", userRouter);
-app.use("/match-history", matchHistoryRouter);
 app.use("/room", roomRouter);
+app.use("/solo", soloGameRouter);
 
 export default app;

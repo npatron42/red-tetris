@@ -1,0 +1,37 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   TetrisGame.css                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/12/11 13:02:53 by npatron           #+#    #+#             */
+/*   Updated: 2025/12/11 16:48:59 by npatron          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+.game-board-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 5%;
+    min-height: 100vh;
+}
+
+.grid {
+    background-color: #0a0a0a;
+    display: grid;
+    grid-template-columns: repeat(10, 30px);
+    grid-template-rows: repeat(20, 30px);
+    gap: 0;
+    padding: 10px;
+    border: 3px solid #333;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+}
+
+.cell {
+    width: 30px;
+    height: 30px;
+    transition: background-color 0.1s ease;
+}

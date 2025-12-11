@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 16:28:20 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/09 15:53:29 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/11 18:50:22 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,6 @@ const Login = () => {
 
     const handleLogin = async () => {
         const response = await createUser({ username: username })
-        console.log(response)
         if (response.success) {
             login(username)
             toast('Wow so easy!', {
@@ -63,7 +62,6 @@ const Login = () => {
                 });
         }
         else {
-            console.log(response.error)
             toast.error('Login failed')
         }
     }

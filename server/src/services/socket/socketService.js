@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/28 18:50:10 by fpalumbo          #+#    #+#             */
-/*   Updated: 2025/12/09 16:17:10 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/11 18:50:14 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,22 @@ export class SocketService {
 					delete this.users[username];
 				}
 			});
+
+			socket.on("movePieceMultiplayer", (data) => {
+				const { roomName, direction } = data;
+				if (!roomName || !username || !direction) {
+					return;
+				}
+				this.handleMovePieceMultiplayer(roomName, username, direction);
+			});
+
+			socket.on("movePieceSolo", (data) => {
+				const { direction } = data;
+				if (!username || !direction) {
+					return;
+				}
+				this.handleMovePieceSolo(username, direction);
+			});
 		});
 
 		this.launched = true;
@@ -62,6 +78,27 @@ export class SocketService {
 				this.emitToUser(socketId, event, data);
 			}
 		});
+	}
+
+	setMoveHandler(handler) {
+		this.moveHandler = handler;
+	}
+
+	handleMovePieceMultiplayer(roomName, username, direction) {
+		if (this.moveHandler) {
+			this.moveHandler(roomName, username, direction);
+		}
+	}
+
+	handleMovePieceSolo(username, direction) {
+		if (this.moveHandler) {
+			this.moveHandler(username, direction);
+		}
+	}
+
+	getUserSocketId(username) {
+		const normalizedUsername = username.toLowerCase();
+		return this.users[normalizedUsername] || null;
 	}
 }
 

@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 17:03:16 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/10 14:39:12 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/11 17:30:17 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@
     border: 2px solid #c8c8dd;
     background: transparent;
     color: #c8c8dd;
+    font-family: 'Arcade', sans-serif;
     font-weight: 600;
     cursor: pointer;
     transition: border-color 0.2s ease, color 0.2s ease;

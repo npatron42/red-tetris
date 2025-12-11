@@ -1,20 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   game.js                                            :+:      :+:    :+:   */
+/*   soloGame.js                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/12/08 16:11:25 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/11 17:26:09 by npatron          ###   ########.fr       */
+/*   Created: 2025/12/11 17:39:21 by npatron           #+#    #+#             */
+/*   Updated: 2025/12/11 18:49:43 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import { PiecesGenerator } from "./piecesGenerator.js";
+import crypto from "crypto";
 
-export class Game {
-	constructor(room) {
-		this.room = room;
+export class SoloGame {
+	constructor(player) {
+		this.id = crypto.randomUUID();
+		this.player = player;
 
 		this.piecesGenerator = new PiecesGenerator();
 		this.gameStarted = false;
@@ -31,16 +33,12 @@ export class Game {
 	}
 
 	startGame() {
-		if (this.getPlayersCount() < 1) return;
-
 		this.gameStarted = true;
 		this.status = this.gameStatus.IN_PROGRESS;
-        const players = this.room.getPlayers();
-		players.forEach((player) => {
-			player.resetGameData();
-			player.incrementNumberOfGamesPlayed();
-			player.currentPiece = this.piecesGenerator.getNextPiece(players.length);
-		});
+
+		this.player.resetGameData();
+		this.player.incrementNumberOfGamesPlayed();
+		this.player.currentPiece = this.piecesGenerator.getNextPiece();
 	}
 
 	endGame() {
@@ -60,18 +58,14 @@ export class Game {
 		}
 	}
 
-	getPlayersCount() {
-		return this.room.getPlayers().length;
-	}
-
 	getGameStatus() {
 		return this.status;
 	}
 
-	handleLockPiece(player) {
-		const grid = player.getGrid();
-		grid.lockPiece(player.currentPiece);
-		player.currentPiece = this.piecesGenerator.getNextPiece();
+	handleLockPiece() {
+		const grid = this.player.getGrid();
+		grid.lockPiece(this.player.currentPiece);
+		this.player.currentPiece = this.piecesGenerator.getNextPiece();
 		return grid.getGrid();
 	}
 
@@ -80,13 +74,12 @@ export class Game {
 			return null;
 		}
 
-		const player = this.room.getPlayers().find((p) => p.getUsername() === username);
-		if (!player || !player.currentPiece) {
+		if (this.player.getUsername() !== username || !this.player.currentPiece) {
 			return null;
 		}
 
-		const piece = player.currentPiece;
-		const grid = player.getGrid();
+		const piece = this.player.currentPiece;
+		const grid = this.player.getGrid();
 		const oldX = piece.getX();
 		const oldY = piece.getY();
 		const oldRotation = piece.rotationIndex;
@@ -116,7 +109,7 @@ export class Game {
 					moved = true;
 				} else {
 					piece.setPosition(oldX, oldY);
-					this.handleLockPiece(player);
+					this.handleLockPiece();
 				}
 				break;
 			case "ROTATE":
@@ -127,37 +120,39 @@ export class Game {
 					moved = true;
 				}
 				break;
-            case "DROP":
-                for (let i = 0; i < 20; i++) {
-                    piece.fallDown();
-                    if (grid.isValidPosition(piece, piece.getX(), piece.getY())) {
-                        moved = true;
-                    } else {
-                        piece.setPosition(oldX, oldY);
-                        this.handleLockPiece(player);
-                    }
-                }
-                break;
+			case "DROP":
+				let dropY = oldY;
+				while (grid.isValidPosition(piece, piece.getX(), dropY + 1)) {
+					dropY++;
+				}
+				piece.setPosition(piece.getX(), dropY);
+				moved = true;
+				this.handleLockPiece();
+				break;
 		}
 
-		this.sendUpdatedGridToPlayers(socketService);
+		this.sendUpdatedGridToPlayer(socketService);
 		return moved;
 	}
 
-	sendUpdatedGridToPlayers(socketService) {
-		const players = this.room.getPlayers();
-		const gameState = players.map((player) => ({
-			username: player.getUsername(),
-			grid: player.currentPiece
-				? player.getGrid().getGridWithPiece(player.currentPiece)
-				: player.getGrid().getGrid(),
-			score: player.currentScore
-		}));
+	sendUpdatedGridToPlayer(socketService) {
+		try {
+			const gameState = [
+				{
+					username: this.player.getUsername(),
+					grid: this.player.currentPiece
+						? this.player.getGrid().getGridWithPiece(this.player.currentPiece)
+						: this.player.getGrid().getGrid(),
+					score: this.player.currentScore
+				}
+			];
 
-		const usernames = players.map((player) => player.getUsername());
-		socketService.emitToUsers(usernames, "gridUpdate", {
-			roomName: this.room.getRoomName(),
-			gameState
-		});
+			socketService.emitToUsers([this.player.getUsername()], "soloGameUpdated", {
+				username: this.player.getUsername(),
+				gameState
+			});
+		} catch (error) {
+			console.error("Error sending updated grid to player", error);
+		}
 	}
 }

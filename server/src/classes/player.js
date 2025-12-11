@@ -6,9 +6,11 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 15:04:22 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/10 15:20:50 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/11 16:29:42 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+import { Grid } from "./grid.js";
 
 export class Player {
 	constructor(username, socketId) {
@@ -21,12 +23,12 @@ export class Player {
 		this.bestScore = 0;
 		this.totalScore = 0;
 		this.averageScore = 0;
-
+		this.grid = new Grid();
 		this.resetGameData();
 	}
 
 	resetGameData() {
-		this.grid = Array.from({ length: 20 }, () => Array(10).fill(0));
+		this.grid = new Grid();
 		this.currentScore = 0;
 		this.isSpectrum = false;
 		this.linesResistant = 0;
@@ -62,5 +64,17 @@ export class Player {
 	hasLost() {
 		this.isSpectrum = true;
 		this.incrementNumberOfLosses();
+	}
+
+	getGrid() {
+		return this.grid;
+	}
+
+	getUsername() {
+		return this.username;
+	}
+
+	getSocketId() {
+		return this.socketId;
 	}
 }
