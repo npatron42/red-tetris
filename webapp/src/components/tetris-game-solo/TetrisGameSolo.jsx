@@ -6,13 +6,14 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 13:02:55 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/11 18:50:34 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/11 19:09:59 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import './TetrisGameSolo.css';
 
 import { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { useUser } from '../../providers/UserProvider';
 import { useSocket } from '../../providers/SocketProvider';
 import { socketService } from '../../services/socketService';
@@ -28,8 +29,9 @@ const COLOR_MAP = {
     0: '#1a1a1a'
 };
 
-export const TetrisGameSolo = ({ gameId }) => {
+export const TetrisGameSolo = () => {
     
+    const gameId = useParams().gameId;
     const [grid, setGrid] = useState(() => Array.from({ length: 20 }, () => Array(10).fill(0)));
     const { user } = useUser();
     const { socket } = useSocket();
@@ -93,6 +95,7 @@ export const TetrisGameSolo = ({ gameId }) => {
 
             if (direction) {
                 socketService.sendMoveSolo({
+                    gameId, 
                     direction,  
                     username: user
                 });

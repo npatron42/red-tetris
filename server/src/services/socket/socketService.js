@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/28 18:50:10 by fpalumbo          #+#    #+#             */
-/*   Updated: 2025/12/11 18:50:14 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/11 19:08:34 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,11 +45,12 @@ export class SocketService {
 			});
 
 			socket.on("movePieceSolo", (data) => {
-				const { direction } = data;
-				if (!username || !direction) {
+				console.log(data)
+				const { gameId, direction } = data;
+				if (!gameId || !username || !direction) {
 					return;
 				}
-				this.handleMovePieceSolo(username, direction);
+				this.handleMovePieceSolo(gameId, username, direction);
 			});
 		});
 
@@ -90,9 +91,9 @@ export class SocketService {
 		}
 	}
 
-	handleMovePieceSolo(username, direction) {
+	handleMovePieceSolo(gameId, username, direction) {
 		if (this.moveHandler) {
-			this.moveHandler(username, direction);
+			this.moveHandler(gameId, username, direction);
 		}
 	}
 

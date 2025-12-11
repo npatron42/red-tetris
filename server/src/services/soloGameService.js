@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 17:39:02 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/11 18:33:54 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/11 19:33:18 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@ import { SoloGame } from "../classes/soloGame.js";
 import { Player } from "../classes/player.js";
 import socketService from "./socket/socketService.js";
 import { GameDao } from "../dao/gameDao.js";
+
+import { v4 as uuidv4 } from 'uuid';
 
 const logger = pino({ level: "info" });
 
@@ -26,83 +28,114 @@ export class SoloGameService {
 	}
 
 	setupSocketHandler() {
-		socketService.setMoveHandler((username, direction) => {
-			this.handleMovePiece(username, direction);
-		});
+		try {
+			socketService.setMoveHandler((gameId, username, direction) => {
+				try {
+					this.handleMovePiece(gameId, username, direction);
+				} catch (error) {
+					logger.error(`Error in move handler: ${error.message}`);
+				}
+			});
+		} catch (error) {
+			logger.error(`Error in setupSocketHandler: ${error.message}`);
+		}
 	}
 
 	async createSoloGame(username) {
-		const socketId = socketService.getUserSocketId(username);
+		try {
+			const gameId = uuidv4();
+			const socketId = socketService.getUserSocketId(username);
 
-		if (!socketId) {
-			throw new Error("User socket not found");
+			if (!socketId) {
+				throw new Error("User socket not found");
+			}
+
+			const player = new Player(username, socketId);
+			const soloGame = new SoloGame(player);
+
+			this.activeGames.set(gameId, soloGame);
+			let game = {
+				gameId,
+				username,
+				status: "IN_PROGRESS"
+			};
+			await this.gameDao.create(game);
+			soloGame.startGame();
+
+			logger.info(`Solo game created for ${username}: ${soloGame.id}`);
+
+			return {
+				gameId: gameId,
+				username,
+				status: "IN_PROGRESS"
+			};
+		} catch (error) {
+			logger.error(`Error in createSoloGame: ${error.message}`);
+			throw error;
 		}
-
-		const player = new Player(username, socketId);
-		const soloGame = new SoloGame(player);
-
-		this.activeGames.set(soloGame.id, soloGame);
-		this.gameDao.create(soloGame);
-		soloGame.startGame();
-
-		logger.info(`Solo game created for ${username}: ${soloGame.id}`);
-
-		return {
-			gameId: soloGame.id,
-			username,
-			status: "IN_PROGRESS"
-		};
 	}
 
 	async getSoloGame(gameId) {
-		const game = this.activeGames.get(gameId);
+		try {
+			const game = this.activeGames.get(gameId);
 
-		if (!game) {
-			return null;
+			if (!game) {
+				return null;
+			}
+
+			return {
+				gameId,
+				username: game.player.getUsername(),
+				status: game.getGameStatus(),
+				score: game.player.currentScore
+			};
+		} catch (error) {
+			logger.error(`Error in getSoloGame: ${error.message}`);
+			throw error;
 		}
-
-		return {
-			gameId,
-			username: game.player.getUsername(),
-			status: game.getGameStatus(),
-			score: game.player.currentScore
-		};
 	}
 
 	async endSoloGame(gameId, score) {
-		const game = this.activeGames.get(gameId);
+		try {
+			const game = this.activeGames.get(gameId);
 
-		if (!game) {
-			throw new Error("Game not found");
+			if (!game) {
+				throw new Error("Game not found");
+			}
+
+			game.endGame();
+			this.activeGames.delete(gameId);
+
+			logger.info(`Solo game ended: ${gameId}, score: ${score}`);
+		} catch (error) {
+			logger.error(`Error in endSoloGame: ${error.message}`);
+			throw error;
 		}
-
-		game.endGame();
-		this.activeGames.delete(gameId);
-
-		logger.info(`Solo game ended: ${gameId}, score: ${score}`);
 	}
 
-	handleMovePiece(username, direction) {
-		const activeGame = this.getActiveGameByUsername(username);
+	handleMovePiece(gameId, username, direction) {
+		try {
+			const activeGame = this.getActiveGame(gameId);
 
-		if (!activeGame) {
-			logger.warn(`Game not found for user: ${username}`);
-			return;
+			if (!activeGame) {
+				logger.warn(`Game not found for user: ${username}`);
+				return;
+			}
+
+			activeGame.movePiece(username, direction, socketService);
+		} catch (error) {
+			logger.error(`Error in handleMovePiece: ${error.message}`);
 		}
-
-		activeGame.game.movePiece(username, direction, socketService);
 	}
 
 	getActiveGame(gameId) {
-		return this.activeGames.get(gameId);
-	}
-
-	getActiveGameByUsername(username) {
-		for (const [gameId, game] of this.activeGames.entries()) {
-			if (game.player.getUsername() === username && game.gameStarted) {
-				return { gameId, game };
-			}
+		try {
+			console.log("getActiveGame", gameId);
+			console.log("activeGames", this.activeGames);
+			return this.activeGames.get(gameId);
+		} catch (error) {
+			logger.error(`Error in getActiveGame: ${error.message}`);
+			return null;
 		}
-		return null;
 	}
 }

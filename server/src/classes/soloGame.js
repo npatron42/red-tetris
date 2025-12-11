@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 17:39:21 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/11 18:49:43 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/11 18:59:24 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ export class SoloGame {
 	}
 
 	startGame() {
+		console.log("starting game je passe ici");
 		this.gameStarted = true;
 		this.status = this.gameStatus.IN_PROGRESS;
 
