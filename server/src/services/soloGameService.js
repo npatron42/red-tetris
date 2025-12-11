@@ -6,17 +6,17 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 17:39:02 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/11 19:33:18 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/11 19:54:41 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-import pino from "pino";
 import { SoloGame } from "../classes/soloGame.js";
 import { Player } from "../classes/player.js";
-import socketService from "./socket/socketService.js";
 import { GameDao } from "../dao/gameDao.js";
+import socketService from "./socket/socketService.js";
 
-import { v4 as uuidv4 } from 'uuid';
+import pino from "pino";
+import { v4 as uuidv4 } from "uuid";
 
 const logger = pino({ level: "info" });
 
@@ -130,8 +130,6 @@ export class SoloGameService {
 
 	getActiveGame(gameId) {
 		try {
-			console.log("getActiveGame", gameId);
-			console.log("activeGames", this.activeGames);
 			return this.activeGames.get(gameId);
 		} catch (error) {
 			logger.error(`Error in getActiveGame: ${error.message}`);

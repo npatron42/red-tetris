@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:11:25 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/11 17:26:09 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/11 19:56:27 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ export class Game {
 	}
 
 	movePiece(username, direction, socketService) {
+        console.log("movePiece", username, direction);
 		if (!this.gameStarted) {
 			return null;
 		}
@@ -87,6 +88,13 @@ export class Game {
 
 		const piece = player.currentPiece;
 		const grid = player.getGrid();
+        if (grid.gameIsLost()) {
+            console.log("game is lost");
+            this.endGame();
+            this.sendUpdatedGridToPlayers(socketService);
+            return null;
+        }
+        console.log("game is not lost");
 		const oldX = piece.getX();
 		const oldY = piece.getY();
 		const oldRotation = piece.rotationIndex;
@@ -143,7 +151,7 @@ export class Game {
 		this.sendUpdatedGridToPlayers(socketService);
 		return moved;
 	}
-
+    
 	sendUpdatedGridToPlayers(socketService) {
 		const players = this.room.getPlayers();
 		const gameState = players.map((player) => ({
@@ -151,7 +159,9 @@ export class Game {
 			grid: player.currentPiece
 				? player.getGrid().getGridWithPiece(player.currentPiece)
 				: player.getGrid().getGrid(),
-			score: player.currentScore
+			score: player.currentScore,
+            gameStatus: this.getGameStatus()
+            
 		}));
 
 		const usernames = players.map((player) => player.getUsername());

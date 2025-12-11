@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 15:04:22 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/11 19:01:13 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/11 19:54:33 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,7 @@ export class Player {
 	}
 
 	resetGameData() {
-		console.log("resetting game data");
-		console.log("grid before", this.grid); 
 		this.grid = new Grid();
-        console.log("grid after", this.grid);
 		this.currentScore = 0;
 		this.isSpectrum = false;
 		this.linesResistant = 0;

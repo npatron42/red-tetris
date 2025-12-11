@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/28 18:50:10 by fpalumbo          #+#    #+#             */
-/*   Updated: 2025/12/11 19:08:34 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/11 19:54:44 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,6 @@ export class SocketService {
 			});
 
 			socket.on("movePieceSolo", (data) => {
-				console.log(data)
 				const { gameId, direction } = data;
 				if (!gameId || !username || !direction) {
 					return;

@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 15:17:51 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/11 16:48:59 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/11 19:52:04 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,4 +80,13 @@ export class Grid {
 		}
 		return gridCopy;
 	}
+
+    gameIsLost() {
+        for (let i = 0; i < this.grid.length; i++) {
+            if (this.grid[i][0] !== 0) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

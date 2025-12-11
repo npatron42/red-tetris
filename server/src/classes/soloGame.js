@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 17:39:21 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/11 18:59:24 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/11 19:57:01 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,6 @@ export class SoloGame {
 	}
 
 	startGame() {
-		console.log("starting game je passe ici");
 		this.gameStarted = true;
 		this.status = this.gameStatus.IN_PROGRESS;
 
@@ -81,10 +80,17 @@ export class SoloGame {
 
 		const piece = this.player.currentPiece;
 		const grid = this.player.getGrid();
+		if (grid.gameIsLost()) {
+			console.log("game is lost");
+			this.endGame();
+			this.sendUpdatedGridToPlayer(socketService);
+			return null;
+		}
+		console.log("game is not lost");
 		const oldX = piece.getX();
 		const oldY = piece.getY();
 		const oldRotation = piece.rotationIndex;
-
+		
 		let moved = false;
 
 		switch (direction) {
