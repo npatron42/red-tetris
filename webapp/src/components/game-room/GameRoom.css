@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/09 17:10:30 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/10 14:30:10 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/11 14:16:58 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,11 @@
 }
 
 .gameroom-card {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    justify-content: center;
+    align-items: center;
     padding: 2.5rem;
     border-radius: 20px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
@@ -96,6 +101,10 @@
 }
 
 .player-name {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
     font-size: 14px;
     font-weight: 600;
     font-family: 'Arcade', sans-serif;
@@ -103,7 +112,7 @@
 }
 
 .player-card.is-leader {
-    border: 2px solid #ffd700;
+    border: 2px solid #039BE5;
 }
 
 .crown-icon {
@@ -128,6 +137,12 @@
     height: 100vh;
     color: white;
     font-size: 1.5rem;
+}
+
+.lobby-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
 .custom-button-play, .custom-button-leave {

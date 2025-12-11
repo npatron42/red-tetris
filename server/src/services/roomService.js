@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:10:49 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/10 14:16:26 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/10 15:33:45 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ export class RoomService {
 			leaderUsername: leaderUsername.toLowerCase(),
 			createdAt: new Date(),
 			players: [leaderUsername.toLowerCase()],
-			gameOnGoing: false
+			gameStatus: "PENDING"
 		};
 		const savedRoom = roomDao.create(room);
 		this.activeRooms.set(savedRoom.roomName, savedRoom);
@@ -110,13 +110,10 @@ export class RoomService {
 		room.players = filteredPlayers;
 		this.activeRooms.set(roomName, room);
 		roomDao.update(roomName, { players: filteredPlayers });
-		logger.info("Player added to room", { roomName, username });
-		logger.info("Active rooms", { activeRooms: this.activeRooms });
 		return room;
 	}
 
 	removePlayer(roomName, username) {
-		logger.info("Removing player from room", { roomName, username });
 		const room = this.getRoomByName(roomName);
 		if (!room) {
 			return null;
@@ -127,7 +124,6 @@ export class RoomService {
 			.filter((player) => player.toLowerCase() !== normalizedUsername);
 
 		if (filteredPlayers.length === room.players.length) {
-			logger.info("Player not found in room", { roomName, username });
 			return room;
 		}
 
@@ -183,6 +179,7 @@ export class RoomService {
 		const payload = {
 			roomName: room.name,
 			leaderUsername: room.leaderUsername,
+			gameStatus: room.gameOnGoing,
 			players: room.players.filter((player) => player !== null && player !== undefined)
 		};
 		socketService.emitToUsers(payload.players, "roomUpdated", payload);

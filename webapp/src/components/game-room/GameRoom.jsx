@@ -6,38 +6,39 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:39:24 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/10 14:26:05 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/11 14:16:12 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import { useEffect, useMemo, useState, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
+import { LogOutIcon, PlayIcon, UserIcon, CrownIcon } from 'lucide-react';
+
 import { useUser } from '../../providers/UserProvider';
 import { useSocket } from '../../providers/SocketProvider';
 import { useRoom } from '../../composables/useRoom';
-import { LogOutIcon, PlayIcon, UserIcon } from 'lucide-react';
+import { GameResults } from '../game-results/GameResults';
+import { TetrisGame } from '../tetris-game/TetrisGame';
 
-import './GameRoom.css';
+import './GameRoom.css';	
 
 const GameRoom = () => {
     const navigate = useNavigate();
     const { roomName } = useParams();
     const { user } = useUser();
-    const { roomEvents } = useSocket();
-    const { isUserAllowedToJoinARoom, handleLeaveRoom, isLoading, error } = useRoom()
+    const { roomEvents, socket } = useSocket();
+    const { isUserAllowedToJoinARoom, handleLeaveRoom, isLoading, error } = useRoom();
 
-    const [isUserAuthorized, setIsUserAuthorized] = useState(false)
-    const [roomInfo, setRoomInfo] = useState(null)
-    const hasLeftRoom = useRef(false)
-
+    const [isUserAuthorized, setIsUserAuthorized] = useState(false);
+    const [roomInfo, setRoomInfo] = useState(null);
+    
     const normalizedRouteRoomName = useMemo(() => roomName?.toString().toLowerCase() || "", [roomName]);
     const normalizedUser = useMemo(() => user?.toString().toLowerCase() || "", [user]);
 
     const fetchRoomDetails = useCallback(async () => {
-        if (!roomName || !normalizedUser) {
-            return;
-        }
+        if (!roomName || !normalizedUser) return;
+
         const result = await isUserAllowedToJoinARoom(roomName, normalizedUser);
         if (result.success && result.data?.room) {
             setIsUserAuthorized(true);
@@ -52,41 +53,42 @@ const GameRoom = () => {
         fetchRoomDetails();
     }, [fetchRoomDetails]);
 
-	const startGame = useCallback(() => {
-		console.log("Starting game");
-	}, []);
 
-	const leaveRoom = async () => {
-		try {
-			const result = await handleLeaveRoom({ roomName: normalizedRouteRoomName, username: normalizedUser });
-			console.log(result);
-			if (result.data.success) {
-				navigate('/');
-			}
-		} catch (error) {
-			console.error(error);
-		}
-	}
+    const startGame = async () => {
+        try {
+            const result = await handleStartGame({ roomName: normalizedRouteRoomName });
+            if (result.data.success) {
+                navigate('/');
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const leaveRoom = async () => {
+        try {
+            const result = await handleLeaveRoom({ roomName: normalizedRouteRoomName, username: normalizedUser });
+            if (result.data.success) {
+                navigate('/');
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     useEffect(() => {
-        if (!roomEvents.roomUpdated || !roomEvents.roomUpdated.roomName) {
-            return;
-        }
+        if (!roomEvents.roomUpdated || !roomEvents.roomUpdated.roomName) return;
+
         const incomingRoomName = roomEvents.roomUpdated.roomName.toString().toLowerCase();
-        if (incomingRoomName !== normalizedRouteRoomName) {
-            return;
-        }
+        if (incomingRoomName !== normalizedRouteRoomName) return;
+
         fetchRoomDetails();
+        console.log("Room updated via socket:", roomEvents);
     }, [roomEvents.roomUpdated, normalizedRouteRoomName, fetchRoomDetails]);
 
 
-    if (isLoading && !roomInfo) {
-        return <div className="room-loading">Loading room...</div>;
-    }
-
-    if (error && !isUserAuthorized) {
-        return <div className="room-error">Error: {error}</div>;
-    }
+    if (isLoading && !roomInfo) return <div className="room-loading">Loading room...</div>;
+    if (error && !isUserAuthorized) return <div className="room-error">Error: {error}</div>;
 
     if (!isUserAuthorized) {
         return (
@@ -96,42 +98,70 @@ const GameRoom = () => {
             </div>
         );
     }
-	
-	if (!roomInfo) {	
-		return <div className="room-loading">Loading room...</div>;
-	}
+    
+    if (!roomInfo) return <div className="room-loading">Loading room...</div>;
+
+	    const renderContent = () => {
+        const status = roomInfo.status || 'waiting'; 
+
+        switch (status) {
+            case 'playing':
+                return <TetrisGame roomInfo={roomInfo} currentUser={normalizedUser} />;
+            
+            case 'finished':
+                return <GameResults 
+                            roomInfo={roomInfo} 
+                            onRestart={startGame} 
+                            onLeave={leaveRoom} 
+                       />;
+            
+            case 'waiting':
+            default:
+                return (
+                    <div className="gameroom-card">
+                        <header className="room-header">
+                            <h1 className="room-title"><span>{roomName}</span></h1>
+                        </header>
+
+                        <div className="players-section">
+                            <div className="players-grid">
+                                {roomInfo.players.map((player) => (
+                                    <div 
+                                        key={player} 
+                                        className={`player-card ${player === roomInfo.leaderUsername ? 'is-leader' : ''}`}
+                                    >
+                                        <div className="player-avatar">
+                                            <UserIcon size={24} color="#ffffff" />
+                                        </div>
+                                        <span className="player-name">
+                                            {player} 
+                                            {player === roomInfo.leaderUsername && <CrownIcon size={24} color="#ffd700" />}
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                        <div className="lobby-actions">
+                            {normalizedUser === roomInfo.leaderUsername?.toLowerCase() && (
+                                <button className="custom-button-play" onClick={startGame}>
+                                    <PlayIcon size={24} color="#039BE5" />
+                                    Start Game
+                                </button>
+                            )}
+                            
+                            <button className="custom-button-leave" onClick={leaveRoom}>
+                                <LogOutIcon size={24} color="#E53935" />
+                                Leave Room
+                            </button>
+                        </div>
+                    </div>
+                );
+        }
+    };
 
     return (
         <div className="gameroom-container">
-            <div className="gameroom-card">
-                <header className="room-header">
-                    <h1 className="room-title"> <span>{roomName}</span></h1>
-	            </header>
-
-				<div className="players-section">
-					<div className="players-grid">
-						{roomInfo.players.map((player) => (
-							<div 
-								key={player} 
-								className={`player-card ${player === roomInfo.leaderUsername ? 'is-leader' : ''}`}
-							>
-								<div className="player-avatar">
-									<UserIcon size={24} color="#ffffff" />
-								</div>
-								<span className="player-name">{player}</span>
-							</div>
-						))}
-					</div>
-				</div>
-            </div>
-			<button className="custom-button-play" onClick={startGame}>
-				<PlayIcon size={24} color="#039BE5" />
-				Start Game
-			</button>
-			<button className="custom-button-leave" onClick={leaveRoom}>
-				<LogOutIcon size={24} color="#E53935" />
-				Leave Room
-			</button>
+            {renderContent()}
         </div>
     );
 };

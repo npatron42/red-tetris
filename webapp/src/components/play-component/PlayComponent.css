@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 17:03:16 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/10 14:28:32 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/10 14:39:12 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
   color: #ECF0F1;
   border: 1px solid #403d39;
   box-shadow: 12px 12px 24px rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(20px);
+  backdrop-filter: blur(10px);
 }
 
 .play-button, .input-button {
