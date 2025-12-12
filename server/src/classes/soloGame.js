@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 17:39:21 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/12 16:40:26 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/12 16:44:46 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,7 @@ export class SoloGame {
 		if (grid.gameIsLost()) {
 			this.endGame();
 			this.sendUpdatedGridToPlayer(socketService);
+			return;
 		}
 		const oldX = piece.getX();
 		const oldY = piece.getY();
@@ -115,7 +116,6 @@ export class SoloGame {
 				piece.rotate();
 				if (!grid.isValidPosition(piece, piece.getX(), piece.getY())) {
 					piece.rotationIndex = oldRotation;
-				} else {
 				}
 				break;
 			case "DROP":
