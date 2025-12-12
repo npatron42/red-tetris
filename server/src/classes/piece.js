@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:11:27 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/11 17:25:10 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/12 16:37:49 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@ export class Piece {
 	constructor(type) {
 		this.type = type;
 		this.shape = Piece.SHAPES[type];
-		this.color = Piece.COLORS[type];
 		this.x = 3;
 		this.y = 0;
 		this.rotationIndex = 0;
@@ -60,15 +59,6 @@ export class Piece {
 
 Piece.TYPES = ["I", "J", "L", "O", "S", "T", "Z"];
 
-Piece.COLORS = {
-	I: "cyan",
-	J: "blue",
-	L: "orange",
-	O: "yellow",
-	S: "green",
-	T: "purple",
-	Z: "red"
-};
 
 Piece.SHAPES = {
 	I: [[["C", "C", "C", "C"]], [["C"], ["C"], ["C"], ["C"]]],

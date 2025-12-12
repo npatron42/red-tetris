@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 17:39:21 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/11 19:57:01 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/12 16:40:26 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,23 +81,17 @@ export class SoloGame {
 		const piece = this.player.currentPiece;
 		const grid = this.player.getGrid();
 		if (grid.gameIsLost()) {
-			console.log("game is lost");
 			this.endGame();
 			this.sendUpdatedGridToPlayer(socketService);
-			return null;
 		}
-		console.log("game is not lost");
 		const oldX = piece.getX();
 		const oldY = piece.getY();
 		const oldRotation = piece.rotationIndex;
 		
-		let moved = false;
-
 		switch (direction) {
 			case "LEFT":
 				piece.moveLeft();
 				if (grid.isValidPosition(piece, piece.getX(), piece.getY())) {
-					moved = true;
 				} else {
 					piece.setPosition(oldX, oldY);
 				}
@@ -105,7 +99,6 @@ export class SoloGame {
 			case "RIGHT":
 				piece.moveRight();
 				if (grid.isValidPosition(piece, piece.getX(), piece.getY())) {
-					moved = true;
 				} else {
 					piece.setPosition(oldX, oldY);
 				}
@@ -113,7 +106,6 @@ export class SoloGame {
 			case "DOWN":
 				piece.moveDown();
 				if (grid.isValidPosition(piece, piece.getX(), piece.getY())) {
-					moved = true;
 				} else {
 					piece.setPosition(oldX, oldY);
 					this.handleLockPiece();
@@ -124,7 +116,6 @@ export class SoloGame {
 				if (!grid.isValidPosition(piece, piece.getX(), piece.getY())) {
 					piece.rotationIndex = oldRotation;
 				} else {
-					moved = true;
 				}
 				break;
 			case "DROP":
@@ -133,13 +124,11 @@ export class SoloGame {
 					dropY++;
 				}
 				piece.setPosition(piece.getX(), dropY);
-				moved = true;
 				this.handleLockPiece();
 				break;
 		}
-
+		
 		this.sendUpdatedGridToPlayer(socketService);
-		return moved;
 	}
 
 	sendUpdatedGridToPlayer(socketService) {

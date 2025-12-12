@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 15:10:23 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/10 15:19:31 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/12 16:36:56 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ export class PiecesGenerator {
 
 	generateSequence(length = 5) {
 		const sequence = [];
-		const tempBag = [...this.bag];
 
 		for (let i = 0; i < length; i++) {
 			sequence.push(new Piece(Piece.TYPES[Math.floor(Math.random() * 7)]));

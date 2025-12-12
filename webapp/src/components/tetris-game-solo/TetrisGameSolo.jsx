@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 13:02:55 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/11 19:09:59 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/12 16:39:19 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,14 +18,14 @@ import { useUser } from '../../providers/UserProvider';
 import { useSocket } from '../../providers/SocketProvider';
 import { socketService } from '../../services/socketService';
 
-const COLOR_MAP = {
-    cyan: '#00FFFF',
-    blue: '#0000FF',
-    orange: '#FFA500',
-    yellow: '#FFFF00',
-    green: '#00FF00',
-    purple: '#800080',
-    red: '#FF0000',
+const COLORS = {
+    I: '#00FFFF',
+    J: '#0000FF',
+    L: '#FFA500',
+    O: '#FFFF00',
+    S: '#00FF00',
+    T: '#800080',
+    Z: '#FF0000',
     0: '#1a1a1a'
 };
 
@@ -37,7 +37,7 @@ export const TetrisGameSolo = () => {
     const { socket } = useSocket();
 
     const getCellStyle = (cell) => {
-        const backgroundColor = COLOR_MAP[cell] || COLOR_MAP[0];
+        const backgroundColor = COLORS[cell] || COLORS[0];
         return {
             backgroundColor,
             border: `1px solid ${cell === 0 ? '#333' : '#000'}`
@@ -46,6 +46,7 @@ export const TetrisGameSolo = () => {
 
     useEffect(() => {
         const handleGridUpdate = (data) => {
+            console.log("handleGridUpdate", data);
             if (data.gameState && data.gameState.length > 0) {
                 const playerState = data.gameState[0];
                 if (playerState.grid) {
@@ -85,7 +86,7 @@ export const TetrisGameSolo = () => {
                     direction = 'ROTATE';
                     event.preventDefault();
                     break;
-                case 'Space':
+                case ' ':
                     direction = 'DROP';
                     event.preventDefault();
                     break;

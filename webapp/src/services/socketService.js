@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 13:57:35 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/11 18:46:29 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/12 13:07:42 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ const connect = (username) => {
 	socket.on("soloGameUpdated", (data) => {
 		emit("soloGameUpdated", data);
 	});
+
 
 	return socket;
 };

@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 17:39:02 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/11 19:54:41 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/12 13:04:10 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,8 +105,12 @@ export class SoloGameService {
 
 			game.endGame();
 			this.activeGames.delete(gameId);
-
+            await this.gameDao.update(gameId, { status: "COMPLETED" });
 			logger.info(`Solo game ended: ${gameId}, score: ${score}`);
+            socketService.emitToUsers([game.player.getUsername()], "soloGameEnded", {
+                gameId,
+                score
+            });
 		} catch (error) {
 			logger.error(`Error in endSoloGame: ${error.message}`);
 			throw error;
