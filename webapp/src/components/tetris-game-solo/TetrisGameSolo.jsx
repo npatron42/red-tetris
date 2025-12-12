@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 13:02:55 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/12 16:39:19 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/12 16:55:24 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,19 @@ import { socketService } from '../../services/socketService';
 
 const COLORS = {
     I: '#00FFFF',
+    'I-ghost': 'rgba(0,255,255,0.35)',
     J: '#0000FF',
+    'J-ghost': 'rgba(0,0,255,0.35)',
     L: '#FFA500',
+    'L-ghost': 'rgba(255,165,0,0.35)',
     O: '#FFFF00',
+    'O-ghost': 'rgba(255,255,0,0.35)',
     S: '#00FF00',
+    'S-ghost': 'rgba(0,255,0,0.35)',
     T: '#800080',
+    'T-ghost': 'rgba(128,0,128,0.35)',
     Z: '#FF0000',
+    'Z-ghost': 'rgba(255,0,0,0.35)',
     0: '#1a1a1a'
 };
 

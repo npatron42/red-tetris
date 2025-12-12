@@ -6,99 +6,105 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 15:17:51 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/12 16:36:40 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/12 16:57:20 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 export class Grid {
-	constructor() {
-		this.grid = Array.from({ length: 20 }, () => Array(10).fill(0));
-	}
+    constructor(rows = 20, cols = 10) {
+        this.rows = rows;
+        this.cols = cols;
+        this._resetGrid();
+    }
 
-	updateGrid(row, column, value) {
-		this.grid[row][column] = value;
-		return this.grid;
-	}
 
-	getGrid() {
-		return this.grid;
-	}
+    _resetGrid() {
+        this.grid = Array.from({ length: this.rows }, () => Array(this.cols).fill(0));
+    }
 
-	clearGrid() {
-		this.grid = Array.from({ length: 20 }, () => Array(10).fill(0));
-	}
+    clearGrid() {
+        this._resetGrid();
+    }
 
-	isValidPosition(piece, x, y) {
-		const tetrominoShape = piece.getCurrentShape();
-		for (let row = 0; row < tetrominoShape.length; row++) {
-			for (let col = 0; col < tetrominoShape[row].length; col++) {
-				if (tetrominoShape[row][col] !== 0) {
-					const newY = y + row;
-					const newX = x + col;
-					if (newX < 0 || newX >= 10 || newY >= 20) {
-						return false;
-					}
-					if (newY >= 0 && this.grid[newY][newX] !== 0) {
-						return false;
-					}
-				}
-			}
-		}
-		return true;
-	}
+    getGrid() {
+        return this.grid;
+    }
 
-	lockPiece(piece) {
-		const shape = piece.getCurrentShape();
-		const type = piece.type;
-		for (let row = 0; row < shape.length; row++) {
-			for (let col = 0; col < shape[row].length; col++) {
-				if (shape[row][col] !== 0) {
-					const y = piece.y + row;
-					const x = piece.x + col;
-					if (y >= 0 && y < 20 && x >= 0 && x < 10) {
-						this.grid[y][x] = type;
-					}
-				}
-			}
-		}
-	}
+    isValidPosition(piece, x, y) {
+        const shape = piece.getCurrentShape();
 
-	getGridWithPiece(piece) {
-		const gridCopy = this.grid.map((row) => [...row]);
-		const shape = piece.getCurrentShape();
-		const type = piece.type;
-		for (let row = 0; row < shape.length; row++) {
-			for (let col = 0; col < shape[row].length; col++) {
-				if (shape[row][col] !== 0) {
-					const y = piece.y + row;
-					const x = piece.x + col;
-					if (y >= 0 && y < 20 && x >= 0 && x < 10) {
-						    gridCopy[y][x] = type;
-					}
-				}
-			}
-		}
-		return gridCopy;
-	}
+        for (let row = 0; row < shape.length; row++) {
+            for (let col = 0; col < shape[row].length; col++) {
+                if (shape[row][col] !== 0) {
+                    const targetX = x + col;
+                    const targetY = y + row;
 
-    gameIsLost() {
-        for (let row = 0; row < 2; row++) {
-            for (let col = 0; col < 10; col++) {
-                if (this.grid[row][col] !== 0) {
-                    return true;
+                    if (targetX < 0 || targetX >= this.cols || targetY >= this.rows) {
+                        return false;
+                    }
+                    if (targetY >= 0 && this.grid[targetY][targetX] !== 0) {
+                        return false;
+                    }
                 }
             }
         }
-        return false;
+        return true;
     }
 
-    printGrid() {
-        console.log("--------------------------------");
-        for (let row = 0; row < this.grid.length; row++) {
-            console.log(this.grid[row]);
+    getGhostY(piece) {
+        let ghostY = piece.y;
+        while (this.isValidPosition(piece, piece.x, ghostY + 1)) {
+            ghostY++;
         }
-        console.log("--------------------------------");
+        return ghostY;
     }
 
+    lockPiece(piece) {
+        const shape = piece.getCurrentShape();
+        
+        shape.forEach((row, r) => {
+            row.forEach((val, c) => {
+                if (val !== 0) {
+                    const y = piece.y + r;
+                    const x = piece.x + c;
+                    if (y >= 0 && y < this.rows && x >= 0 && x < this.cols) {
+                        this.grid[y][x] = piece.type;
+                    }
+                }
+            });
+        });
+    }
 
+    getGridWithPiece(piece) {
+        const gridCopy = this.grid.map(row => [...row]);
+        const ghostY = this.getGhostY(piece);
+        
+        const paint = (y, x, value) => {
+            const shape = piece.getCurrentShape();
+            shape.forEach((row, r) => {
+                row.forEach((val, c) => {
+                    if (val !== 0) {
+                        const targetY = y + r;
+                        const targetX = x + c;
+                        if (targetY >= 0 && targetY < this.rows) {
+                            gridCopy[targetY][targetX] = value;
+                        }
+                    }
+                });
+            });
+        };
+
+        if (ghostY !== piece.y) {
+            paint(ghostY, piece.x, `${piece.type}-ghost`);
+        }
+
+        paint(piece.y, piece.x, piece.type);
+
+        return gridCopy;
+    }
+    gameIsLost() {
+        return this.grid.slice(0, 2).some(row => 
+            row.some(cell => cell !== 0)
+        );
+    }
 }

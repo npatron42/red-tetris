@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 17:39:21 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/12 16:44:46 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/12 17:08:39 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,6 @@ export class SoloGame {
 
 		this.piecesGenerator = new PiecesGenerator();
 		this.gameStarted = false;
-
-		this.gameInterval = null;
-		this.tickRate = 1000;
 
 		this.gameStatus = {
 			PENDING: "PENDING",
@@ -44,18 +41,6 @@ export class SoloGame {
 	endGame() {
 		this.gameStarted = false;
 		this.status = this.gameStatus.COMPLETED;
-		this.stopGameLoop();
-	}
-
-	startGameLoop() {
-		this.gameInterval = setInterval(() => {}, this.tickRate);
-	}
-
-	stopGameLoop() {
-		if (this.gameInterval) {
-			clearInterval(this.gameInterval);
-			this.gameInterval = null;
-		}
 	}
 
 	getGameStatus() {
@@ -88,7 +73,7 @@ export class SoloGame {
 		const oldX = piece.getX();
 		const oldY = piece.getY();
 		const oldRotation = piece.rotationIndex;
-		
+
 		switch (direction) {
 			case "LEFT":
 				piece.moveLeft();
@@ -127,7 +112,7 @@ export class SoloGame {
 				this.handleLockPiece();
 				break;
 		}
-		
+
 		this.sendUpdatedGridToPlayer(socketService);
 	}
 
