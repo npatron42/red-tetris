@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 16:54:46 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/22 17:13:22 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/22 17:16:10 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@ import { useNavigate } from 'react-router-dom';
 import { useSoloGame } from '../../composables/useSoloGame';
 
 import { useUser } from '../../providers/UserProvider';
-import './MultiGameRoom.css';	
+import './SoloGameRoom.css';	
 
-const MultiGameRoom = () => {
+const SoloGameRoom = () => {
     const navigate = useNavigate();
     const { user } = useUser();
     const { createGame } = useSoloGame();
@@ -37,4 +37,4 @@ const MultiGameRoom = () => {
     );
 };
 
-export default MultiGameRoom;
+export default SoloGameRoom;
