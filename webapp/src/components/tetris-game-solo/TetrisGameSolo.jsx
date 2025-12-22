@@ -6,18 +6,19 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 13:02:55 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/22 16:31:49 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/22 16:43:27 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import './TetrisGameSolo.css';
 
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useUser } from '../../providers/UserProvider';
 import { useSocket } from '../../providers/SocketProvider';
 import { socketService } from '../../services/socketService';
 
+import { endSoloGame } from '../../composables/useApi';
 
 const COLORS = {
     I: '#00FFFF',
@@ -39,6 +40,7 @@ const COLORS = {
 
 export const TetrisGameSolo = () => {
     
+    const navigate = useNavigate();
     const gameId = useParams().gameId;
     const [grid, setGrid] = useState(() => Array.from({ length: 20 }, () => Array(10).fill(0)));
     const { user } = useUser();
@@ -52,9 +54,15 @@ export const TetrisGameSolo = () => {
             border: `1px solid ${cell === 0 ? '#333' : '#000'}`
         };
     };
+
+    const goToHome = async () => {
+        setTimeout(() => {
+            navigate('/');
+        }, 3000);
+    };
     
     useEffect(() => {
-        const handleGridUpdate = (data) => {
+        const handleGridUpdate = async (data) => {
             console.log("handleGridUpdate", data);
             if (data.gameState && data.gameState.length > 0) {
                 const playerState = data.gameState[0];
@@ -63,6 +71,11 @@ export const TetrisGameSolo = () => {
                 }
                 if (playerState.gameStatus) {
                     setGameStatus(playerState.gameStatus);
+                    
+                    if (playerState.gameStatus === 'COMPLETED') {
+                        await endSoloGame(gameId, playerState.score);
+                        await goToHome();
+                    }
                 }
             }
         };
@@ -125,10 +138,11 @@ export const TetrisGameSolo = () => {
     return (
         <> 
         {gameStatus === 'COMPLETED' && (
-            <div className="game-lost-container" style={{ textAlign: 'center', color: 'white' }}>
+            <div className="game-board-container">
                 <h1>Game Completed</h1>
             </div>
         )}
+        {gameStatus === 'IN_PROGRESS' && (
         <div className="game-board-container" style={{ textAlign: 'center', color: 'white' }}>
             <div className="grid">
                 {grid.flatMap((row, rowIndex) =>
@@ -142,6 +156,7 @@ export const TetrisGameSolo = () => {
                 )}
             </div>
         </div>
+        )}
         </>
     );
 };
