@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 17:39:02 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/22 16:23:59 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/22 16:35:31 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,13 +79,8 @@ export class SoloGameService {
 				status: "IN_PROGRESS"
 			};
 			await this.gameDao.create(game);
-			logger.info("createSoloGame 1");
 			soloGame.startGame();
-			logger.info("createSoloGame 2");
 			soloGame.startGameLoop(socketService);
-			logger.info("createSoloGame 3");
-			logger.info(`Solo game created for ${username}: ${soloGame.id}`);
-
 			return {
 				gameId: gameId,
 				username,

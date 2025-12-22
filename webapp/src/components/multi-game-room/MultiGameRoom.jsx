@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   GameRoom.jsx                                       :+:      :+:    :+:   */
+/*   MultiGameRoom.jsx                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:39:24 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/11 17:45:53 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/22 16:56:17 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-import { useEffect, useMemo, useState, useCallback, useRef } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
 import { LogOutIcon, PlayIcon, UserIcon, CrownIcon } from 'lucide-react';
@@ -21,9 +21,9 @@ import { useRoom } from '../../composables/useRoom';
 import { GameResults } from '../game-results/GameResults';
 import { TetrisGameMultiplayer } from '../tetris-game-multiplayer/TetrisGameMultiplayer';
 
-import './GameRoom.css';	
+import './MultiGameRoom.css';	
 
-const GameRoom = () => {
+const MultiGameRoom = () => {
     const navigate = useNavigate();
     const { roomName } = useParams();
     const { user } = useUser();
@@ -158,4 +158,4 @@ const GameRoom = () => {
     );
 };
 
-export default GameRoom;
+export default MultiGameRoom;

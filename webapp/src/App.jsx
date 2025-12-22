@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/09 11:58:43 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/11 18:33:54 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/22 17:14:17 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,8 @@ import Home from './components/home/Home';
 import Login from './components/login/Login';
 import CreateRoom from './components/play-component/CreateRoom';
 import JoinRoom from './components/play-component/JoinRoom';
-import GameRoom from './components/game-room/GameRoom';
+import MultiGameRoom from './components/multi-game-room/MultiGameRoom';
+import SoloGameRoom from './components/solo-game-room/SoloGameRoom';
 import { SoloGame } from './components/solo-game/SoloGame';
 import BackgroundAnimation from './components/Background/BackgroundAnimation';
 
@@ -67,7 +68,8 @@ const App = () => {
                         <Route path="/solo/:gameId" element={<RequireAuth><SoloGame /></RequireAuth>} />
                         <Route path="/create-room" element={<RequireAuth><CreateRoom /></RequireAuth>} />
                         <Route path="/join-room" element={<RequireAuth><JoinRoom /></RequireAuth>} />
-                        <Route path="/:roomName/:leaderUsername" element={<RequireAuth><GameRoom /></RequireAuth>} />
+                        <Route path="/:roomName/:leaderUsername" element={<RequireAuth><MultiGameRoom /></RequireAuth>} />
+                        <Route path="/solo/game-room" element={<RequireAuth><SoloGameRoom /></RequireAuth>} />
                     </Routes>
                 </SocketProvider>
             </UserProvider>

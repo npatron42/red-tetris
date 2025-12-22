@@ -6,29 +6,22 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 17:01:45 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/11 19:25:30 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/22 17:14:50 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import './PlayComponent.css'
 
-import { Joystick, BadgePlus, MoveRight } from 'lucide-react'
+import { Joystick } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useUser } from '../../providers/UserProvider'
-import { useSoloGame } from '../../composables/useSoloGame'
 
 export const PlayComponent = () => {
     const navigate = useNavigate()
     const { user } = useUser()
-    const { createGame } = useSoloGame()
 
-    const handleCreateSoloGame = async () => {
-        try {
-            const gameId = await createGame(user)
-            navigate(`/solo/${gameId}`)
-        } catch (error) {
-            console.error(error)
-        }
+    const navigateToSoloGame = () => {
+        navigate('/solo/game-room')
     }
     
     return (
@@ -42,7 +35,7 @@ export const PlayComponent = () => {
             </div>
             {user && (
                 <div className="play-button-container">
-                    <button className="play-button" onClick={handleCreateSoloGame}>
+                    <button className="play-button" onClick={navigateToSoloGame}>
                         SOLO
                     </button>
                     <button className="play-button" onClick={() => navigate('/create-room')}>
