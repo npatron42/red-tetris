@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 15:20:41 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/22 16:39:15 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/22 17:30:38 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,9 +109,9 @@ export const startGame = async (roomData) => {
 	}
 };
 
-export const createSoloGame = async (username) => {
+export const createSoloGame = async (username, difficulty) => {
 	try {
-		const response = await axios.post("http://localhost:4000/solo/create", { username });
+		const response = await axios.post("http://localhost:4000/solo/create", { username, difficulty });
 		return response.data;
 	} catch (error) {
 		console.error(`Error creating solo game:`, error);

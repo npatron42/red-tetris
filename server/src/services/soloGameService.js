@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 17:39:02 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/22 16:35:31 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/22 17:33:45 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ export class SoloGameService {
 		}
 	}
 
-	async createSoloGame(username) {
+	async createSoloGame(username, difficulty) {
 		try {
 			const gameId = uuidv4();
 			const socketId = socketService.getUserSocketId(username);
@@ -70,16 +70,17 @@ export class SoloGameService {
 			}
 
 			const player = new Player(username, socketId);
-			const soloGame = new SoloGame(player);
+			const soloGame = new SoloGame(player, difficulty);
 
 			this.activeGames.set(gameId, soloGame);
 			let game = {
 				gameId,
 				username,
-				status: "IN_PROGRESS"
+				status: "IN_PROGRESS",
+				difficulty
 			};
 			await this.gameDao.create(game);
-			soloGame.startGame();
+			soloGame.startGame(difficulty);
 			soloGame.startGameLoop(socketService);
 			return {
 				gameId: gameId,

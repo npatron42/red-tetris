@@ -6,172 +6,100 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 16:54:42 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/22 16:57:56 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/22 17:29:33 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 .gameroom-container {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 32px;
     justify-content: center;
     align-items: center;
     color: #fff;
+    height: 100%;
+    min-height: 60vh; 
 }
 
-.gameroom-card {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-    justify-content: center;
-    align-items: center;
-    padding: 2.5rem;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    width: 100%;
-    max-width: 600px;
+.gameroom-container select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    
+    background-color: transparent;
+    color: #fff;
+    font-family: 'Arcade', sans-serif;
+    font-size: 18px;
+    font-weight: 500;
     text-align: center;
-    border: 1px solid #403d39;
-    box-shadow: 12px 12px 24px rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(20px);
-}
-
-.room-header {
-    margin-bottom: 2rem;
-    border-bottom: 1px solid #403d39;
-    padding-bottom: 1rem;
-    font-family: 'Arcade', sans-serif;
-}
-
-.room-title span {
-    color: #fff;
-    font-weight: 300;
-}
-
-.leader-badge {
-    background-color: #0f3460;
-    color: #ffd700;
-    padding: 0.5rem 1rem;
-    border-radius: 50px;
-    display: inline-block;
-    font-weight: bold;
-    font-size: 16px;
-    margin-top: 0.5rem;
-}
-
-.players-section h3 {
-    margin-bottom: 1.5rem;
-    color: #aebeff;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-size: 14px;
-}
-
-.players-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
-}
-
-.player-card {
-    padding: 1.5rem;
-    border-radius: 12px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    position: relative;
-    overflow: hidden;
-}
-
-.player-avatar {
-    width: 60px;
-    height: 60px;
-    background-color: #039BE5;
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Arcade', sans-serif;
-    font-weight: bold;
-    margin-bottom: 0.8rem;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-}
-
-.player-name {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    font-size: 14px;
-    font-weight: 600;
-    font-family: 'Arcade', sans-serif;
-    word-break: break-all;
-}
-
-.player-card.is-leader {
-    border: 2px solid #039BE5;
-}
-
-.crown-icon {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 1.2rem;
-    font-family: 'Arcade', sans-serif;
-}
-
-
-.empty-text {
-    color: #6a7b9c;
-    font-style: italic;
-}
-
-.room-loading, .room-error, .room-unauthorized {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    color: white;
-    font-size: 1.5rem;
-}
-
-.lobby-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.custom-button-play, .custom-button-leave {
-    font-family: 'Arcade', sans-serif;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
+    
+    padding: 16px 32px;
     width: 100%;
-    padding: 12px 18px;
+    max-width: 300px;
+    
+    border: 2px solid #403d39;
+    border-radius: 12px;
+    cursor: pointer;
+    
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    transition: all 0.2s ease;
+    
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23c8c8dd%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 0.65em auto;
+}
+
+.gameroom-container select:hover,
+.gameroom-container select:focus {
+    border-color: #039BE5;
+    box-shadow: 0 0 15px rgba(3, 155, 229, 0.2);
+    outline: none;
+}
+
+.gameroom-container select option {
+    background-color: #1a1a2e;
+    color: #fff;
+    padding: 12px;
+    font-family: sans-serif;
+}
+
+.gameroom-container button {
+    font-family: 'Arcade', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    
+    width: 100%;
+    max-width: 300px;
+    padding: 16px 24px;
+    
     border-radius: 999px;
     border: 2px solid #c8c8dd;
     background: transparent;
     color: #c8c8dd;
+    
+    font-size: 18px;
     font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    
     cursor: pointer;
-    transition: border-color 0.2s ease, color 0.2s ease;
-    box-shadow: 12px 12px 24px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
     backdrop-filter: blur(20px);
 }
 
-.custom-button-play:hover {
+.gameroom-container button:hover {
     border-color: #039BE5;
+    color: #039BE5;
+    background-color: rgba(3, 155, 229, 0.1);
+    box-shadow: 0 0 20px rgba(3, 155, 229, 0.4);
+    transform: translateY(-2px);
 }
 
-.custom-button-leave:hover {
-    border-color: #E53935;
-}
-
-.room-error {
-    color: #e94560;
+.gameroom-container button:active {
+    transform: translateY(0);
 }

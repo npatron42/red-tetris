@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 17:39:21 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/22 17:24:23 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/22 17:33:29 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ export const Status = {
 };
 
 export class SoloGame {
-	constructor(player) {
+	constructor(player, difficulty) {
 		this.id = crypto.randomUUID();
 		this.player = player;
 
@@ -36,10 +36,10 @@ export class SoloGame {
 		this.interval = null;
 
 		this.status = Status.PENDING;
-		this.difficulty = Difficulty.EASY;
+		this.difficulty = difficulty;
 	}
 
-	startGame() {
+	startGame(difficulty) {
 		this.isStarted = true;
 		this.status = Status.IN_PROGRESS;
 
@@ -49,19 +49,16 @@ export class SoloGame {
 	}
 
 	startGameLoop(socketService) {
-		console.log("startGameLoop");
 		if (this.interval) {
 			return;
 		}
-		console.log("startGameLoop 2");
-
 		this.interval = setInterval(() => {
 			if (!this.isStarted) {
 				this.stopGameLoop();
 				return;
 			}
 			this.movePiece(this.player.getUsername(), "DOWN", socketService);
-		}, 1000);
+		}, this._getDifficultySpeed());
 	}
 
 	stopGameLoop() {
@@ -169,6 +166,19 @@ export class SoloGame {
 			});
 		} catch (error) {
 			console.error("Error sending updated grid to player", error);
+		}
+	}
+
+	_getDifficultySpeed() {
+		switch (this.difficulty) {
+			case Difficulty.EASY:
+				return 1000;
+			case Difficulty.MEDIUM:
+				return 500;
+			case Difficulty.HARD:
+				return 250;
+			default:
+				return 1000;
 		}
 	}
 }
