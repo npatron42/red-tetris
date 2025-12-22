@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 13:02:55 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/22 16:30:08 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/22 16:31:49 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ export const TetrisGameSolo = () => {
     const [grid, setGrid] = useState(() => Array.from({ length: 20 }, () => Array(10).fill(0)));
     const { user } = useUser();
     const { socket } = useSocket();
+    const [gameStatus   , setGameStatus] = useState(null);
 
     const getCellStyle = (cell) => {
         const backgroundColor = COLORS[cell] || COLORS[0];
@@ -59,6 +60,9 @@ export const TetrisGameSolo = () => {
                 const playerState = data.gameState[0];
                 if (playerState.grid) {
                     setGrid(playerState.grid);
+                }
+                if (playerState.gameStatus) {
+                    setGameStatus(playerState.gameStatus);
                 }
             }
         };
@@ -119,6 +123,12 @@ export const TetrisGameSolo = () => {
     }, [socket, user]);
     
     return (
+        <> 
+        {gameStatus === 'COMPLETED' && (
+            <div className="game-lost-container" style={{ textAlign: 'center', color: 'white' }}>
+                <h1>Game Completed</h1>
+            </div>
+        )}
         <div className="game-board-container" style={{ textAlign: 'center', color: 'white' }}>
             <div className="grid">
                 {grid.flatMap((row, rowIndex) =>
@@ -132,5 +142,6 @@ export const TetrisGameSolo = () => {
                 )}
             </div>
         </div>
+        </>
     );
 };
