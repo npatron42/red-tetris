@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 13:02:55 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/22 16:43:27 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/22 17:24:53 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ export const TetrisGameSolo = () => {
     const [grid, setGrid] = useState(() => Array.from({ length: 20 }, () => Array(10).fill(0)));
     const { user } = useUser();
     const { socket } = useSocket();
-    const [gameStatus   , setGameStatus] = useState(null);
+    const [gameStatus, setGameStatus] = useState(null);
 
     const getCellStyle = (cell) => {
         const backgroundColor = COLORS[cell] || COLORS[0];
@@ -64,19 +64,19 @@ export const TetrisGameSolo = () => {
     useEffect(() => {
         const handleGridUpdate = async (data) => {
             console.log("handleGridUpdate", data);
-            if (data.gameState && data.gameState.length > 0) {
-                const playerState = data.gameState[0];
+            if (data.state && data.state.length > 0) {
+                const playerState = data.state[0];
                 if (playerState.grid) {
                     setGrid(playerState.grid);
                 }
-                if (playerState.gameStatus) {
-                    setGameStatus(playerState.gameStatus);
+                if (playerState.status) {
+                    setGameStatus(playerState.status);
                     
-                    if (playerState.gameStatus === 'COMPLETED') {
+                    if (playerState.status === 'COMPLETED') {
                         await endSoloGame(gameId, playerState.score);
                         await goToHome();
                     }
-                }
+                }   
             }
         };
 

@@ -6,13 +6,24 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 17:39:21 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/22 16:29:44 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/22 17:24:23 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import { PiecesGenerator } from "./piecesGenerator.js";
 import crypto from "crypto";
 
+export const Difficulty = {
+	EASY: "EASY",
+	MEDIUM: "MEDIUM",
+	HARD: "HARD"
+};
+
+export const Status = {
+	PENDING: "PENDING",
+	IN_PROGRESS: "IN_PROGRESS",
+	COMPLETED: "COMPLETED"
+};
 
 export class SoloGame {
 	constructor(player) {
@@ -20,20 +31,17 @@ export class SoloGame {
 		this.player = player;
 
 		this.piecesGenerator = new PiecesGenerator();
-		this.gameStarted = false;
-		this.gameInterval = null;
 
-		this.gameStatus = {
-			PENDING: "PENDING",
-			IN_PROGRESS: "IN_PROGRESS",
-			COMPLETED: "COMPLETED"
-		};
-		this.status = this.gameStatus.PENDING;
+		this.isStarted = false;
+		this.interval = null;
+
+		this.status = Status.PENDING;
+		this.difficulty = Difficulty.EASY;
 	}
 
 	startGame() {
-		this.gameStarted = true;
-		this.status = this.gameStatus.IN_PROGRESS;
+		this.isStarted = true;
+		this.status = Status.IN_PROGRESS;
 
 		this.player.resetGameData();
 		this.player.incrementNumberOfGamesPlayed();
@@ -42,13 +50,13 @@ export class SoloGame {
 
 	startGameLoop(socketService) {
 		console.log("startGameLoop");
-		if (this.gameInterval) {
+		if (this.interval) {
 			return;
 		}
 		console.log("startGameLoop 2");
 
-		this.gameInterval = setInterval(() => {
-			if (!this.gameStarted) {
+		this.interval = setInterval(() => {
+			if (!this.isStarted) {
 				this.stopGameLoop();
 				return;
 			}
@@ -57,19 +65,19 @@ export class SoloGame {
 	}
 
 	stopGameLoop() {
-		if (this.gameInterval) {
-			clearInterval(this.gameInterval);
-			this.gameInterval = null;
+		if (this.interval) {
+			clearInterval(this.interval);
+			this.interval = null;
 		}
 	}
 
 	endGame() {
 		this.stopGameLoop();
-		this.gameStarted = false;
-		this.status = this.gameStatus.COMPLETED;
+		this.isStarted = false;
+		this.status = Status.COMPLETED;
 	}
 
-	getGameStatus() {
+	getStatus() {
 		return this.status;
 	}
 
@@ -81,7 +89,7 @@ export class SoloGame {
 	}
 
 	movePiece(username, direction, socketService) {
-		if (!this.gameStarted) {
+		if (!this.isStarted) {
 			return null;
 		}
 
@@ -144,20 +152,20 @@ export class SoloGame {
 
 	sendUpdatedGridToPlayer(socketService) {
 		try {
-			const gameState = [
+			const state = [
 				{
 					username: this.player.getUsername(),
 					grid: this.player.currentPiece
 						? this.player.getGrid().getGridWithPiece(this.player.currentPiece)
 						: this.player.getGrid().getGrid(),
 					score: this.player.currentScore,
-					gameStatus: this.getGameStatus(),
+					status: this.getStatus()
 				}
 			];
 
 			socketService.emitToUsers([this.player.getUsername()], "soloGameUpdated", {
 				username: this.player.getUsername(),
-				gameState
+				state
 			});
 		} catch (error) {
 			console.error("Error sending updated grid to player", error);

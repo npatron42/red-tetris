@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:11:25 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/22 16:28:45 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/22 17:18:04 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@ export class Game {
 
 		this.piecesGenerator = new PiecesGenerator();
 		this.gameStarted = false;
-
 		this.gameInterval = null;
 		this.tickRate = 1000;
 
@@ -49,9 +48,6 @@ export class Game {
 		this.stopGameLoop();
 	}
 
-	startGameLoop() {
-		this.gameInterval = setInterval(() => {}, this.tickRate);
-	}
 
 	stopGameLoop() {
 		if (this.gameInterval) {
