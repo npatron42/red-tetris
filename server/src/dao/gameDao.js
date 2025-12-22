@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 15:57:54 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/11 18:49:46 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/22 16:38:47 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,9 @@ export class GameDao {
 		return game;
 	}
 
-	update(name, updates) {
+	update(gameId, updates) {
 		const games = readJsonFile(dbPath);
-		const index = games.findIndex((game) => game.name === name);
+		const index = games.findIndex((game) => game.gameId === gameId);
 		if (index === -1) {
 			return null;
 		}
@@ -42,9 +42,9 @@ export class GameDao {
 		return games[index];
 	}
 
-	delete(name) {
+	delete(gameId) {
 		const games = readJsonFile(dbPath);
-		const filtered = games.filter((game) => game.name !== name);
+		const filtered = games.filter((game) => game.gameId !== gameId);
 		writeJsonFile(dbPath, filtered);
 		return true;
 	}
