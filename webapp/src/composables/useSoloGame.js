@@ -6,26 +6,22 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 17:59:32 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/11 18:33:54 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/22 17:35:17 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import { useState } from "react";
-import {
-	createSoloGame as apiCreateSoloGame,
-	getSoloGame as apiGetSoloGame,
-	endSoloGame as apiEndSoloGame
-} from "./useApi";
+import { createSoloGame, getSoloGame, endSoloGame } from "./useApi";
 
 export const useSoloGame = () => {
 	const [gameId, setGameId] = useState(null);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
 
-	const createGame = async (username) => {
+	const createGame = async (username, difficulty) => {
 		try {
 			setLoading(true);
-			const response = await apiCreateSoloGame(username);
+			const response = await createSoloGame(username, difficulty);
 			if (response.success) {
 				setGameId(response.data.gameId);
 				return response.data.gameId;
@@ -41,7 +37,7 @@ export const useSoloGame = () => {
 	const getGame = async (id) => {
 		try {
 			setLoading(true);
-			const response = await apiGetSoloGame(id);
+			const response = await getSoloGame(id);
 			return response.data;
 		} catch (error) {
 			setError(error);
@@ -54,7 +50,7 @@ export const useSoloGame = () => {
 	const endGame = async (id, score) => {
 		try {
 			setLoading(true);
-			await apiEndSoloGame(id, score);
+			await endSoloGame(id, score);
 		} catch (error) {
 			setError(error);
 			throw error;
