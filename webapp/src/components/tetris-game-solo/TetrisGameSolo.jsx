@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 13:02:55 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/12 16:55:24 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/22 16:30:08 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ import { useParams } from 'react-router-dom';
 import { useUser } from '../../providers/UserProvider';
 import { useSocket } from '../../providers/SocketProvider';
 import { socketService } from '../../services/socketService';
+
 
 const COLORS = {
     I: '#00FFFF',
@@ -50,7 +51,7 @@ export const TetrisGameSolo = () => {
             border: `1px solid ${cell === 0 ? '#333' : '#000'}`
         };
     };
-
+    
     useEffect(() => {
         const handleGridUpdate = (data) => {
             console.log("handleGridUpdate", data);

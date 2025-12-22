@@ -6,12 +6,13 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 17:39:21 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/12 17:08:39 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/22 16:29:44 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import { PiecesGenerator } from "./piecesGenerator.js";
 import crypto from "crypto";
+
 
 export class SoloGame {
 	constructor(player) {
@@ -20,6 +21,7 @@ export class SoloGame {
 
 		this.piecesGenerator = new PiecesGenerator();
 		this.gameStarted = false;
+		this.gameInterval = null;
 
 		this.gameStatus = {
 			PENDING: "PENDING",
@@ -38,7 +40,31 @@ export class SoloGame {
 		this.player.currentPiece = this.piecesGenerator.getNextPiece();
 	}
 
+	startGameLoop(socketService) {
+		console.log("startGameLoop");
+		if (this.gameInterval) {
+			return;
+		}
+		console.log("startGameLoop 2");
+
+		this.gameInterval = setInterval(() => {
+			if (!this.gameStarted) {
+				this.stopGameLoop();
+				return;
+			}
+			this.movePiece(this.player.getUsername(), "DOWN", socketService);
+		}, 1000);
+	}
+
+	stopGameLoop() {
+		if (this.gameInterval) {
+			clearInterval(this.gameInterval);
+			this.gameInterval = null;
+		}
+	}
+
 	endGame() {
+		this.stopGameLoop();
 		this.gameStarted = false;
 		this.status = this.gameStatus.COMPLETED;
 	}
@@ -124,7 +150,8 @@ export class SoloGame {
 					grid: this.player.currentPiece
 						? this.player.getGrid().getGridWithPiece(this.player.currentPiece)
 						: this.player.getGrid().getGrid(),
-					score: this.player.currentScore
+					score: this.player.currentScore,
+					gameStatus: this.getGameStatus(),
 				}
 			];
 

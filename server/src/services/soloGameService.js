@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 17:39:02 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/12 17:06:27 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/22 16:23:59 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,27 @@ export class SoloGameService {
 					logger.error(`Error in move handler: ${error.message}`);
 				}
 			});
+
+			socketService.setDisconnectHandler((username) => {
+				try {
+					this.handlePlayerDisconnect(username);
+				} catch (error) {
+					logger.error(`Error in disconnect handler: ${error.message}`);
+				}
+			});
 		} catch (error) {
 			logger.error(`Error in setupSocketHandler: ${error.message}`);
+		}
+	}
+
+	handlePlayerDisconnect(username) {
+		for (const [gameId, game] of this.activeGames.entries()) {
+			if (game.player.getUsername() === username) {
+				logger.info(`Cleaning up game ${gameId} for disconnected player ${username}`);
+				game.stopGameLoop();
+				game.endGame();
+				this.activeGames.delete(gameId);
+			}
 		}
 	}
 
@@ -60,8 +79,11 @@ export class SoloGameService {
 				status: "IN_PROGRESS"
 			};
 			await this.gameDao.create(game);
+			logger.info("createSoloGame 1");
 			soloGame.startGame();
-
+			logger.info("createSoloGame 2");
+			soloGame.startGameLoop(socketService);
+			logger.info("createSoloGame 3");
 			logger.info(`Solo game created for ${username}: ${soloGame.id}`);
 
 			return {
@@ -103,14 +125,15 @@ export class SoloGameService {
 				throw new Error("Game not found");
 			}
 
+			game.stopGameLoop();
 			game.endGame();
 			this.activeGames.delete(gameId);
-            await this.gameDao.update(gameId, { status: "COMPLETED" });
+			await this.gameDao.update(gameId, { status: "COMPLETED" });
 			logger.info(`Solo game ended: ${gameId}, score: ${score}`);
-            socketService.emitToUsers([game.player.getUsername()], "soloGameEnded", {
-                gameId,
-                score
-            });
+			socketService.emitToUsers([game.player.getUsername()], "soloGameEnded", {
+				gameId,
+				score
+			});
 		} catch (error) {
 			logger.error(`Error in endSoloGame: ${error.message}`);
 			throw error;

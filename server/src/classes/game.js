@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:11:25 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/11 19:56:27 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/22 16:28:45 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,8 +160,8 @@ export class Game {
 				? player.getGrid().getGridWithPiece(player.currentPiece)
 				: player.getGrid().getGrid(),
 			score: player.currentScore,
-            gameStatus: this.getGameStatus()
-            
+            gameStatus: this.getGameStatus(),
+            gameIsLost: player.getGrid().gameIsLost()
 		}));
 
 		const usernames = players.map((player) => player.getUsername());

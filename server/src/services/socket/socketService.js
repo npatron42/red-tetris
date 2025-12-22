@@ -15,6 +15,7 @@ export class SocketService {
 		this.io = null;
 		this.launched = false;
 		this.users = {};
+		this.disconnectHandler = null;
 	}
 
 	async init(server) {
@@ -33,6 +34,9 @@ export class SocketService {
 			socket.on("disconnect", () => {
 				if (username && this.users[username] === socket.id) {
 					delete this.users[username];
+					if (this.disconnectHandler) {
+						this.disconnectHandler(username);
+					}
 				}
 			});
 
@@ -82,6 +86,10 @@ export class SocketService {
 
 	setMoveHandler(handler) {
 		this.moveHandler = handler;
+	}
+
+	setDisconnectHandler(handler) {
+		this.disconnectHandler = handler;
 	}
 
 	handleMovePieceMultiplayer(roomName, username, direction) {
