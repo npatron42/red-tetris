@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 17:39:21 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/22 17:33:29 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/23 17:22:06 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,13 @@ import crypto from "crypto";
 export const Difficulty = {
 	EASY: "EASY",
 	MEDIUM: "MEDIUM",
-	HARD: "HARD"
+	HARD: "HARD",
+	VERY_HARD: "VERY_HARD",
+	IMPOSSIBLE: "IMPOSSIBLE",
+	EXTREME: "EXTREME",
+	ULTRA: "ULTRA",
+	NINJA: "NINJA",
+	GOD: "GOD"
 };
 
 export const Status = {
@@ -25,21 +31,23 @@ export const Status = {
 	COMPLETED: "COMPLETED"
 };
 
+
 export class SoloGame {
 	constructor(player, difficulty) {
 		this.id = crypto.randomUUID();
 		this.player = player;
 
 		this.piecesGenerator = new PiecesGenerator();
-
+		this.scoringSystem = new ScoringSystem();
 		this.isStarted = false;
 		this.interval = null;
 
 		this.status = Status.PENDING;
 		this.difficulty = difficulty;
+		this.level = 1;
 	}
 
-	startGame(difficulty) {
+	startGame() {
 		this.isStarted = true;
 		this.status = Status.IN_PROGRESS;
 
@@ -177,6 +185,18 @@ export class SoloGame {
 				return 500;
 			case Difficulty.HARD:
 				return 250;
+			case Difficulty.VERY_HARD:
+				return 100;
+			case Difficulty.IMPOSSIBLE:
+				return 50;
+			case Difficulty.EXTREME:
+				return 25;
+			case Difficulty.ULTRA:
+				return 10;
+			case Difficulty.NINJA:
+				return 5;	
+			case Difficulty.GOD:
+				return 1;
 			default:
 				return 1000;
 		}
