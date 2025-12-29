@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 13:02:55 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/29 14:59:46 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/29 16:31:57 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ import { useState, useEffect } from "react";
 import { useUser } from "../../../providers/UserProvider";
 import { useSocket } from "../../../providers/SocketProvider";
 import { socketService } from "../../../services/socketService";
+import { TetrominosBag } from "../../tetrominos-bag/TetrominosBag";
 
 const COLOR_MAP = {
 	I: "#00F0FF",
@@ -129,23 +130,33 @@ export const TetrisGameMultiplayer = ({ roomInfo, currentUser }) => {
 	const renderPlayerBoard = (playerState, isCurrentUser) => {
 		const defaultGrid = Array.from({ length: 20 }, () => Array(10).fill(0));
 		const grid = playerState?.grid || defaultGrid;
+		const nextPieces = playerState?.nextPieces || [];
 
 		return (
 			<div className="player-board">
-				<div className="player-info">
-					<h3>{playerState?.username || "Waiting..."}</h3>
-					{playerState && (
-						<div className="game-stats">
-							<p>
-								Score: <span>{playerState.score || 0}</span>
-							</p>
-							<p>
-								Level: <span>{playerState.level || 1}</span>
-							</p>
+				<h3 className="player-title">{playerState?.username || "Waiting..."}</h3>
+				<div className="game-layout">
+					<div className={`grid ${isCurrentUser ? "active-border" : ""}`}>{renderGrid(grid)}</div>
+					{isCurrentUser && (
+						<div className="side-panel">
+							<div className="player-info">
+								{playerState && (
+									<div className="game-stats">
+										<div className="stat-item">
+											<div className="stat-label">Score</div>
+											<div className="stat-value">{playerState.score || 0}</div>
+										</div>
+										<div className="stat-item">
+											<div className="stat-label">Level</div>
+											<div className="stat-value">{playerState.level || 1}</div>
+										</div>
+									</div>
+								)}
+							</div>
+							<TetrominosBag nextPieces={nextPieces} />
 						</div>
 					)}
 				</div>
-				<div className={`grid ${isCurrentUser ? "active-border" : ""}`}>{renderGrid(grid)}</div>
 			</div>
 		);
 	};

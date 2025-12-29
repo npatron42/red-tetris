@@ -6,11 +6,11 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 17:39:21 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/23 17:57:33 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/29 16:14:25 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-import { PiecesGenerator } from "./piecesGenerator.js";
+import { TetrominosBag } from "./tetrominosBag.js";
 import { ScoringSystem } from "./scoringSystem.js";
 import crypto from "crypto";
 
@@ -37,7 +37,7 @@ export class SoloGame {
 		this.id = crypto.randomUUID();
 		this.player = player;
 
-		this.piecesGenerator = new PiecesGenerator();
+		this.tetrominosBag = new TetrominosBag();
 		this.scoringSystem = new ScoringSystem();
 		this.isStarted = false;
 		this.interval = null;
@@ -57,7 +57,7 @@ export class SoloGame {
 
 		this.player.resetGameData();
 		this.player.incrementNumberOfGamesPlayed();
-		this.player.currentPiece = this.piecesGenerator.getNextPiece();
+		this.player.currentPiece = this.tetrominosBag.getNextPiece();
 	}
 
 	startGameLoop(socketService) {
@@ -104,7 +104,7 @@ export class SoloGame {
 				linesCleared
 			);
 		}
-		this.player.currentPiece = this.piecesGenerator.getNextPiece();
+		this.player.currentPiece = this.tetrominosBag.getNextPiece();
 		return grid.getGrid();
 	}
 
@@ -180,7 +180,8 @@ export class SoloGame {
 						: this.player.getGrid().getGrid(),
 					score: this.player.currentScore,
 					level: this.level,
-					status: this.getStatus()
+					status: this.getStatus(),
+					nextPieces: this.tetrominosBag.peekNextPieces(3)
 				}
 			];
 

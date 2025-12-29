@@ -6,11 +6,11 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:11:25 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/29 14:19:10 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/29 16:14:33 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-import { PiecesGenerator } from "./piecesGenerator.js";
+import { TetrominosBag } from "./tetrominosBag.js";
 import { ScoringSystem } from "./scoringSystem.js";
 
 export const Status = {
@@ -23,7 +23,7 @@ export class MultiPlayerGame {
 	constructor(room) {
 		this.room = room;
 
-		this.piecesGenerator = new PiecesGenerator();
+		this.tetrominosBag = new TetrominosBag();
 		this.scoringSystem = new ScoringSystem();
 		this.isStarted = false;
 		this.interval = null;
@@ -46,7 +46,7 @@ export class MultiPlayerGame {
 		players.forEach((player) => {
 			player.resetGameData();
 			player.incrementNumberOfGamesPlayed();
-			player.currentPiece = this.piecesGenerator.getNextPiece();
+			player.currentPiece = this.tetrominosBag.getNextPiece();
 		});
 	}
 
@@ -97,7 +97,7 @@ export class MultiPlayerGame {
 		if (linesCleared > 0) {
 			player.currentScore = this.scoringSystem.calculateScore(player.currentScore, this.level, linesCleared);
 		}
-		player.currentPiece = this.piecesGenerator.getNextPiece();
+		player.currentPiece = this.tetrominosBag.getNextPiece();
 		return grid.getGrid();
 	}
 
@@ -175,7 +175,8 @@ export class MultiPlayerGame {
 					: player.getGrid().getGrid(),
 				score: player.currentScore,
 				level: this.level,
-				status: this.getStatus()
+				status: this.getStatus(),
+				nextPieces: this.tetrominosBag.peekNextPieces(3)
 			}));
 
 			const usernames = players.map((player) => player.getUsername());

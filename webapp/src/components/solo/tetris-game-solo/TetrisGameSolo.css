@@ -6,18 +6,111 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 13:02:53 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/29 15:05:01 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/29 16:31:56 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 .solo-game-container {
     display: flex;
+    align-items: center;
     justify-content: center;
-    align-items: flex-start;
+    min-height: 80vh;
+    padding: 20px;
+}
+
+.solo-game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 800px;
+    margin-bottom: 30px;
+}
+
+.solo-game-header h1 {
+    font-family: 'PacfontGood', sans-serif;
+    font-size: 2.5rem;
+    color: #FDD835;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    margin: 0;
+}
+
+.back-button {
+    font-family: 'PacfontGood', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    padding: 12px 24px;
+    font-size: 1rem;
+    color: white;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.back-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.loading, .error {
+    font-family: 'PacfontGood', sans-serif;
+    font-size: 1.5rem;
+    color: #FDD835;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    padding: 20px;
+}
+
+.error {
+    color: #ff4444;
+}
+
+.tetris-game-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
     padding-top: 5vh;
     min-height: 100vh;
     color: white;
     font-family: 'Orbitron', sans-serif;
+}
+
+.side-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    align-items: center;
+}
+
+.game-info-panel {
+    background: rgba(0, 0, 0, 0.6);
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    min-width: 200px;
+}
+
+.info-item {
+    margin: 15px 0;
+    text-align: center;
+}
+
+.info-label {
+    font-size: 0.9rem;
+    color: #aaa;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.info-value {
+    font-size: 1.8rem;
+    color: #fff;
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
 .players-boards {

@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 13:02:55 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/29 15:13:06 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/29 16:31:57 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useUser } from "../../../providers/UserProvider";
 import { useSocket } from "../../../providers/SocketProvider";
 import { socketService } from "../../../services/socketService";
+import { TetrominosBag } from "../../tetrominos-bag/TetrominosBag";
 
 import { endSoloGame } from "../../../composables/useApi";
 
@@ -46,6 +47,7 @@ export const TetrisGameSolo = () => {
 	const [grid, setGrid] = useState(() => Array.from({ length: 20 }, () => Array(10).fill(0)));
 	const [score, setScore] = useState(0);
 	const [level, setLevel] = useState(1);
+	const [nextPieces, setNextPieces] = useState([]);
 	const { user } = useUser();
 	const { socket } = useSocket();
 	const [gameStatus, setGameStatus] = useState(null);
@@ -94,6 +96,9 @@ export const TetrisGameSolo = () => {
 				}
 				if (playerState.level !== undefined) {
 					setLevel(playerState.level);
+				}
+				if (playerState.nextPieces) {
+					setNextPieces(playerState.nextPieces);
 				}
 				if (playerState.status) {
 					setGameStatus(playerState.status);
@@ -169,18 +174,21 @@ export const TetrisGameSolo = () => {
 				</div>
 			)}
 			{gameStatus === "IN_PROGRESS" && (
-				<div className="solo-game-container" style={{ textAlign: "center", color: "white" }}>
-					<div className="game-info-panel">
-						<div className="info-item">
-							<div className="info-label">Score</div>
-							<div className="info-value">{score.toLocaleString()}</div>
-						</div>
-						<div className="info-item">
-							<div className="info-label">Level</div>
-							<div className="info-value">{level}</div>
-						</div>
-					</div>
+				<div className="tetris-game-wrapper">
 					<div className="grid">{renderGrid(grid)}</div>
+					<div className="side-panel">
+						<div className="game-info-panel">
+							<div className="info-item">
+								<div className="info-label">Score</div>
+								<div className="info-value">{score.toLocaleString()}</div>
+							</div>
+							<div className="info-item">
+								<div className="info-label">Level</div>
+								<div className="info-value">{level}</div>
+							</div>
+						</div>
+						<TetrominosBag nextPieces={nextPieces} />
+					</div>
 				</div>
 			)}
 		</>

@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 13:02:53 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/29 14:47:47 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/29 16:31:57 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,23 +57,37 @@ body {
     pointer-events: none;
 }
 
-.player-info {
-    text-align: center;
-    z-index: 1;
-    background: rgba(0, 0, 0, 0.6);
-    padding: 10px 20px;
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-    min-width: 200px;
-}
-
-.player-info h3 {
+.player-title {
     margin: 0;
     font-size: 1.2rem;
     color: #fff;
     text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
     letter-spacing: 2px;
+    z-index: 1;
+}
+
+.game-layout {
+    display: flex;
+    gap: 40px;
+    align-items: center;
+    z-index: 1;
+}
+
+.side-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    align-items: center;
+}
+
+.player-info {
+    text-align: center;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    min-width: 200px;
 }
 
 .current-player-badge {
@@ -87,20 +101,28 @@ body {
 }
 
 .game-stats {
-    margin-top: 10px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
-.game-stats p {
-    margin: 4px 0;
+.stat-item {
+    text-align: center;
+}
+
+.stat-label {
     font-size: 0.9rem;
     color: #aaa;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
-.game-stats span {
+.stat-value {
+    font-size: 1.8rem;
     color: #fff;
     font-weight: bold;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
 .grid {
