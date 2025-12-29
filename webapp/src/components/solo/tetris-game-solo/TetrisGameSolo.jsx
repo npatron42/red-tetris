@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 13:02:55 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/29 14:50:06 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/29 14:53:53 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,11 @@ import "./TetrisGameSolo.css";
 
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useUser } from "../../providers/UserProvider";
-import { useSocket } from "../../providers/SocketProvider";
-import { socketService } from "../../services/socketService";
+import { useUser } from "../../../providers/UserProvider";
+import { useSocket } from "../../../providers/SocketProvider";
+import { socketService } from "../../../services/socketService";
 
-import { endSoloGame } from "../../composables/useApi";
+import { endSoloGame } from "../../../composables/useApi";
 
 const COLORS = {
 	I: "#00FFFF",

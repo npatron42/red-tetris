@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:39:24 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/29 14:50:18 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/29 14:54:19 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,10 @@ import { useParams, useNavigate } from "react-router-dom";
 
 import { LogOutIcon, PlayIcon, UserIcon, CrownIcon } from "lucide-react";
 
-import { useUser } from "../../providers/UserProvider";
-import { useSocket } from "../../providers/SocketProvider";
-import { useRoom } from "../../composables/useRoom";
-import { GameResults } from "../game-results/GameResults";
+import { useUser } from "../../../providers/UserProvider";
+import { useSocket } from "../../../providers/SocketProvider";
+import { useRoom } from "../../../composables/useRoom";
+import { GameResults } from "../../game-results/GameResults";
 import { TetrisGameMultiplayer } from "../tetris-game-multiplayer/TetrisGameMultiplayer";
 
 import "./MultiGameRoom.css";

@@ -10091,5 +10091,17 @@
     "username": "mpmp",
     "status": "IN_PROGRESS",
     "difficulty": "EASY"
+  },
+  {
+    "gameId": "71635e5f-9cad-4e3d-ac73-5ce3d7ae3934",
+    "username": "mpmp",
+    "status": "COMPLETED",
+    "difficulty": "NINJA"
+  },
+  {
+    "gameId": "466d9514-6513-4916-a09e-17ab1a2accd4",
+    "username": "mpmp",
+    "status": "COMPLETED",
+    "difficulty": "EASY"
   }
 ]

@@ -1,49 +1,54 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   JoinRoom.jsx                                       :+:      :+:    :+:   */
+/*   CreateRoom.jsx                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/07 16:54:59 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/29 14:46:56 by npatron          ###   ########.fr       */
+/*   Created: 2025/12/08 13:08:55 by npatron           #+#    #+#             */
+/*   Updated: 2025/12/29 14:54:19 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import "./PlayComponent.css";
 
-import { MoveRight, ArrowLeft } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useUser } from "../../providers/UserProvider";
-import { useRoom } from "../../composables/useRoom";
-import { toast, ToastContainer, Bounce } from "react-toastify";
+import { useUser } from "../../../providers/UserProvider";
+import { useRoom } from "../../../composables/useRoom";
 
-export default function JoinRoom() {
-	const [roomName, setroomName] = useState("");
+import { BadgePlus, ArrowLeft } from "lucide-react";
+import { ToastContainer, toast, Bounce } from "react-toastify";
+
+const CreateRoom = () => {
+	const [roomName, setRoomName] = useState("");
 	const navigate = useNavigate();
 	const { user } = useUser();
-	const { handleJoinRoom } = useRoom();
+	const { handleCreateRoom, isLoading, error } = useRoom();
+
 	if (!user) {
 		return null;
 	}
 
-	const handleSubmit = async (event) => {
+	const handleRoomCreation = async (event) => {
 		event.preventDefault();
-		const trimmedRoomName = roomName.trim();
-		if (trimmedRoomName.length < 1) {
+		const parsedRoomName = roomName.trim();
+		if (parsedRoomName.length < 1) {
 			return;
 		}
-		const roomData = {
-			roomName: trimmedRoomName,
-			username: user
-		};
-		const response = await handleJoinRoom(roomData);
-		if (response.success && response.data?.success) {
-			navigate(`/${trimmedRoomName}/${response.data.room.leaderUsername}`);
+		const result = await handleCreateRoom({ name: parsedRoomName, leaderUsername: user });
+		if (result.success) {
+			navigate(`/${parsedRoomName}/${user}`);
 		} else {
-			const errorMessage = response.error || response.data?.failure || "Failed to join room";
-			toast.error(errorMessage);
+			toast.error(result.error, {
+				position: "top-right",
+				autoClose: 5000,
+				hideProgressBar: false,
+				closeOnClick: false,
+				pauseOnHover: true,
+				draggable: true,
+				theme: "dark"
+			});
 		}
 	};
 
@@ -54,22 +59,22 @@ export default function JoinRoom() {
 					<ArrowLeft size={24} onClick={() => navigate(-1)} />
 				</div>
 				<div className="play-header-center">
-					<span>JOIN ROOM</span>
+					<span>CREATE ROOM</span>
 				</div>
 			</div>
-			<form className="play-button-container" onSubmit={handleSubmit}>
+			<form className="play-button-container" onSubmit={handleRoomCreation}>
 				<input
 					type="text"
 					placeholder="Room name"
 					value={roomName}
-					onChange={(event) => setroomName(event.target.value)}
+					onChange={(event) => setRoomName(event.target.value)}
 					maxLength={32}
 					minLength={1}
 					className="input-button"
 				/>
-				<button className="play-button" type="submit" disabled={roomName.trim().length < 1}>
-					Join
-					<MoveRight size={16} />
+				<button className="play-button" type="submit" disabled={roomName.trim().length < 1 || isLoading}>
+					{isLoading ? "Creating..." : "Create"}
+					<BadgePlus size={16} />
 				</button>
 			</form>
 			<ToastContainer
@@ -77,13 +82,16 @@ export default function JoinRoom() {
 				autoClose={5000}
 				hideProgressBar={false}
 				newestOnTop={false}
-				closeOnClick
+				closeOnClick={false}
 				rtl={false}
 				pauseOnFocusLoss
 				draggable
 				pauseOnHover
 				theme="light"
+				transition={Bounce}
 			/>
 		</div>
 	);
-}
+};
+
+export default CreateRoom;

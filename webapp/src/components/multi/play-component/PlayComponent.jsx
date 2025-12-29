@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 17:01:45 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/29 14:46:54 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/29 14:54:19 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@ import "./PlayComponent.css";
 
 import { Joystick } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useUser } from "../../providers/UserProvider";
+import { useUser } from "../../../providers/UserProvider";
 
 export const PlayComponent = () => {
 	const navigate = useNavigate();

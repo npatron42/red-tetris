@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/09 11:58:43 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/29 14:49:44 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/29 14:54:19 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,11 @@ import { useNavigate } from "react-router-dom";
 
 import Home from "./components/home/Home";
 import Login from "./components/login/Login";
-import CreateRoom from "./components/play-component/CreateRoom";
-import JoinRoom from "./components/play-component/JoinRoom";
-import MultiGameRoom from "./components/multi-game-room/MultiGameRoom";
-import SoloGameRoom from "./components/solo-game-room/SoloGameRoom";
-import { SoloGame } from "./components/solo-game/SoloGame";
+import CreateRoom from "./components/multi/play-component/CreateRoom";
+import JoinRoom from "./components/multi/play-component/JoinRoom";
+import MultiGameRoom from "./components/multi/multi-game-room/MultiGameRoom";
+import SoloGameRoom from "./components/solo/solo-game-room/SoloGameRoom";
+import { SoloGame } from "./components/solo/solo-game/SoloGame";
 import BackgroundAnimation from "./components/Background/BackgroundAnimation";
 
 import { RequireAuth, UserProvider } from "./providers/UserProvider";

@@ -6,16 +6,14 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/29 14:47:08 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/29 14:47:11 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/29 14:54:35 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
 import "./SoloGame.css";
 
-import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useUser } from "../../providers/UserProvider";
+import { useUser } from "../../../providers/UserProvider";
 import { TetrisGameSolo } from "../tetris-game-solo/TetrisGameSolo";
 
 export const SoloGame = () => {

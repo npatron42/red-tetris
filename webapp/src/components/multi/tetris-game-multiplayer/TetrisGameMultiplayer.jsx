@@ -6,16 +6,16 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 13:02:55 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/29 14:48:02 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/29 14:54:19 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import "./TetrisGameMultiplayer.css";
 
 import { useState, useEffect } from "react";
-import { useUser } from "../../providers/UserProvider";
-import { useSocket } from "../../providers/SocketProvider";
-import { socketService } from "../../services/socketService";
+import { useUser } from "../../../providers/UserProvider";
+import { useSocket } from "../../../providers/SocketProvider";
+import { socketService } from "../../../services/socketService";
 
 const COLOR_MAP = {
 	I: "#00F0FF",
