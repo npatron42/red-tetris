@@ -1,30 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   soloGame.js                                        :+:      :+:    :+:   */
+/*   multiPlayerGame.js                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/12/11 17:39:21 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/23 17:57:33 by npatron          ###   ########.fr       */
+/*   Created: 2025/12/08 16:11:25 by npatron           #+#    #+#             */
+/*   Updated: 2025/12/29 14:19:10 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import { PiecesGenerator } from "./piecesGenerator.js";
 import { ScoringSystem } from "./scoringSystem.js";
-import crypto from "crypto";
-
-export const Difficulty = {
-	EASY: "EASY",
-	MEDIUM: "MEDIUM",
-	HARD: "HARD",
-	VERY_HARD: "VERY_HARD",
-	IMPOSSIBLE: "IMPOSSIBLE",
-	EXTREME: "EXTREME",
-	ULTRA: "ULTRA",
-	NINJA: "NINJA",
-	GOD: "GOD"
-};
 
 export const Status = {
 	PENDING: "PENDING",
@@ -32,10 +19,9 @@ export const Status = {
 	COMPLETED: "COMPLETED"
 };
 
-export class SoloGame {
-	constructor(player, difficulty) {
-		this.id = crypto.randomUUID();
-		this.player = player;
+export class MultiPlayerGame {
+	constructor(room) {
+		this.room = room;
 
 		this.piecesGenerator = new PiecesGenerator();
 		this.scoringSystem = new ScoringSystem();
@@ -45,19 +31,23 @@ export class SoloGame {
 		this.gameStartTime = null;
 
 		this.status = Status.PENDING;
-		this.difficulty = difficulty;
 		this.level = 1;
 	}
 
 	startGame() {
+		if (this.getPlayersCount() < 1) return;
+
 		this.isStarted = true;
 		this.status = Status.IN_PROGRESS;
 		this.level = 1;
 		this.gameStartTime = Date.now();
 
-		this.player.resetGameData();
-		this.player.incrementNumberOfGamesPlayed();
-		this.player.currentPiece = this.piecesGenerator.getNextPiece();
+		const players = this.room.getPlayers();
+		players.forEach((player) => {
+			player.resetGameData();
+			player.incrementNumberOfGamesPlayed();
+			player.currentPiece = this.piecesGenerator.getNextPiece();
+		});
 	}
 
 	startGameLoop(socketService) {
@@ -70,8 +60,11 @@ export class SoloGame {
 				this.stopGameLoop();
 				return;
 			}
-			this.movePiece(this.player.getUsername(), "DOWN", socketService);
-		}, this._getDifficultySpeed());
+			const players = this.room.getPlayers();
+			players.forEach((player) => {
+				this.movePiece(player.getUsername(), "DOWN", socketService);
+			});
+		}, 1000);
 	}
 
 	stopGameLoop() {
@@ -89,22 +82,22 @@ export class SoloGame {
 		this.status = Status.COMPLETED;
 	}
 
+	getPlayersCount() {
+		return this.room.getPlayers().length;
+	}
+
 	getStatus() {
 		return this.status;
 	}
 
-	handleLockPiece() {
-		const grid = this.player.getGrid();
-		grid.lockPiece(this.player.currentPiece);
+	handleLockPiece(player) {
+		const grid = player.getGrid();
+		grid.lockPiece(player.currentPiece);
 		const linesCleared = grid.clearLines();
 		if (linesCleared > 0) {
-			this.player.currentScore = this.scoringSystem.calculateScore(
-				this.player.currentScore,
-				this.level,
-				linesCleared
-			);
+			player.currentScore = this.scoringSystem.calculateScore(player.currentScore, this.level, linesCleared);
 		}
-		this.player.currentPiece = this.piecesGenerator.getNextPiece();
+		player.currentPiece = this.piecesGenerator.getNextPiece();
 		return grid.getGrid();
 	}
 
@@ -113,17 +106,19 @@ export class SoloGame {
 			return null;
 		}
 
-		if (this.player.getUsername() !== username || !this.player.currentPiece) {
+		const player = this.room.getPlayers().find((p) => p.getUsername() === username);
+		if (!player || !player.currentPiece) {
 			return null;
 		}
 
-		const piece = this.player.currentPiece;
-		const grid = this.player.getGrid();
+		const piece = player.currentPiece;
+		const grid = player.getGrid();
 		if (grid.gameIsLost()) {
 			this.endGame();
-			this.sendUpdatedGridToPlayer(socketService);
+			this.sendUpdatedGridToPlayers(socketService);
 			return;
 		}
+
 		const oldX = piece.getX();
 		const oldY = piece.getY();
 		const oldRotation = piece.rotationIndex;
@@ -148,7 +143,7 @@ export class SoloGame {
 				if (grid.isValidPosition(piece, piece.getX(), piece.getY())) {
 				} else {
 					piece.setPosition(oldX, oldY);
-					this.handleLockPiece();
+					this.handleLockPiece(player);
 				}
 				break;
 			case "ROTATE":
@@ -163,33 +158,33 @@ export class SoloGame {
 					dropY++;
 				}
 				piece.setPosition(piece.getX(), dropY);
-				this.handleLockPiece();
+				this.handleLockPiece(player);
 				break;
 		}
 
-		this.sendUpdatedGridToPlayer(socketService);
+		this.sendUpdatedGridToPlayers(socketService);
 	}
 
-	sendUpdatedGridToPlayer(socketService) {
+	sendUpdatedGridToPlayers(socketService) {
 		try {
-			const state = [
-				{
-					username: this.player.getUsername(),
-					grid: this.player.currentPiece
-						? this.player.getGrid().getGridWithPiece(this.player.currentPiece)
-						: this.player.getGrid().getGrid(),
-					score: this.player.currentScore,
-					level: this.level,
-					status: this.getStatus()
-				}
-			];
+			const players = this.room.getPlayers();
+			const gameState = players.map((player) => ({
+				username: player.getUsername(),
+				grid: player.currentPiece
+					? player.getGrid().getGridWithPiece(player.currentPiece)
+					: player.getGrid().getGrid(),
+				score: player.currentScore,
+				level: this.level,
+				status: this.getStatus()
+			}));
 
-			socketService.emitToUsers([this.player.getUsername()], "soloGameUpdated", {
-				username: this.player.getUsername(),
-				state
+			const usernames = players.map((player) => player.getUsername());
+			socketService.emitToUsers(usernames, "multiGridUpdate", {
+				roomName: this.room.getRoomName(),
+				gameState
 			});
 		} catch (error) {
-			console.error("Error sending updated grid to player", error);
+			console.error("Error sending updated grid to players", error);
 		}
 	}
 
@@ -204,7 +199,7 @@ export class SoloGame {
 			}
 			this.level++;
 			this._restartGameLoop(socketService);
-			this.sendUpdatedGridToPlayer(socketService);
+			this.sendUpdatedGridToPlayers(socketService);
 		}, 10000);
 	}
 
@@ -213,13 +208,20 @@ export class SoloGame {
 			clearInterval(this.interval);
 			this.interval = null;
 		}
+		const baseSpeed = 1000;
+		const speedReduction = Math.max(0, (this.level - 1) * 0.05);
+		const calculatedSpeed = Math.max(100, baseSpeed * (1 - speedReduction));
+
 		this.interval = setInterval(() => {
 			if (!this.isStarted) {
 				this.stopGameLoop();
 				return;
 			}
-			this.movePiece(this.player.getUsername(), "DOWN", socketService);
-		}, this._getDifficultySpeed());
+			const players = this.room.getPlayers();
+			players.forEach((player) => {
+				this.movePiece(player.getUsername(), "DOWN", socketService);
+			});
+		}, Math.floor(calculatedSpeed));
 	}
 
 	stopLevelTimer() {
@@ -227,44 +229,5 @@ export class SoloGame {
 			clearInterval(this.levelInterval);
 			this.levelInterval = null;
 		}
-	}
-
-	_getDifficultySpeed() {
-		let baseSpeed;
-		switch (this.difficulty) {
-			case Difficulty.EASY:
-				baseSpeed = 1000;
-				break;
-			case Difficulty.MEDIUM:
-				baseSpeed = 500;
-				break;
-			case Difficulty.HARD:
-				baseSpeed = 250;
-				break;
-			case Difficulty.VERY_HARD:
-				baseSpeed = 100;
-				break;
-			case Difficulty.IMPOSSIBLE:
-				baseSpeed = 50;
-				break;
-			case Difficulty.EXTREME:
-				baseSpeed = 25;
-				break;
-			case Difficulty.ULTRA:
-				baseSpeed = 10;
-				break;
-			case Difficulty.NINJA:
-				baseSpeed = 5;
-				break;
-			case Difficulty.GOD:
-				baseSpeed = 1;
-				break;
-			default:
-				baseSpeed = 1000;
-		}
-
-		const speedReduction = Math.max(0, (this.level - 1) * 0.05);
-		const calculatedSpeed = Math.max(1, baseSpeed * (1 - speedReduction));
-		return Math.floor(calculatedSpeed);
 	}
 }

@@ -6,16 +6,14 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:10:49 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/11 18:50:09 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/29 14:16:16 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import roomDao from "../dao/roomDao.js";
 import socketService from "./socket/socketService.js";
 import pino from "pino";
-import { GameService } from "./gameService.js";
-import { Room } from "../classes/room.js";
-import { Player } from "../classes/player.js";
+import multiGameService from "./multiGameService.js";
 
 const logger = pino({
 	level: "info"
@@ -25,8 +23,6 @@ logger.info("RoomService initialized");
 export class RoomService {
 	constructor() {
 		this.activeRooms = new Map();
-		this.gameServices = new Map();
-		socketService.setMoveHandler(this.handleMovePiece.bind(this));
 	}
 
 	createRoom(roomName, leaderUsername) {
@@ -167,15 +163,8 @@ export class RoomService {
 			this.activeRooms.set(roomName, roomData);
 			roomDao.update(roomName, { gameOnGoing: true, gameStatus: "PLAYING" });
 
-			const roomInstance = new Room(roomData.name, roomData.leaderUsername, null);
-			roomInstance.players = roomData.players.map((username) => {
-				const socketId = socketService.getUserSocketId(username);
-				return new Player(username, socketId);
-			});
+			multiGameService.createMultiGame(roomData.name, roomData.leaderUsername, roomData.players);
 
-			const gameService = new GameService();
-			gameService.startGame(roomInstance);
-			this.gameServices.set(roomName, gameService);
 			this.notifyPlayersRoomUpdated(roomData);
 			return roomData;
 		} catch (error) {
@@ -192,20 +181,8 @@ export class RoomService {
 		room.gameOnGoing = false;
 		this.activeRooms.set(roomName, room);
 		roomDao.update(roomName, { gameOnGoing: false });
-		const gameService = this.gameServices.get(roomName);
-		if (gameService) {
-			gameService.endGame();
-			this.gameServices.delete(roomName);
-		}
+		multiGameService.endMultiGame(roomName);
 		return room;
-	}
-
-	handleMovePiece(roomName, username, direction) {
-		const gameService = this.gameServices.get(roomName);
-		if (!gameService) {
-			return;
-		}
-		gameService.movePiece(roomName, username, direction);
 	}
 
 	notifyPlayersRoomUpdated(room) {

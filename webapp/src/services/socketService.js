@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 13:57:35 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/12 13:07:42 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/29 14:49:36 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,14 +54,16 @@ const connect = (username) => {
 		emit("roomUpdated", data);
 	});
 
-	socket.on("gridUpdate", (data) => {
-		emit("gridUpdate", data);
+	socket.on("multiGridUpdate", (data) => {
+		emit("multiGridUpdate", data);
+	});
+	socket.on("soloGridUpdate", (data) => {
+		emit("soloGridUpdate", data);
 	});
 
 	socket.on("soloGameUpdated", (data) => {
 		emit("soloGameUpdated", data);
 	});
-
 
 	return socket;
 };

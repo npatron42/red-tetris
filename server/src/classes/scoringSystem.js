@@ -6,11 +6,11 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/23 17:22:17 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/23 17:31:34 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/23 17:35:31 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-class ScoringSystem {
+export class ScoringSystem {
 	constructor() {
 		this.rules = {
 			1: 100,
@@ -20,7 +20,8 @@ class ScoringSystem {
 		};
 	}
 	calculateScore(playerScore, gameLevel, numberOfLinesCleared) {
-		playerScore += this.rules[numberOfLinesCleared] * gameLevel;
+		const points = this.rules[numberOfLinesCleared] || 0;
+		playerScore += points * gameLevel;
 		return playerScore;
 	}
 }

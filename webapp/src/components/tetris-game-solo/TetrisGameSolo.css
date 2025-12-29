@@ -1,21 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   TetrisGame.css                                     :+:      :+:    :+:   */
+/*   TetrisGameSolo.css                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 13:02:53 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/11 16:48:59 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/29 14:50:07 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 .game-board-container {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     padding-top: 5%;
     min-height: 100vh;
+    gap: 20px;
 }
 
 .grid {
@@ -34,4 +36,53 @@
     width: 30px;
     height: 30px;
     transition: background-color 0.1s ease;
+}
+
+.game-info-panel {
+    display: flex;
+    gap: 40px;
+    justify-content: center;
+    align-items: center;
+    padding: 15px 30px;
+    background-color: rgba(10, 10, 10, 0.8);
+    border: 2px solid #333;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.info-label {
+    font-size: 14px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.info-value {
+    font-size: 24px;
+    font-weight: bold;
+    color: #00FFFF;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+}
+
+@keyframes lineClear {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.3;
+        transform: scale(1.1);
+        background-color: #FFFFFF !important;
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
 }

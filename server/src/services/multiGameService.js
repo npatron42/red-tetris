@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/29 14:00:00 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/29 14:00:00 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/29 14:24:40 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ export class MultiGameService {
 
 	setupSocketHandler() {
 		try {
-			socketService.setMoveHandler((roomName, username, direction) => {
+			socketService.setMultiMoveHandler((roomName, username, direction) => {
 				try {
 					this.handleMovePiece(roomName, username, direction);
 				} catch (error) {
@@ -33,7 +33,7 @@ export class MultiGameService {
 				}
 			});
 
-			socketService.setDisconnectHandler((username) => {
+			socketService.addDisconnectHandler((username) => {
 				try {
 					this.handlePlayerDisconnect(username);
 				} catch (error) {
@@ -156,6 +156,7 @@ export class MultiGameService {
 
 	handleMovePiece(roomName, username, direction) {
 		try {
+			console.log("handleMovePiece", roomName, username, direction);
 			const roomInstance = this.getActiveGame(roomName);
 
 			if (!roomInstance) {
@@ -181,4 +182,3 @@ export class MultiGameService {
 }
 
 export default new MultiGameService();
-

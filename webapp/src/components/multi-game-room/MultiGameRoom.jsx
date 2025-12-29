@@ -6,156 +6,152 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:39:24 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/22 16:56:17 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/29 14:50:18 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-import { useEffect, useMemo, useState, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useEffect, useMemo, useState, useCallback } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 
-import { LogOutIcon, PlayIcon, UserIcon, CrownIcon } from 'lucide-react';
+import { LogOutIcon, PlayIcon, UserIcon, CrownIcon } from "lucide-react";
 
-import { useUser } from '../../providers/UserProvider';
-import { useSocket } from '../../providers/SocketProvider';
-import { useRoom } from '../../composables/useRoom';
-import { GameResults } from '../game-results/GameResults';
-import { TetrisGameMultiplayer } from '../tetris-game-multiplayer/TetrisGameMultiplayer';
+import { useUser } from "../../providers/UserProvider";
+import { useSocket } from "../../providers/SocketProvider";
+import { useRoom } from "../../composables/useRoom";
+import { GameResults } from "../game-results/GameResults";
+import { TetrisGameMultiplayer } from "../tetris-game-multiplayer/TetrisGameMultiplayer";
 
-import './MultiGameRoom.css';	
+import "./MultiGameRoom.css";
 
 const MultiGameRoom = () => {
-    const navigate = useNavigate();
-    const { roomName } = useParams();
-    const { user } = useUser();
-    const { roomEvents, socket } = useSocket();
-    const { isUserAllowedToJoinARoom, handleLeaveRoom, handleStartGame, isLoading, error } = useRoom();
+	const navigate = useNavigate();
+	const { roomName } = useParams();
+	const { user } = useUser();
+	const { roomEvents, socket } = useSocket();
+	const { isUserAllowedToJoinARoom, handleLeaveRoom, handleStartGame, isLoading, error } = useRoom();
 
-    const [isUserAuthorized, setIsUserAuthorized] = useState(false);
-    const [roomInfo, setRoomInfo] = useState(null);
-    
-    const normalizedRouteRoomName = useMemo(() => roomName?.toString().toLowerCase() || "", [roomName]);
-    const normalizedUser = useMemo(() => user?.toString().toLowerCase() || "", [user]);
+	const [isUserAuthorized, setIsUserAuthorized] = useState(false);
+	const [roomInfo, setRoomInfo] = useState(null);
 
-    const fetchRoomDetails = useCallback(async () => {
-        if (!roomName || !normalizedUser) return;
+	const normalizedRouteRoomName = useMemo(() => roomName?.toString().toLowerCase() || "", [roomName]);
+	const normalizedUser = useMemo(() => user?.toString().toLowerCase() || "", [user]);
 
-        const result = await isUserAllowedToJoinARoom(roomName, normalizedUser);
-        if (result.success && result.data?.room) {
-            setIsUserAuthorized(true);
-            setRoomInfo(result.data.room);
-        } else {
-            setIsUserAuthorized(false);
-            setRoomInfo(null);
-        }
-    }, [isUserAllowedToJoinARoom, normalizedUser, roomName]);
-    
-    useEffect(() => {
-        fetchRoomDetails();
-    }, [fetchRoomDetails]);
+	const fetchRoomDetails = useCallback(async () => {
+		if (!roomName || !normalizedUser) return;
 
+		const result = await isUserAllowedToJoinARoom(roomName, normalizedUser);
+		if (result.success && result.data?.room) {
+			setIsUserAuthorized(true);
+			setRoomInfo(result.data.room);
+		} else {
+			setIsUserAuthorized(false);
+			setRoomInfo(null);
+		}
+	}, [isUserAllowedToJoinARoom, normalizedUser, roomName]);
 
-    const startGame = async () => {
-        await handleStartGame({ roomName: normalizedRouteRoomName });
-    };
+	useEffect(() => {
+		fetchRoomDetails();
+	}, [fetchRoomDetails]);
 
-    const leaveRoom = async () => {
-        try {
-            const result = await handleLeaveRoom({ roomName: normalizedRouteRoomName, username: normalizedUser });
-            if (result.data.success) {
-                navigate('/');
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    };
+	const startGame = async () => {
+		await handleStartGame({ roomName: normalizedRouteRoomName });
+	};
 
-    useEffect(() => {
-        if (!roomEvents.roomUpdated || !roomEvents.roomUpdated.roomName) return;
+	const leaveRoom = async () => {
+		try {
+			const result = await handleLeaveRoom({ roomName: normalizedRouteRoomName, username: normalizedUser });
+			if (result.data.success) {
+				navigate("/");
+			}
+		} catch (error) {
+			console.error(error);
+		}
+	};
 
-        const incomingRoomName = roomEvents.roomUpdated.roomName.toString().toLowerCase();
-        if (incomingRoomName !== normalizedRouteRoomName) return;
+	useEffect(() => {
+		if (!roomEvents.roomUpdated || !roomEvents.roomUpdated.roomName) return;
 
-        fetchRoomDetails();
-    }, [roomEvents.roomUpdated, normalizedRouteRoomName, fetchRoomDetails]);
+		const incomingRoomName = roomEvents.roomUpdated.roomName.toString().toLowerCase();
+		if (incomingRoomName !== normalizedRouteRoomName) return;
 
+		fetchRoomDetails();
+	}, [roomEvents.roomUpdated, normalizedRouteRoomName, fetchRoomDetails]);
 
-    if (isLoading && !roomInfo) return <div className="room-loading">Loading room...</div>;
-    if (error && !isUserAuthorized) return <div className="room-error">Error: {error}</div>;
+	if (isLoading && !roomInfo) return <div className="room-loading">Loading room...</div>;
+	if (error && !isUserAuthorized) return <div className="room-error">Error: {error}</div>;
 
-    if (!isUserAuthorized) {
-        return (
-            <div className="room-unauthorized">
-                <h1>Access Denied</h1>
-                <p>You are not authorized to join this room.</p>
-            </div>
-        );
-    }
-    
-    if (!roomInfo) return <div className="room-loading">Loading room...</div>;
+	if (!isUserAuthorized) {
+		return (
+			<div className="room-unauthorized">
+				<h1>Access Denied</h1>
+				<p>You are not authorized to join this room.</p>
+			</div>
+		);
+	}
 
-	    const renderContent = () => {
-        const status = roomInfo.gameStatus || 'waiting'; 
+	if (!roomInfo) return <div className="room-loading">Loading room...</div>;
 
-        switch (status) {
-            case 'PLAYING':
-                return <TetrisGameMultiplayer roomInfo={roomInfo} currentUser={normalizedUser} />;
-            
-            case 'finished':
-                return <GameResults 
-                            roomInfo={roomInfo} 
-                            onRestart={startGame} 
-                            onLeave={leaveRoom} 
-                       />;
-            
-            case 'waiting':
-            default:
-                return (
-                    <div className="gameroom-card">
-                        <header className="room-header">
-                            <h1 className="room-title"><span>{roomName}</span></h1>
-                        </header>
+	const renderContent = () => {
+		const status = roomInfo.gameStatus || "waiting";
 
-                        <div className="players-section">
-                            <div className="players-grid">
-                                {roomInfo.players.map((player) => (
-                                    <div 
-                                        key={player} 
-                                        className={`player-card ${player === roomInfo.leaderUsername ? 'is-leader' : ''}`}
-                                    >
-                                        <div className="player-avatar">
-                                            <UserIcon size={24} color="#ffffff" />
-                                        </div>
-                                        <span className="player-name">
-                                            {player} 
-                                            {player === roomInfo.leaderUsername && <CrownIcon size={24} color="#ffd700" />}
-                                        </span>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                        <div className="lobby-actions">
-                            {normalizedUser === roomInfo.leaderUsername?.toLowerCase() && (
-                                <button className="custom-button-play" onClick={startGame}>
-                                    <PlayIcon size={24} color="#039BE5" />
-                                    Start Game
-                                </button>
-                            )}
-                            
-                            <button className="custom-button-leave" onClick={leaveRoom}>
-                                <LogOutIcon size={24} color="#E53935" />
-                                Leave Room
-                            </button>
-                        </div>
-                    </div>
-                );
-        }
-    };
+		switch (status) {
+			case "PLAYING":
+				return <TetrisGameMultiplayer roomInfo={roomInfo} currentUser={normalizedUser} />;
 
-    return (
-        <div className="gameroom-container">
-            {renderContent()}
-        </div>
-    );
+			case "finished":
+				return <GameResults roomInfo={roomInfo} onRestart={startGame} onLeave={leaveRoom} />;
+
+			case "waiting":
+			default:
+				return (
+					<div className="gameroom-card">
+						<header className="room-header">
+							<h1 className="room-title">
+								<span>{roomName}</span>
+							</h1>
+						</header>
+
+						<div className="players-section">
+							<div className="players-grid">
+								{roomInfo.players.map((player) => (
+									<div
+										key={player}
+										className={`player-card ${
+											player === roomInfo.leaderUsername ? "is-leader" : ""
+										}`}
+									>
+										<div className="player-avatar">
+											<UserIcon size={24} color="#ffffff" />
+										</div>
+										<span className="player-name">
+											{player}
+											{player === roomInfo.leaderUsername && (
+												<CrownIcon size={24} color="#ffd700" />
+											)}
+										</span>
+									</div>
+								))}
+							</div>
+						</div>
+						<div className="lobby-actions">
+							{normalizedUser === roomInfo.leaderUsername?.toLowerCase() && (
+								<button className="custom-button-play" onClick={startGame}>
+									<PlayIcon size={24} color="#039BE5" />
+									Start Game
+								</button>
+							)}
+
+							<button className="custom-button-leave" onClick={leaveRoom}>
+								<LogOutIcon size={24} color="#E53935" />
+								Leave Room
+							</button>
+						</div>
+					</div>
+				);
+		}
+	};
+
+	return <div className="gameroom-container">{renderContent()}</div>;
 };
 
 export default MultiGameRoom;

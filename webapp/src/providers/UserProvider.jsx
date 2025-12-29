@@ -6,70 +6,69 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 16:11:56 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/08 15:26:37 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/29 14:49:34 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
-const UserContext = createContext(null)
+const UserContext = createContext(null);
 
 export const UserProvider = ({ children }) => {
-    const [user, setUser] = useState(() => localStorage.getItem('user'))
+	const [user, setUser] = useState(() => localStorage.getItem("user"));
 
-    useEffect(() => {
-        if (user) {
-            localStorage.setItem('user', user)
-        } else {
-            localStorage.removeItem('user')
-        }
-    }, [user])
+	useEffect(() => {
+		if (user) {
+			localStorage.setItem("user", user);
+		} else {
+			localStorage.removeItem("user");
+		}
+	}, [user]);
 
-    const login = useCallback((username) => {
-        setUser(username)
-    }, [])
+	const login = useCallback((username) => {
+		setUser(username);
+	}, []);
 
-    const logout = useCallback(() => {
-        setUser(null)
-    }, [])
+	const logout = useCallback(() => {
+		setUser(null);
+	}, []);
 
-    const value = useMemo(
-        () => ({
-            user,
-            isAuthenticated: Boolean(user),
-            login,
-            logout,
-        }),
-        [login, logout, user],
-    )
+	const value = useMemo(
+		() => ({
+			user,
+			isAuthenticated: Boolean(user),
+			login,
+			logout
+		}),
+		[login, logout, user]
+	);
 
-    return <UserContext.Provider value={value}>{children}</UserContext.Provider>
-}
+	return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
+};
 
 export const useUser = () => {
-    const context = useContext(UserContext)
-    if (!context) {
-        throw new Error('useUser must be used within a UserProvider')
-    }
-    return context
-}
+	const context = useContext(UserContext);
+	if (!context) {
+		throw new Error("useUser must be used within a UserProvider");
+	}
+	return context;
+};
 
 export const RequireAuth = ({ children }) => {
-    const { isAuthenticated } = useUser()
-    const navigate = useNavigate()
-    const location = useLocation()
+	const { isAuthenticated } = useUser();
+	const navigate = useNavigate();
+	const location = useLocation();
 
-    useEffect(() => {
-        if (!isAuthenticated) {
-            navigate('/login', { replace: true, state: { from: location } })
-        }
-    }, [isAuthenticated, location, navigate])
+	useEffect(() => {
+		if (!isAuthenticated) {
+			navigate("/login", { replace: true, state: { from: location } });
+		}
+	}, [isAuthenticated, location, navigate]);
 
-    if (!isAuthenticated) {
-        return null
-    }
+	if (!isAuthenticated) {
+		return null;
+	}
 
-    return children
-}
-
+	return children;
+};

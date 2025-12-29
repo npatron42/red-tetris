@@ -22,20 +22,29 @@ export const SocketProvider = ({ children }) => {
 	const [roomId, setRoomId] = useState(null);
 	const [roomEvents, setRoomEvents] = useState({
 		roomUpdated: null,
-		gridUpdated: null,
+		gridUpdated: null
 	});
 
 	const [soloGameEvents, setSoloGameEvents] = useState({
 		gridUpdated: null,
+		multiGridUpdated: null,
+		soloGridUpdated: null
 	});
 
 	useEffect(() => {
-
 		const handleRoomUpdated = (data) => {
 			setRoomEvents((prev) => ({ ...prev, roomUpdated: data }));
 		};
 
 		const handleSoloGameUpdated = (data) => {
+			setSoloGameEvents((prev) => ({ ...prev, gridUpdated: data }));
+		};
+
+		const handleMultiGridUpdate = (data) => {
+			setRoomEvents((prev) => ({ ...prev, multiGridUpdated: data }));
+		};
+
+		const handleSoloGridUpdate = (data) => {
 			setSoloGameEvents((prev) => ({ ...prev, gridUpdated: data }));
 		};
 
@@ -46,17 +55,21 @@ export const SocketProvider = ({ children }) => {
 		socketService.on("roomUpdated", handleRoomUpdated);
 		socketService.on("gridUpdated", handleGridUpdated);
 		socketService.on("soloGameUpdated", handleSoloGameUpdated);
+		socketService.on("multiGridUpdate", handleMultiGridUpdate);
+		socketService.on("soloGridUpdate", handleSoloGridUpdate);
 		return () => {
 			socketService.off("roomUpdated", handleRoomUpdated);
 			socketService.off("gridUpdated", handleGridUpdated);
 			socketService.off("soloGameUpdated", handleSoloGameUpdated);
+			socketService.off("multiGridUpdate", handleMultiGridUpdate);
+			socketService.off("soloGridUpdate", handleSoloGridUpdate);
 		};
 	}, []);
 
 	useEffect(() => {
 		if (isAuthenticated && user) {
 			const socket = socketService.connect(user, null);
-			
+
 			if (socket) {
 				socket.on("connect", () => {
 					setIsConnected(true);
@@ -141,7 +154,7 @@ export const SocketProvider = ({ children }) => {
 		setRoomId(null);
 		setRoomEvents({
 			roomUpdated: null,
-			gridUpdated: null,
+			gridUpdated: null
 		});
 	}, []);
 
@@ -157,7 +170,7 @@ export const SocketProvider = ({ children }) => {
 			connect,
 			disconnect,
 			sendMove,
-			socket: socketService.getSocket(),
+			socket: socketService.getSocket()
 		}),
 		[isConnected, roomId, roomEvents, connect, disconnect, sendMove]
 	);

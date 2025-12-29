@@ -30,5 +30,13 @@
     "numberOfLosses": 0,
     "totalGames": 0,
     "matchHistory": []
+  },
+  {
+    "id": "5a63c51b-fb4a-4730-83d3-1bb9158d48f5",
+    "username": "mpmp",
+    "numberOfWins": 0,
+    "numberOfLosses": 0,
+    "totalGames": 0,
+    "matchHistory": []
   }
 ]

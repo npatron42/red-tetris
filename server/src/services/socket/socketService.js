@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/28 18:50:10 by fpalumbo          #+#    #+#             */
-/*   Updated: 2025/12/22 16:31:52 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/29 14:24:40 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,9 @@ export class SocketService {
 		this.io = null;
 		this.launched = false;
 		this.users = {};
-		this.disconnectHandler = null;
+		this.disconnectHandlers = [];
+		this.soloMoveHandler = null;
+		this.multiMoveHandler = null;
 	}
 
 	async init(server) {
@@ -34,9 +36,11 @@ export class SocketService {
 			socket.on("disconnect", () => {
 				if (username && this.users[username] === socket.id) {
 					delete this.users[username];
-					if (this.disconnectHandler) {
-						this.disconnectHandler(username);
-					}
+					this.disconnectHandlers.forEach((handler) => {
+						if (handler) {
+							handler(username);
+						}
+					});
 				}
 			});
 
@@ -84,23 +88,29 @@ export class SocketService {
 		});
 	}
 
-	setMoveHandler(handler) {
-		this.moveHandler = handler;
+	setSoloMoveHandler(handler) {
+		this.soloMoveHandler = handler;
 	}
 
-	setDisconnectHandler(handler) {
-		this.disconnectHandler = handler;
+	setMultiMoveHandler(handler) {
+		this.multiMoveHandler = handler;
+	}
+
+	addDisconnectHandler(handler) {
+		if (handler && !this.disconnectHandlers.includes(handler)) {
+			this.disconnectHandlers.push(handler);
+		}
 	}
 
 	handleMovePieceMultiplayer(roomName, username, direction) {
-		if (this.moveHandler) {
-			this.moveHandler(roomName, username, direction);
+		if (this.multiMoveHandler) {
+			this.multiMoveHandler(roomName, username, direction);
 		}
 	}
 
 	handleMovePieceSolo(gameId, username, direction) {
-		if (this.moveHandler) {
-			this.moveHandler(gameId, username, direction);
+		if (this.soloMoveHandler) {
+			this.soloMoveHandler(gameId, username, direction);
 		}
 	}
 

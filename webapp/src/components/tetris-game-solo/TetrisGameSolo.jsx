@@ -6,157 +6,170 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 13:02:55 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/22 17:24:53 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/29 14:50:06 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-import './TetrisGameSolo.css';
+import "./TetrisGameSolo.css";
 
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useUser } from '../../providers/UserProvider';
-import { useSocket } from '../../providers/SocketProvider';
-import { socketService } from '../../services/socketService';
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useUser } from "../../providers/UserProvider";
+import { useSocket } from "../../providers/SocketProvider";
+import { socketService } from "../../services/socketService";
 
-import { endSoloGame } from '../../composables/useApi';
+import { endSoloGame } from "../../composables/useApi";
 
 const COLORS = {
-    I: '#00FFFF',
-    'I-ghost': 'rgba(0,255,255,0.35)',
-    J: '#0000FF',
-    'J-ghost': 'rgba(0,0,255,0.35)',
-    L: '#FFA500',
-    'L-ghost': 'rgba(255,165,0,0.35)',
-    O: '#FFFF00',
-    'O-ghost': 'rgba(255,255,0,0.35)',
-    S: '#00FF00',
-    'S-ghost': 'rgba(0,255,0,0.35)',
-    T: '#800080',
-    'T-ghost': 'rgba(128,0,128,0.35)',
-    Z: '#FF0000',
-    'Z-ghost': 'rgba(255,0,0,0.35)',
-    0: '#1a1a1a'
+	I: "#00FFFF",
+	"I-ghost": "rgba(0,255,255,0.35)",
+	J: "#0000FF",
+	"J-ghost": "rgba(0,0,255,0.35)",
+	L: "#FFA500",
+	"L-ghost": "rgba(255,165,0,0.35)",
+	O: "#FFFF00",
+	"O-ghost": "rgba(255,255,0,0.35)",
+	S: "#00FF00",
+	"S-ghost": "rgba(0,255,0,0.35)",
+	T: "#800080",
+	"T-ghost": "rgba(128,0,128,0.35)",
+	Z: "#FF0000",
+	"Z-ghost": "rgba(255,0,0,0.35)",
+	0: "#1a1a1a"
 };
 
 export const TetrisGameSolo = () => {
-    
-    const navigate = useNavigate();
-    const gameId = useParams().gameId;
-    const [grid, setGrid] = useState(() => Array.from({ length: 20 }, () => Array(10).fill(0)));
-    const { user } = useUser();
-    const { socket } = useSocket();
-    const [gameStatus, setGameStatus] = useState(null);
+	const navigate = useNavigate();
+	const gameId = useParams().gameId;
+	const [grid, setGrid] = useState(() => Array.from({ length: 20 }, () => Array(10).fill(0)));
+	const [score, setScore] = useState(0);
+	const [level, setLevel] = useState(1);
+	const { user } = useUser();
+	const { socket } = useSocket();
+	const [gameStatus, setGameStatus] = useState(null);
 
-    const getCellStyle = (cell) => {
-        const backgroundColor = COLORS[cell] || COLORS[0];
-        return {
-            backgroundColor,
-            border: `1px solid ${cell === 0 ? '#333' : '#000'}`
-        };
-    };
+	const getCellStyle = (cell) => {
+		const backgroundColor = COLORS[cell] || COLORS[0];
+		return {
+			backgroundColor,
+			border: `1px solid ${cell === 0 ? "#333" : "#000"}`
+		};
+	};
 
-    const goToHome = async () => {
-        setTimeout(() => {
-            navigate('/');
-        }, 3000);
-    };
-    
-    useEffect(() => {
-        const handleGridUpdate = async (data) => {
-            console.log("handleGridUpdate", data);
-            if (data.state && data.state.length > 0) {
-                const playerState = data.state[0];
-                if (playerState.grid) {
-                    setGrid(playerState.grid);
-                }
-                if (playerState.status) {
-                    setGameStatus(playerState.status);
-                    
-                    if (playerState.status === 'COMPLETED') {
-                        await endSoloGame(gameId, playerState.score);
-                        await goToHome();
-                    }
-                }   
-            }
-        };
+	const goToHome = async () => {
+		setTimeout(() => {
+			navigate("/");
+		}, 3000);
+	};
 
-        socketService.on('soloGameUpdated', handleGridUpdate);
-        return () => {
-            socketService.off('soloGameUpdated', handleGridUpdate);
-        };
-    }, [user]);
+	useEffect(() => {
+		const handleGridUpdate = async (data) => {
+			console.log("handleGridUpdate", data);
+			if (data.state && data.state.length > 0) {
+				const playerState = data.state[0];
+				if (playerState.grid) {
+					setGrid(playerState.grid);
+				}
+				if (playerState.score !== undefined) {
+					setScore(playerState.score);
+				}
+				if (playerState.level !== undefined) {
+					setLevel(playerState.level);
+				}
+				if (playerState.status) {
+					setGameStatus(playerState.status);
 
-    useEffect(() => {
-        const handleKeyDown = (event) => {
-            if (!socket || !user) {
-                return;
-            }
+					if (playerState.status === "COMPLETED") {
+						await endSoloGame(gameId, playerState.score);
+						await goToHome();
+					}
+				}
+			}
+		};
 
-            let direction = null;
+		socketService.on("soloGameUpdated", handleGridUpdate);
+		return () => {
+			socketService.off("soloGameUpdated", handleGridUpdate);
+		};
+	}, [user, gameId]);
 
-            switch (event.key) {
-                case 'ArrowLeft':
-                    direction = 'LEFT';
-                    event.preventDefault();
-                    break;
-                case 'ArrowRight':
-                    direction = 'RIGHT';
-                    event.preventDefault();
-                    break;
-                case 'ArrowDown':
-                    direction = 'DOWN';
-                    event.preventDefault();
-                    break;
-                case 'ArrowUp':
-                    direction = 'ROTATE';
-                    event.preventDefault();
-                    break;
-                case ' ':
-                    direction = 'DROP';
-                    event.preventDefault();
-                    break;
-                default:
-                    return;
-            }
+	useEffect(() => {
+		const handleKeyDown = (event) => {
+			if (!socket || !user) {
+				return;
+			}
 
-            if (direction) {
-                socketService.sendMoveSolo({
-                    gameId, 
-                    direction,  
-                    username: user
-                });
-            }
-        };
+			let direction = null;
 
-        window.addEventListener('keydown', handleKeyDown);
+			switch (event.key) {
+				case "ArrowLeft":
+					direction = "LEFT";
+					event.preventDefault();
+					break;
+				case "ArrowRight":
+					direction = "RIGHT";
+					event.preventDefault();
+					break;
+				case "ArrowDown":
+					direction = "DOWN";
+					event.preventDefault();
+					break;
+				case "ArrowUp":
+					direction = "ROTATE";
+					event.preventDefault();
+					break;
+				case " ":
+					direction = "DROP";
+					event.preventDefault();
+					break;
+				default:
+					return;
+			}
 
-        return () => {
-            window.removeEventListener('keydown', handleKeyDown);
-        };
-    }, [socket, user]);
-    
-    return (
-        <> 
-        {gameStatus === 'COMPLETED' && (
-            <div className="game-board-container">
-                <h1>Game Completed</h1>
-            </div>
-        )}
-        {gameStatus === 'IN_PROGRESS' && (
-        <div className="game-board-container" style={{ textAlign: 'center', color: 'white' }}>
-            <div className="grid">
-                {grid.flatMap((row, rowIndex) =>
-                    row.map((cell, cellIndex) => (
-                        <div 
-                            key={`${rowIndex}-${cellIndex}`} 
-                            className="cell"
-                            style={getCellStyle(cell)}
-                        />
-                    ))
-                )}
-            </div>
-        </div>
-        )}
-        </>
-    );
+			if (direction) {
+				socketService.sendMoveSolo({
+					gameId,
+					direction,
+					username: user
+				});
+			}
+		};
+
+		window.addEventListener("keydown", handleKeyDown);
+
+		return () => {
+			window.removeEventListener("keydown", handleKeyDown);
+		};
+	}, [socket, user]);
+
+	return (
+		<>
+			{gameStatus === "COMPLETED" && (
+				<div className="game-board-container">
+					<h1>Game Completed</h1>
+				</div>
+			)}
+			{gameStatus === "IN_PROGRESS" && (
+				<div className="game-board-container" style={{ textAlign: "center", color: "white" }}>
+					<div className="game-info-panel">
+						<div className="info-item">
+							<div className="info-label">Score</div>
+							<div className="info-value">{score.toLocaleString()}</div>
+						</div>
+						<div className="info-item">
+							<div className="info-label">Level</div>
+							<div className="info-value">{level}</div>
+						</div>
+					</div>
+					<div className="grid">
+						{grid.flatMap((row, rowIndex) =>
+							row.map((cell, cellIndex) => (
+								<div key={`${rowIndex}-${cellIndex}`} className="cell" style={getCellStyle(cell)} />
+							))
+						)}
+					</div>
+				</div>
+			)}
+		</>
+	);
 };

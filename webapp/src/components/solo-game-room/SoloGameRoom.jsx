@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 16:54:46 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/22 17:34:22 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/22 17:45:17 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,13 +38,21 @@ const SoloGameRoom = () => {
     }
 
     return (
-        <div className="gameroom-container">
-            <select value={difficulty} onChange={handleDifficultyChange}>
-                <option value="EASY">Easy</option>
-                <option value="MEDIUM">Medium</option>
-                <option value="HARD">Hard</option>
-            </select>
-            <button onClick={handleCreateSoloGame}>Create Solo Game</button>
+        <div className="solo-game-room-container">
+            <div className="solo-game-room-difficulty-container">
+                <select value={difficulty} onChange={handleDifficultyChange}>
+                    <option value="EASY">Easy</option>
+                    <option value="MEDIUM">Medium</option>
+                    <option value="HARD">Hard</option>
+                    <option value="VERY_HARD">Very Hard</option>
+                    <option value="IMPOSSIBLE">Impossible</option>
+                    <option value="EXTREME">Extreme</option>
+                    <option value="ULTRA">Ultra</option>
+                    <option value="NINJA">Ninja</option>
+                    <option value="GOD">God</option>
+                </select> 
+            </div>
+            <button className="solo-game-room-button" onClick={handleCreateSoloGame}>Create Solo Game</button>
         </div>
     );
 };

@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 17:39:02 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/22 17:33:45 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/29 14:24:40 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ export class SoloGameService {
 
 	setupSocketHandler() {
 		try {
-			socketService.setMoveHandler((gameId, username, direction) => {
+			socketService.setSoloMoveHandler((gameId, username, direction) => {
 				try {
 					this.handleMovePiece(gameId, username, direction);
 				} catch (error) {
@@ -37,7 +37,7 @@ export class SoloGameService {
 				}
 			});
 
-			socketService.setDisconnectHandler((username) => {
+			socketService.addDisconnectHandler((username) => {
 				try {
 					this.handlePlayerDisconnect(username);
 				} catch (error) {
