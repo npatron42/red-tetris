@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 13:02:55 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/29 14:53:53 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/29 15:13:06 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,21 +21,23 @@ import { socketService } from "../../../services/socketService";
 import { endSoloGame } from "../../../composables/useApi";
 
 const COLORS = {
-	I: "#00FFFF",
-	"I-ghost": "rgba(0,255,255,0.35)",
-	J: "#0000FF",
-	"J-ghost": "rgba(0,0,255,0.35)",
-	L: "#FFA500",
-	"L-ghost": "rgba(255,165,0,0.35)",
-	O: "#FFFF00",
-	"O-ghost": "rgba(255,255,0,0.35)",
-	S: "#00FF00",
-	"S-ghost": "rgba(0,255,0,0.35)",
-	T: "#800080",
-	"T-ghost": "rgba(128,0,128,0.35)",
-	Z: "#FF0000",
-	"Z-ghost": "rgba(255,0,0,0.35)",
-	0: "#1a1a1a"
+	I: "#00F0FF",
+	J: "#0051FF",
+	L: "#FF7B00",
+	O: "#FFEA00",
+	S: "#00FF48",
+	T: "#BC13FE",
+	Z: "#FF003C",
+
+	0: "transparent",
+
+	"I-ghost": "#00F0FF",
+	"J-ghost": "#0051FF",
+	"L-ghost": "#FF7B00",
+	"O-ghost": "#FFEA00",
+	"S-ghost": "#00FF48",
+	"T-ghost": "#BC13FE",
+	"Z-ghost": "#FF003C"
 };
 
 export const TetrisGameSolo = () => {
@@ -48,12 +50,29 @@ export const TetrisGameSolo = () => {
 	const { socket } = useSocket();
 	const [gameStatus, setGameStatus] = useState(null);
 
-	const getCellStyle = (cell) => {
-		const backgroundColor = COLORS[cell] || COLORS[0];
+	const getCellAttributes = (cell) => {
+		if (cell === 0) return { className: "cell empty", style: {} };
+
+		const isGhost = typeof cell === "string" && cell.includes("-ghost");
+		const colorKey = cell;
+		const colorValue = COLORS[colorKey];
+
 		return {
-			backgroundColor,
-			border: `1px solid ${cell === 0 ? "#333" : "#000"}`
+			className: `cell ${isGhost ? "ghost" : "filled"}`,
+			style: {
+				backgroundColor: isGhost ? "transparent" : colorValue,
+				"--cell-color": colorValue
+			}
 		};
+	};
+
+	const renderGrid = (grid) => {
+		return grid.flatMap((row, rowIndex) =>
+			row.map((cell, cellIndex) => {
+				const { className, style } = getCellAttributes(cell);
+				return <div key={`${rowIndex}-${cellIndex}`} className={className} style={style} />;
+			})
+		);
 	};
 
 	const goToHome = async () => {
@@ -150,7 +169,7 @@ export const TetrisGameSolo = () => {
 				</div>
 			)}
 			{gameStatus === "IN_PROGRESS" && (
-				<div className="game-board-container" style={{ textAlign: "center", color: "white" }}>
+				<div className="solo-game-container" style={{ textAlign: "center", color: "white" }}>
 					<div className="game-info-panel">
 						<div className="info-item">
 							<div className="info-label">Score</div>
@@ -161,13 +180,7 @@ export const TetrisGameSolo = () => {
 							<div className="info-value">{level}</div>
 						</div>
 					</div>
-					<div className="grid">
-						{grid.flatMap((row, rowIndex) =>
-							row.map((cell, cellIndex) => (
-								<div key={`${rowIndex}-${cellIndex}`} className="cell" style={getCellStyle(cell)} />
-							))
-						)}
-					</div>
+					<div className="grid">{renderGrid(grid)}</div>
 				</div>
 			)}
 		</>

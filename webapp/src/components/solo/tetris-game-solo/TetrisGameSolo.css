@@ -6,83 +6,146 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 13:02:53 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/29 14:50:07 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/29 15:05:01 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-.game-board-container {
+.solo-game-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 5vh;
+    min-height: 100vh;
+    color: white;
+    font-family: 'Orbitron', sans-serif;
+}
+
+.players-boards {
+    display: flex;
+    gap: 80px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.player-board {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    padding-top: 5%;
-    min-height: 100vh;
     gap: 20px;
+    position: relative;
+}
+
+.player-board::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(0, 255, 255, 0.1) 0%, transparent 70%);
+    z-index: 0;
+    pointer-events: none;
+}
+
+.player-info {
+    text-align: center;
+    z-index: 1;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    min-width: 200px;
+}
+
+.player-info h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #fff;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    letter-spacing: 2px;
+}
+
+.current-player-badge {
+    display: block;
+    margin-top: 5px;
+    font-size: 0.7rem;
+    color: #00ffea;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-shadow: 0 0 10px #00ffea;
+}
+
+.game-stats {
+    margin-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 8px;
+}
+
+.game-stats p {
+    margin: 4px 0;
+    font-size: 0.9rem;
+    color: #aaa;
+}
+
+.game-stats span {
+    color: #fff;
+    font-weight: bold;
 }
 
 .grid {
-    background-color: #0a0a0a;
+    position: relative;
+    z-index: 1;
+    background-color: rgba(10, 10, 10, 0.85);
     display: grid;
     grid-template-columns: repeat(10, 30px);
     grid-template-rows: repeat(20, 30px);
-    gap: 0;
-    padding: 10px;
-    border: 3px solid #333;
-    border-radius: 8px;
-    box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+    gap: 1px;
+    padding: 4px;
+    border: 2px solid #333;
+    border-radius: 4px;
+    box-shadow: 
+        0 0 10px rgba(0, 0, 0, 0.8),
+        0 0 20px rgba(0, 255, 255, 0.1),
+        inset 0 0 20px rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
 }
+
+.player-board .grid.active-border {
+    border-color: #00ffea;
+    box-shadow: 
+        0 0 15px rgba(0, 255, 234, 0.3),
+        inset 0 0 20px rgba(0, 0, 0, 0.8);
+}
+
 
 .cell {
     width: 30px;
     height: 30px;
-    transition: background-color 0.1s ease;
+    position: relative;
+    box-sizing: border-box;
 }
 
-.game-info-panel {
-    display: flex;
-    gap: 40px;
-    justify-content: center;
-    align-items: center;
-    padding: 15px 30px;
-    background-color: rgba(10, 10, 10, 0.8);
-    border: 2px solid #333;
-    border-radius: 8px;
-    box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+.cell.empty {
+    background-color: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.03);
 }
 
-.info-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
+.cell.filled {
+    border: none;
+    border-radius: 2px;
+    box-shadow: 
+        inset 2px 2px 2px rgba(255, 255, 255, 0.4),
+        inset -2px -2px 2px rgba(0, 0, 0, 0.4),
+        0 0 8px var(--cell-color);
 }
 
-.info-label {
-    font-size: 14px;
-    color: #888;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.info-value {
-    font-size: 24px;
-    font-weight: bold;
-    color: #00FFFF;
-    text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
-}
-
-@keyframes lineClear {
-    0% {
-        opacity: 1;
-        transform: scale(1);
-    }
-    50% {
-        opacity: 0.3;
-        transform: scale(1.1);
-        background-color: #FFFFFF !important;
-    }
-    100% {
-        opacity: 0;
-        transform: scale(0.8);
-    }
+.cell.ghost {
+    background-color: transparent !important;
+    border: 2px solid var(--cell-color);
+    box-shadow: 0 0 5px var(--cell-color);
+    opacity: 0.4;
+    border-radius: 2px;
 }

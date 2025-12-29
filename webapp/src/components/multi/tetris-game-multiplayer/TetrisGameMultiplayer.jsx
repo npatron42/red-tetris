@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 13:02:55 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/29 14:54:19 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/29 14:59:46 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,7 +160,6 @@ export const TetrisGameMultiplayer = ({ roomInfo, currentUser }) => {
 						</div>
 					))
 				) : (
-					/* Affichage par défaut en attendant les joueurs */
 					<>
 						{renderPlayerBoard(null, false)}
 						{renderPlayerBoard(null, false)}
