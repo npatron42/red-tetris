@@ -1,0 +1,98 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Jukebox.css                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/12/29 17:13:55 by npatron           #+#    #+#             */
+/*   Updated: 2025/12/29 17:39:10 by npatron          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+.jukebox {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: rgba(6, 22, 20, 0.8);
+    border: 1px solid rgba(194, 227, 223, 0.45);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(6px);
+    width: 220px;
+    color: #C2E3DF;
+    font-family: "Arcade", sans-serif;
+}
+
+.jukebox-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.jukebox-track {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+}
+
+.jukebox-track svg {
+    color: #fdd835;
+}
+
+.jukebox-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #0c2f29, #0d4740);
+    border: 1px solid rgba(3, 155, 229, 0.45);
+    color: #C2E3DF;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.jukebox-toggle:hover {
+    box-shadow: 0 6px 16px rgba(3, 155, 229, 0.25);
+    background: linear-gradient(135deg, #0f554d, #107a71);
+}
+
+
+.jukebox-toggle svg {
+    color: #C2E3DF;
+}
+
+.jukebox-volume input[type="range"] {
+    width: 100%;
+    accent-color: #ffffff;
+    cursor: pointer;
+}
+
+.jukebox-volume input[type="range"]::-webkit-slider-runnable-track {
+    height: 6px;
+    border-radius: 6px;
+    background: linear-gradient(
+    to right, 
+    #D23835,
+    #EF9C31,
+    #F3D64E,
+    #69A857,
+    #4192D6,
+    #8E3FB5
+  );
+}
+
+.jukebox-volume input[type="range"]::-webkit-slider-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #C2E3DF;
+    border: 1px solid #061614;
+    margin-top: -4px;
+}
