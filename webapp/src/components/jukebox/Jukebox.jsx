@@ -6,11 +6,13 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/29 17:13:40 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/29 17:36:58 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/29 17:45:17 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import "./Jukebox.css";
+
+// HTMLMediaElement --> explain to fab that the .play() and .pause() are methods of the HTMLMediaElement interface (API)
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { matchPath, useLocation } from "react-router-dom";
