@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/09 11:58:43 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/29 15:05:49 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/29 16:48:26 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,14 +28,15 @@ import BackgroundAnimation from "./components/animations/background/BackgroundAn
 import { RequireAuth, UserProvider } from "./providers/UserProvider";
 import { SocketProvider } from "./providers/SocketProvider";
 import { Profile } from "./components/navbar/Profile";
+import Jukebox from "./components/jukebox/Jukebox";
 
 const TETRIS_LETTERS = [
-	{ char: "T", color: "#E53935" },
-	{ char: "E", color: "#FB8C00" },
-	{ char: "T", color: "#FDD835" },
-	{ char: "R", color: "#43A047" },
-	{ char: "I", color: "#039BE5" },
-	{ char: "S", color: "#8E24AA" }
+	{ letter: "T", color: "#E53935" },
+	{ letter: "E", color: "#FB8C00" },
+	{ letter: "T", color: "#FDD835" },
+	{ letter: "R", color: "#43A047" },
+	{ letter: "I", color: "#039BE5" },
+	{ letter: "S", color: "#8E24AA" }
 ];
 
 const App = () => {
@@ -49,10 +50,13 @@ const App = () => {
 			<BackgroundAnimation />
 
 			<div className="header">
+				<div className="header-left">
+					<Jukebox />
+				</div>
 				<div className="header-write" onClick={navigateToHome}>
 					{TETRIS_LETTERS.map((item, index) => (
 						<span key={index} style={{ color: item.color }}>
-							{item.char}
+							{item.letter}
 						</span>
 					))}
 				</div>
