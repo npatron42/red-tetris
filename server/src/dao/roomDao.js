@@ -6,50 +6,126 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 15:57:54 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/11 18:52:51 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/30 15:46:31 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-import { readJsonFile, writeJsonFile } from "../utils/fileStorage.js";
-
-const dbPath = "./src/db/rooms.json";
+import { v4 as uuidv4 } from "uuid";
+import { prismaClient } from "../db/mainDbClientPrisma.js";
 
 export class RoomDao {
-	findAll() {
-		return readJsonFile(dbPath);
+	constructor(dbClient = prismaClient) {
+		this.db = dbClient;
 	}
 
-	findByName(name) {
-		const rooms = readJsonFile(dbPath);
-		return rooms.find((room) => room.name === name) || null;
+	async findAll() {
+		return this.db.room.findMany();
 	}
 
-	create(room) {
-		const rooms = readJsonFile(dbPath);
-		rooms.push(room);
-		writeJsonFile(dbPath, rooms);
-		return room;
-	}
-
-	update(name, updates) {
-		const rooms = readJsonFile(dbPath);
-		const index = rooms.findIndex((room) => room.name === name);
-		if (index === -1) {
+	async findById(id) {
+		if (!id) {
 			return null;
 		}
-		if (updates.players) {
-			updates.players = updates.players.filter(player => player !== null && player !== undefined);
-		}
-		rooms[index] = { ...rooms[index], ...updates };
-		writeJsonFile(dbPath, rooms);
-		return rooms[index];
+		return this.db.room.findUnique({
+			where: { id }
+		});
 	}
 
-	delete(name) {
-		const rooms = readJsonFile(dbPath);
-		const filtered = rooms.filter((room) => room.name !== name);
-		writeJsonFile(dbPath, filtered);
-		return true;
+	async findByName(name) {
+		if (!name) {
+			return null;
+		}
+		return this.db.room.findFirst({
+			where: { name }
+		});
+	}
+
+	async resolveUserIdFromName(username) {
+		if (!username) {
+			return null;
+		}
+		const user = await this.db.user.findFirst({ where: { name: username } });
+		return user ? user.id : null;
+	}
+
+	async create(room) {
+		const { leaderId, leaderName, opponentId = null, opponentName = null, name, createdAt } = room;
+
+		const resolvedLeaderId = leaderId || (await this.resolveUserIdFromName(leaderName));
+		const resolvedOpponentId = opponentId || (opponentName ? await this.resolveUserIdFromName(opponentName) : null);
+
+		if (!name) {
+			throw new Error("name is required to create a room");
+		}
+		if (!resolvedLeaderId) {
+			throw new Error("leaderId (or leaderName) is required to create a room");
+		}
+
+		return this.db.room.create({
+			data: {
+				id: room.id || uuidv4(),
+				name,
+				leader_id: resolvedLeaderId,
+				opponent_id: resolvedOpponentId,
+				created_at: createdAt
+			}
+		});
+	}
+
+	async update(id, updates) {
+		if (!id) {
+			return null;
+		}
+		const { leaderId, leaderName, opponentId, opponentName, createdAt, name, ...rest } = updates ?? {};
+
+		const resolvedLeaderId = leaderId || (leaderName ? await this.resolveUserIdFromName(leaderName) : undefined);
+		const resolvedOpponentId =
+			opponentId !== undefined
+				? opponentId
+				: opponentName
+				? await this.resolveUserIdFromName(opponentName)
+				: undefined;
+
+		return this.db.room.update({
+			where: { id },
+			data: {
+				...rest,
+				name: name ?? undefined,
+				leader_id: resolvedLeaderId,
+				opponent_id: resolvedOpponentId,
+				created_at: createdAt ?? undefined
+			}
+		});
+	}
+
+	async updateByName(name, updates) {
+		const existing = await this.findByName(name);
+		if (!existing) {
+			return null;
+		}
+		return this.update(existing.id, updates);
+	}
+
+	async delete(id) {
+		if (!id) {
+			return false;
+		}
+		try {
+			await this.db.room.delete({
+				where: { id }
+			});
+			return true;
+		} catch {
+			return false;
+		}
+	}
+
+	async deleteByName(name) {
+		const existing = await this.findByName(name);
+		if (!existing) {
+			return false;
+		}
+		return this.delete(existing.id);
 	}
 }
 
