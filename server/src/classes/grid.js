@@ -10,6 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+const INDESTRUCTIBLE_CELL = "X";
+
 export class Grid {
 	constructor(rows = 20, cols = 10) {
 		this.rows = rows;
@@ -77,7 +79,11 @@ export class Grid {
 	clearLines() {
 		let linesCleared = 0;
 		for (let row = this.rows - 1; row >= 0; row--) {
-			if (this.grid[row].every((cell) => cell !== 0)) {
+			const rowData = this.grid[row];
+			const isIndestructibleRow = rowData.some((cell) => cell === INDESTRUCTIBLE_CELL);
+			const isRowFull = rowData.every((cell) => cell !== 0);
+
+			if (isRowFull && !isIndestructibleRow) {
 				this.grid.splice(row, 1);
 				this.grid.unshift(Array(this.cols).fill(0));
 				linesCleared++;
@@ -116,5 +122,16 @@ export class Grid {
 	}
 	gameIsLost() {
 		return this.grid.slice(0, 2).some((row) => row.some((cell) => cell !== 0));
+	}
+
+	addIndestructibleLines(count) {
+		if (count <= 0) {
+			return;
+		}
+
+		for (let i = 0; i < count; i++) {
+			this.grid.shift();
+			this.grid.push(Array(this.cols).fill(INDESTRUCTIBLE_CELL));
+		}
 	}
 }

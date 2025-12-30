@@ -29,6 +29,7 @@ const COLORS = {
 	S: "#00FF48",
 	T: "#BC13FE",
 	Z: "#FF003C",
+	X: "#3A3A3A",
 
 	0: "transparent",
 

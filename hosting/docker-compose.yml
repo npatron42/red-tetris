@@ -1,0 +1,15 @@
+services:
+  red-tetris-db:
+    image: postgres:16
+    container_name: red-tetris-db
+    environment:
+      POSTGRES_DB: red-tetris
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: pgsql24.
+    ports:
+      - "5556:5432"
+    volumes:
+      - red-tetris-db-data:/var/lib/postgresql/data
+
+volumes:
+  red-tetris-db-data:

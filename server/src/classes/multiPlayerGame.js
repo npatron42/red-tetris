@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:11:25 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/29 16:14:33 by npatron          ###   ########.fr       */
+/*   Updated: 2025/12/30 12:19:05 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,19 @@ export class MultiPlayerGame {
 			player.currentScore = this.scoringSystem.calculateScore(player.currentScore, this.level, linesCleared);
 		}
 		player.currentPiece = this.tetrominosBag.getNextPiece();
-		return grid.getGrid();
+		return linesCleared;
+	}
+
+	applyPenaltyLinesToOpponents(sourcePlayer, linesCleared) {	
+		const sourceUsername = sourcePlayer.getUsername();
+		const players = this.room.getPlayers();
+
+		players.forEach((player) => {
+			if (player.getUsername() === sourceUsername) {
+				return;
+			}
+			player.getGrid().addIndestructibleLines(linesCleared);
+		});
 	}
 
 	movePiece(username, direction, socketService) {
@@ -122,6 +134,7 @@ export class MultiPlayerGame {
 		const oldX = piece.getX();
 		const oldY = piece.getY();
 		const oldRotation = piece.rotationIndex;
+		let linesCleared = 0;
 
 		switch (direction) {
 			case "LEFT":
@@ -143,7 +156,7 @@ export class MultiPlayerGame {
 				if (grid.isValidPosition(piece, piece.getX(), piece.getY())) {
 				} else {
 					piece.setPosition(oldX, oldY);
-					this.handleLockPiece(player);
+					linesCleared = this.handleLockPiece(player);
 				}
 				break;
 			case "ROTATE":
@@ -158,8 +171,12 @@ export class MultiPlayerGame {
 					dropY++;
 				}
 				piece.setPosition(piece.getX(), dropY);
-				this.handleLockPiece(player);
+				linesCleared = this.handleLockPiece(player);
 				break;
+		}
+
+		if (linesCleared >= 1) {
+			this.applyPenaltyLinesToOpponents(player, linesCleared);
 		}
 
 		this.sendUpdatedGridToPlayers(socketService);
