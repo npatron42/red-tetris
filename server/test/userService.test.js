@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 03:02:02 by npatron           #+#    #+#             */
-/*   Updated: 2026/01/12 03:02:09 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/12 15:25:48 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,11 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { createSpy } from "./testUtils.js";
 
-process.env.DATABASE_URL
+process.env.DATABASE_URL;
 
 const { UserService } = await import("../src/services/userService.js");
 
-test("UserService.getUserByUsername requires a username", async () => {
+test("UserService.getUserByUsername requires a name", async () => {
 	const userDao = { findByName: createSpy(async () => ({ id: "user-1" })) };
 	const service = new UserService(userDao, {});
 
@@ -42,7 +42,7 @@ test("UserService.getUserByUsername returns user", async () => {
 	assert.equal(result, user);
 });
 
-test("UserService.userExists returns false for missing username", async () => {
+test("UserService.userExists returns false for missing name", async () => {
 	const userDao = { findByName: createSpy(async () => ({ id: "user-1" })) };
 	const service = new UserService(userDao, {});
 
@@ -94,12 +94,12 @@ test("UserService.getUserById returns user", async () => {
 	assert.equal(result, user);
 });
 
-test("UserService.createUser rejects invalid usernames", async () => {
+test("UserService.createUser rejects invalid names", async () => {
 	const userDao = { findByName: createSpy(async () => null), create: createSpy(async () => ({})) };
 	const service = new UserService(userDao, {});
 
-	await assert.rejects(() => service.createUser(""), /Invalid username/);
-	await assert.rejects(() => service.createUser("this-name-is-way-too-long"), /Invalid username/);
+	await assert.rejects(() => service.createUser(""), /Invalid name/);
+	await assert.rejects(() => service.createUser("this-name-is-way-too-long"), /Invalid name/);
 });
 
 test("UserService.createUser rejects existing users", async () => {
@@ -127,7 +127,7 @@ test("UserService.createUser creates a new user", async () => {
 	});
 });
 
-test("UserService.addMatchHistory requires username and match", async () => {
+test("UserService.addMatchHistory requires name and match", async () => {
 	const userDao = { findByName: createSpy(async () => ({ id: "user-1" })) };
 	const matchDao = { create: createSpy(async () => ({})) };
 	const service = new UserService(userDao, matchDao);
@@ -180,7 +180,7 @@ test("UserService.addMatchHistory defaults winner and rngSeed", async () => {
 	assert.equal(typeof matchDao.create.calls[0][0].rngSeed, "number");
 });
 
-test("UserService.getMatchHistory requires username", async () => {
+test("UserService.getMatchHistory requires name", async () => {
 	const userDao = { findByName: createSpy(async () => ({ id: "user-1" })) };
 	const matchDao = { findByUsername: createSpy(async () => []) };
 	const service = new UserService(userDao, matchDao);

@@ -6,16 +6,15 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 03:01:54 by npatron           #+#    #+#             */
-/*   Updated: 2026/01/12 03:02:44 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/12 15:25:48 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { createSpy } from "./testUtils.js";
 
-process.env.DATABASE_URL
+process.env.DATABASE_URL;
 
 const { MatchHistoryService } = await import("../src/services/matchHistoryService.js");
 
@@ -72,7 +71,7 @@ test("MatchHistoryService.createMatchHistory uses player1 as player2 when missin
 	assert.equal(result.player2Id, "user-1");
 });
 
-test("MatchHistoryService.getMatchHistoryByUsername requires username", async () => {
+test("MatchHistoryService.getMatchHistoryByUsername requires name", async () => {
 	const matchDao = { findByUsername: createSpy(async () => []) };
 	const userService = { getUserByUsername: createSpy(async () => ({})), updateStats: createSpy(async () => {}) };
 	const service = new MatchHistoryService(matchDao, userService);

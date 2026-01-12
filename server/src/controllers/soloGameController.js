@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 18:24:30 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/22 17:31:05 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/12 15:29:11 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,16 +18,10 @@ const soloGameService = new SoloGameService();
 
 export const createSoloGame = async (req, res) => {
 	try {
-		const { username, difficulty } = req.body;
-		const effectiveUser = req.user?.username || username;
-		if (!effectiveUser) {
-			return res.status(400).json({
-				success: false,
-				message: "Username is required"
-			});
-		}
+		const { difficulty } = req.body;
+		const userId = req.user.id;
 
-		const gameData = await soloGameService.createSoloGame(effectiveUser, difficulty);
+		const gameData = await soloGameService.createSoloGame(userId, difficulty);
 
 		return res.status(201).json({
 			success: true,

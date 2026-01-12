@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:00:15 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/30 15:46:17 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/12 15:25:48 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,19 +67,19 @@ export class MatchDao {
 		}
 	}
 
-	async findByUsername(username) {
-		if (!username) {
+	async findByUsername(name) {
+		if (!name) {
 			return [];
 		}
 		try {
-			const user = await this.db.user.findFirst({ where: { name: username } });
+			const user = await this.db.user.findFirst({ where: { name: name } });
 			if (!user) {
 				return [];
 			}
 			return await this.findByPlayerId(user.id);
 		} catch (error) {
 			console.error("MatchDao.findByUsername error:", error.message);
-			throw new Error(`Failed to find matches for username '${username}': ${error.message}`);
+			throw new Error(`Failed to find matches for name '${name}': ${error.message}`);
 		}
 	}
 

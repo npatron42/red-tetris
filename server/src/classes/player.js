@@ -6,15 +6,15 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 15:04:22 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/11 19:54:33 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/12 15:25:48 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import { Grid } from "./grid.js";
 
 export class Player {
-	constructor(username, socketId) {
-		this.username = username;
+	constructor(name, socketId) {
+		this.name = name;
 		this.socketId = socketId;
 
 		this.numberOfGamesPlayed = 0;
@@ -71,7 +71,7 @@ export class Player {
 	}
 
 	getUsername() {
-		return this.username;
+		return this.name;
 	}
 
 	getSocketId() {

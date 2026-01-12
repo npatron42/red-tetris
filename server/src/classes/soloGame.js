@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 17:39:21 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/29 16:14:25 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/12 15:25:48 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,12 +108,12 @@ export class SoloGame {
 		return grid.getGrid();
 	}
 
-	movePiece(username, direction, socketService) {
+	movePiece(name, direction, socketService) {
 		if (!this.isStarted) {
 			return null;
 		}
 
-		if (this.player.getUsername() !== username || !this.player.currentPiece) {
+		if (this.player.getUsername() !== name || !this.player.currentPiece) {
 			return null;
 		}
 
@@ -174,7 +174,7 @@ export class SoloGame {
 		try {
 			const state = [
 				{
-					username: this.player.getUsername(),
+					name: this.player.getUsername(),
 					grid: this.player.currentPiece
 						? this.player.getGrid().getGridWithPiece(this.player.currentPiece)
 						: this.player.getGrid().getGrid(),
@@ -186,7 +186,7 @@ export class SoloGame {
 			];
 
 			socketService.emitToUsers([this.player.getUsername()], "soloGameUpdated", {
-				username: this.player.getUsername(),
+				name: this.player.getUsername(),
 				state
 			});
 		} catch (error) {

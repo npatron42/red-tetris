@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 15:57:54 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/30 15:46:31 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/12 15:25:48 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,16 +55,16 @@ export class RoomDao {
 		}
 	}
 
-	async resolveUserIdFromName(username) {
-		if (!username) {
+	async resolveUserIdFromName(name) {
+		if (!name) {
 			return null;
 		}
 		try {
-			const user = await this.db.user.findFirst({ where: { name: username } });
+			const user = await this.db.user.findFirst({ where: { name: name } });
 			return user ? user.id : null;
 		} catch (error) {
 			console.error("RoomDao.resolveUserIdFromName error:", error.message);
-			throw new Error(`Failed to resolve user id from name '${username}': ${error.message}`);
+			throw new Error(`Failed to resolve user id from name '${name}': ${error.message}`);
 		}
 	}
 
@@ -77,7 +77,8 @@ export class RoomDao {
 
 		try {
 			const resolvedLeaderId = leaderId || (await this.resolveUserIdFromName(leaderName));
-			const resolvedOpponentId = opponentId || (opponentName ? await this.resolveUserIdFromName(opponentName) : null);
+			const resolvedOpponentId =
+				opponentId || (opponentName ? await this.resolveUserIdFromName(opponentName) : null);
 
 			if (!resolvedLeaderId) {
 				throw new Error("leaderId (or leaderName) is required to create a room");
@@ -106,7 +107,8 @@ export class RoomDao {
 		try {
 			const { leaderId, leaderName, opponentId, opponentName, createdAt, name, ...rest } = updates ?? {};
 
-			const resolvedLeaderId = leaderId || (leaderName ? await this.resolveUserIdFromName(leaderName) : undefined);
+			const resolvedLeaderId =
+				leaderId || (leaderName ? await this.resolveUserIdFromName(leaderName) : undefined);
 			const resolvedOpponentId =
 				opponentId !== undefined
 					? opponentId

@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 14:20:43 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/29 14:49:29 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/12 15:25:48 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,11 @@ export const useRoom = () => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState(null);
 
-	const handleCreateRoom = useCallback(async (roomData) => {
+	const handleCreateRoom = useCallback(async (roomName) => {
 		setIsLoading(true);
 		setError(null);
 		try {
-			const response = await createRoom(roomData);
+			const response = await createRoom(roomName);
 			return { success: true, data: response };
 		} catch (err) {
 			setError("Failed to create room", err);
@@ -31,7 +31,7 @@ export const useRoom = () => {
 		}
 	}, []);
 
-	const isUserAllowedToJoinARoom = useCallback(async (roomName, username) => {
+	const isUserAllowedToJoinARoom = useCallback(async (roomName, userName) => {
 		setIsLoading(true);
 		setError(null);
 		try {
@@ -39,7 +39,7 @@ export const useRoom = () => {
 			if (!response.success || !response.room) {
 				return { success: false, error: "Room not found" };
 			}
-			const normalizedUsername = username.toLowerCase();
+			const normalizedUsername = userName.toLowerCase();
 			const normalizedPlayers = response.room.players
 				.filter((player) => player !== null && player !== undefined)
 				.map((player) => player.toLowerCase());
@@ -55,48 +55,48 @@ export const useRoom = () => {
 		}
 	}, []);
 
-	const handleJoinRoom = useCallback(async (roomData) => {
+	const handleJoinRoom = useCallback(async (roomName) => {
 		setIsLoading(true);
 		setError(null);
 		try {
-			const response = await joinRoom(roomData);
+			const response = await joinRoom(roomName);
 			if (response.success) {
 				return { success: true, data: response };
 			}
-			return { success: false, error: response.failure || "Failed to join room" };
+			return { success: false, error: response.message || "Failed to join room" };
 		} catch (err) {
 			setError("Failed to join room", err);
-			return { success: false, error: err.response?.data?.failure || err.message || "Failed to join room" };
+			return { success: false, error: err.response?.data?.message || err.message || "Failed to join room" };
 		} finally {
 			setIsLoading(false);
 		}
 	}, []);
 
-	const handleLeaveRoom = useCallback(async (roomData) => {
-		if (!roomData?.roomName || !roomData?.username) {
-			return { success: false, error: "Room name and username are required" };
+	const handleLeaveRoom = useCallback(async (roomName) => {
+		if (!roomName) {
+			return { success: false, error: "Room name is required" };
 		}
 		setIsLoading(true);
 		setError(null);
 		try {
-			const response = await leaveRoom(roomData);
+			const response = await leaveRoom(roomName);
 			if (response.success) {
 				return { success: true, data: response };
 			}
-			return { success: false, error: response.failure || "Failed to leave room" };
+			return { success: false, error: response.message || "Failed to leave room" };
 		} catch (err) {
 			setError("Failed to leave room", err);
-			return { success: false, error: err.response?.data?.failure || err.message || "Failed to leave room" };
+			return { success: false, error: err.response?.data?.message || err.message || "Failed to leave room" };
 		} finally {
 			setIsLoading(false);
 		}
 	}, []);
 
-	const handleStartGame = useCallback(async (roomData) => {
+	const handleStartGame = useCallback(async (roomName) => {
 		setIsLoading(true);
 		setError(null);
 		try {
-			const response = await startGame(roomData);
+			const response = await startGame(roomName);
 			return { success: true, data: response };
 		} catch (err) {
 			setError("Failed to start game", err);

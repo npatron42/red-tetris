@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 17:59:32 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/29 14:49:30 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/12 15:25:48 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,10 @@ export const useSoloGame = () => {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
 
-	const createGame = async (username, difficulty) => {
+	const createGame = async (difficulty) => {
 		try {
 			setLoading(true);
-			const response = await createSoloGame(username, difficulty);
+			const response = await createSoloGame(difficulty);
 			if (response.success) {
 				setGameId(response.data.gameId);
 				return response.data.gameId;

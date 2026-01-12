@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/07 16:54:59 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/29 14:54:19 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/12 15:25:48 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ export default function JoinRoom() {
 		}
 		const roomData = {
 			roomName: trimmedRoomName,
-			username: user
+			name: user
 		};
 		const response = await handleJoinRoom(roomData);
 		if (response.success && response.data?.success) {

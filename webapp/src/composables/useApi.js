@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 15:20:41 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/29 14:49:25 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/12 15:55:29 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,12 +36,12 @@ export const getUser = async () => {
 	}
 };
 
-export const getHistoryMatchByUsername = async (username) => {
+export const getHistoryMatch = async () => {
 	try {
-		const response = await api.get(`/user/get-history-match/${username}`);
+		const response = await api.get("/match-history/me");
 		return response.data;
 	} catch (error) {
-		console.error(`Error getting history match by username:`, error);
+		console.error(`Error getting history match:`, error);
 		throw error;
 	}
 };
@@ -56,31 +56,31 @@ export const getRoomByName = async (roomName) => {
 	}
 };
 
+export const getAllRooms = async () => {
+	try {
+		const response = await api.get("/room/");
+		return response.data;
+	} catch (error) {
+		console.error(`Error getting all rooms:`, error);
+		throw error;
+	}
+};
+
 // POST METHODS
 
-export const createUser = async (username) => {
+export const createUser = async (name) => {
 	try {
-		const response = await api.post("/user/create", { username });
+		const response = await api.post("/user/create", { name });
 		return response.data;
 	} catch (error) {
-		console.error(`Error fetching user data:`, error);
+		console.error(`Error creating user:`, error);
 		throw error;
 	}
 };
 
-export const loginUser = async (username) => {
+export const joinRoom = async (roomName) => {
 	try {
-		const response = await api.post("/user/login", { username });
-		return response.data;
-	} catch (error) {
-		console.error(`Error fetching user data:`, error);
-		throw error;
-	}
-};
-
-export const joinRoom = async (roomData) => {
-	try {
-		const response = await api.post("/room/join", roomData);
+		const response = await api.post("/room/join", { roomName });
 		return response.data;
 	} catch (error) {
 		console.error(`Error joining room:`, error);
@@ -88,9 +88,9 @@ export const joinRoom = async (roomData) => {
 	}
 };
 
-export const leaveRoom = async (roomData) => {
+export const leaveRoom = async (roomName) => {
 	try {
-		const response = await api.post("/room/leave", roomData);
+		const response = await api.post("/room/leave", { roomName });
 		return response.data;
 	} catch (error) {
 		console.error(`Error leaving room:`, error);
@@ -98,9 +98,9 @@ export const leaveRoom = async (roomData) => {
 	}
 };
 
-export const createHistoryMatch = async (historyMatch) => {
+export const createHistoryMatch = async (playerIds, winnerId) => {
 	try {
-		const response = await api.post("/match/create-history-match", historyMatch);
+		const response = await api.post("/match-history/create", { playerIds, winnerId });
 		return response.data;
 	} catch (error) {
 		console.error(`Error creating history match:`, error);
@@ -108,9 +108,9 @@ export const createHistoryMatch = async (historyMatch) => {
 	}
 };
 
-export const createRoom = async (roomData) => {
+export const createRoom = async (name) => {
 	try {
-		const response = await api.post("/room/create", roomData);
+		const response = await api.post("/room/create", { name });
 		return response.data;
 	} catch (error) {
 		console.error(`Error creating room:`, error);
@@ -118,9 +118,9 @@ export const createRoom = async (roomData) => {
 	}
 };
 
-export const startGame = async (roomData) => {
+export const startGame = async (roomName) => {
 	try {
-		const response = await api.post("/room/start-game", roomData);
+		const response = await api.post("/room/start-game", { roomName });
 		return response.data;
 	} catch (error) {
 		console.error(`Error starting game:`, error);
@@ -128,9 +128,10 @@ export const startGame = async (roomData) => {
 	}
 };
 
-export const createSoloGame = async (username, difficulty) => {
+export const createSoloGame = async (difficulty) => {
 	try {
-		const response = await api.post("/solo/create", { username, difficulty });
+		console.log("createSoloGame difficulty:", difficulty);
+		const response = await api.post("/solo/create", { difficulty });
 		return response.data;
 	} catch (error) {
 		console.error(`Error creating solo game:`, error);

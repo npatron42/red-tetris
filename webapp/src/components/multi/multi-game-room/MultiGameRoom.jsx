@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:39:24 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/29 14:54:19 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/12 15:25:48 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ const MultiGameRoom = () => {
 
 	const leaveRoom = async () => {
 		try {
-			const result = await handleLeaveRoom({ roomName: normalizedRouteRoomName, username: normalizedUser });
+			const result = await handleLeaveRoom({ roomName: normalizedRouteRoomName, name: normalizedUser });
 			if (result.data.success) {
 				navigate("/");
 			}

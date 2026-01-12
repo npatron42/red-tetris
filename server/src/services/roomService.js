@@ -6,12 +6,12 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:10:49 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/29 14:16:16 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/12 15:28:57 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import { RoomDao } from "../dao/roomDao.js";
-import { UserDao } from "../dao/userDao.js";
+import { UserDao } from "../dao/UserDao.js";
 import socketService from "./socket/socketService.js";
 import pino from "pino";
 import multiGameService from "./multiGameService.js";
@@ -25,7 +25,12 @@ export class RoomService {
 	constructor(roomDao, userDao) {
 		this.roomDao = roomDao;
 		this.userDao = userDao;
-		this.activeRooms = new Map(); // key: roomId, value: augmented view
+		this.activeRooms = new Map();
+	}
+
+	async getUserById(id) {
+		if (!id) return null;
+		return this.userDao.findById(id);
 	}
 
 	async getUserNameById(id) {
@@ -64,16 +69,16 @@ export class RoomService {
 		return this.buildRoomView({ ...room, leaderUsername, opponentUsername }, displayName);
 	}
 
-	async createRoom(roomName, leaderUsername) {
-		if (!roomName || !leaderUsername) {
-			throw new Error("Room name and leader username are required");
+	async createRoom(roomName, leaderId) {
+		if (!roomName || !leaderId) {
+			throw new Error("Room name and leader ID are required");
 		}
 		const existingRoom = await this.roomDao.findByName(roomName);
 		if (existingRoom) {
 			throw new Error("Room already exists");
 		}
 
-		const leader = await this.userDao.findByName(leaderUsername);
+		const leader = await this.userDao.findById(leaderId);
 		if (!leader) {
 			throw new Error("Leader user not found");
 		}
@@ -88,16 +93,16 @@ export class RoomService {
 		return view;
 	}
 
-	async joinRoom(roomName, username) {
+	async joinRoom(roomName, userId) {
 		const room = await this.getRoomByName(roomName);
 		if (!room) {
 			throw new Error("Room not found");
 		}
-		if (room.opponentUsername) {
+		if (room.opponentId) {
 			return room;
 		}
 
-		const user = await this.userDao.findByName(username);
+		const user = await this.userDao.findById(userId);
 		if (!user) {
 			throw new Error("User not found");
 		}
@@ -137,27 +142,33 @@ export class RoomService {
 		return views;
 	}
 
-	async addPlayer(roomName, username) {
-		logger.info("Adding player to room", { roomName, username });
+	async addPlayer(roomName, userId) {
+		logger.info("Adding player to room", { roomName, userId });
 		const room = await this.getRoomByName(roomName);
 		if (!room) {
 			throw new Error("Room not found");
 		}
-		if (room.players.includes(username)) {
+		const user = await this.userDao.findById(userId);
+		if (!user) {
+			throw new Error("User not found");
+		}
+		if (room.players.includes(user.name)) {
 			return room;
 		}
-		return this.joinRoom(roomName, username);
+		return this.joinRoom(roomName, userId);
 	}
 
-	async removePlayer(roomName, username) {
+	async removePlayer(roomName, userId) {
 		const room = await this.getRoomByName(roomName);
 		if (!room) {
 			return null;
 		}
-		const normalizedUsername = username.toLowerCase();
+		if (!userId) {
+			logger.warn("Invalid userId parameter in removePlayer", { userId, roomName });
+			return room;
+		}
 
-		// If leader leaves, promote opponent if any
-		if (room.leaderUsername?.toLowerCase() === normalizedUsername) {
+		if (room.leaderId === userId) {
 			if (room.opponentId) {
 				await this.roomDao.updateByName(roomName, { leaderId: room.opponentId, opponentId: null });
 				const updated = await this.getRoomByName(roomName);
@@ -170,8 +181,7 @@ export class RoomService {
 			}
 		}
 
-		// If opponent leaves
-		if (room.opponentUsername?.toLowerCase() === normalizedUsername) {
+		if (room.opponentId === userId) {
 			await this.roomDao.updateByName(roomName, { opponentId: null });
 			const updated = await this.getRoomByName(roomName);
 			this.notifyPlayersRoomUpdated(updated);

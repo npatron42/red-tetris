@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 13:02:55 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/29 16:31:57 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/12 15:25:48 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,7 @@ export const TetrisGameMultiplayer = ({ roomInfo, currentUser }) => {
 				socketService.sendMoveMultiplayer({
 					roomName: roomInfo.name,
 					direction,
-					username: user
+					name: user
 				});
 			}
 		};
@@ -135,7 +135,7 @@ export const TetrisGameMultiplayer = ({ roomInfo, currentUser }) => {
 
 		return (
 			<div className="player-board">
-				<h3 className="player-title">{playerState?.username || "Waiting..."}</h3>
+				<h3 className="player-title">{playerState?.name || "Waiting..."}</h3>
 				<div className="game-layout">
 					<div className={`grid ${isCurrentUser ? "active-border" : ""}`}>{renderGrid(grid)}</div>
 					{isCurrentUser && (
@@ -167,9 +167,7 @@ export const TetrisGameMultiplayer = ({ roomInfo, currentUser }) => {
 			<div className="players-boards">
 				{playersState.length > 0 ? (
 					playersState.map((playerState) => (
-						<div key={playerState.username}>
-							{renderPlayerBoard(playerState, playerState.username === user)}
-						</div>
+						<div key={playerState.name}>{renderPlayerBoard(playerState, playerState.name === user)}</div>
 					))
 				) : (
 					<>

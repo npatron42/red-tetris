@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/22 22:54:31 by npatron           #+#    #+#             */
-/*   Updated: 2026/01/12 03:06:10 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/12 15:20:07 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@ import userService from "../services/userService.js";
 import { generateUserToken } from "../middleware/authMiddleware.js";
 
 const buildAuthResponse = (user) => {
-	const token = generateUserToken({ userId: user.id, username: user.name });
-	return { token, user: { id: user.id, username: user.name } };
+	const token = generateUserToken({ userId: user.id, name: user.name });
+	return { token, user: { id: user.id, name: user.name } };
 };
 
 export const getUser = async (req, res) => {
@@ -23,47 +23,24 @@ export const getUser = async (req, res) => {
 		const data = await userService.getUserById(req.user.id);
 		res.json({ success: true, user: data });
 	} catch (error) {
-		res.status(404).json({ success: false, failure: "No user found" });
+		res.status(404).json({ success: false, message: "No user found" });
 	}
 };
 
 export const createUser = async (req, res) => {
 	try {
-		const { username } = req.body;
-		if (!username) {
-			console.log("createUser ICI 0", username);
-			res.json({ failure: "Username is required" });
-			return;
+		const { name } = req.body;
+		if (!name) {
+			return res.status(400).json({ success: false, message: "name is required" });
 		}
-		console.log("createUser ICI 1", username);
-		const isUserExisting = await userService.userExists(username);
-		console.log("createUser ICI 2", isUserExisting);
+		const isUserExisting = await userService.userExistsByName(name);
 		if (isUserExisting) {
-			console.log("createUser ICI 3", isUserExisting);
-			res.json({ failed: "User existing" });
-			return;
+			return res.status(409).json({ success: false, message: "User already exists" });
 		}
-		console.log("createUser ICI 2", username);
-		const user = await userService.createUser(username);
-		console.log("createUser ICI 3", user);
+		const user = await userService.createUser(name);
 		const auth = buildAuthResponse(user);
-		res.json({ success: "User added", ...auth });
+		res.json({ success: true, message: "User created", ...auth });
 	} catch (error) {
-		res.json({ failure: error.message || "Error creating user" });
-	}
-};
-
-export const loginUser = async (req, res) => {
-	try {
-		const { username } = req.body;
-		if (!username) {
-			res.json({ failure: "Username is required" });
-			return;
-		}
-		const user = await userService.getUserByUsername(username);
-		const auth = buildAuthResponse(user);
-		res.json({ success: "login", ...auth });
-	} catch (error) {
-		res.json({ failure: error.message || "Error during login" });
+		res.status(500).json({ success: false, message: error.message || "Error creating user" });
 	}
 };

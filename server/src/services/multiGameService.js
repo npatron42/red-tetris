@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/29 14:00:00 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/29 14:24:40 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/12 15:25:48 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,17 +25,17 @@ export class MultiGameService {
 
 	setupSocketHandler() {
 		try {
-			socketService.setMultiMoveHandler((roomName, username, direction) => {
+			socketService.setMultiMoveHandler((roomName, name, direction) => {
 				try {
-					this.handleMovePiece(roomName, username, direction);
+					this.handleMovePiece(roomName, name, direction);
 				} catch (error) {
 					logger.error(`Error in move handler: ${error.message}`);
 				}
 			});
 
-			socketService.addDisconnectHandler((username) => {
+			socketService.addDisconnectHandler((name) => {
 				try {
-					this.handlePlayerDisconnect(username);
+					this.handlePlayerDisconnect(name);
 				} catch (error) {
 					logger.error(`Error in disconnect handler: ${error.message}`);
 				}
@@ -45,14 +45,14 @@ export class MultiGameService {
 		}
 	}
 
-	handlePlayerDisconnect(username) {
+	handlePlayerDisconnect(name) {
 		for (const [roomName, roomInstance] of this.activeGames.entries()) {
 			const game = roomInstance.getGame();
 			const players = roomInstance.getPlayers();
-			const player = players.find((p) => p.getUsername() === username);
+			const player = players.find((p) => p.getUsername() === name);
 
 			if (player) {
-				logger.info(`Cleaning up game in room ${roomName} for disconnected player ${username}`);
+				logger.info(`Cleaning up game in room ${roomName} for disconnected player ${name}`);
 				game.stopGameLoop();
 				game.endGame();
 				this.activeGames.delete(roomName);
@@ -72,9 +72,9 @@ export class MultiGameService {
 			}
 
 			const roomInstance = new Room(roomName, leaderUsername, leaderSocketId);
-			roomInstance.players = players.map((username) => {
-				const socketId = socketService.getUserSocketId(username);
-				return new Player(username, socketId);
+			roomInstance.players = players.map((name) => {
+				const socketId = socketService.getUserSocketId(name);
+				return new Player(name, socketId);
 			});
 
 			this.activeGames.set(roomName, roomInstance);
@@ -110,7 +110,7 @@ export class MultiGameService {
 			return {
 				roomName,
 				players: players.map((p) => ({
-					username: p.getUsername(),
+					name: p.getUsername(),
 					score: p.currentScore
 				})),
 				status: game.getStatus(),
@@ -135,16 +135,16 @@ export class MultiGameService {
 			game.endGame();
 
 			const players = roomInstance.getPlayers();
-			const usernames = players.map((p) => p.getUsername());
+			const names = players.map((p) => p.getUsername());
 
 			this.activeGames.delete(roomName);
 
 			logger.info(`Multi game ended in room: ${roomName}`);
 
-			socketService.emitToUsers(usernames, "multiGameEnded", {
+			socketService.emitToUsers(names, "multiGameEnded", {
 				roomName,
 				players: players.map((p) => ({
-					username: p.getUsername(),
+					name: p.getUsername(),
 					score: p.currentScore
 				}))
 			});
@@ -154,9 +154,9 @@ export class MultiGameService {
 		}
 	}
 
-	handleMovePiece(roomName, username, direction) {
+	handleMovePiece(roomName, name, direction) {
 		try {
-			console.log("handleMovePiece", roomName, username, direction);
+			console.log("handleMovePiece", roomName, name, direction);
 			const roomInstance = this.getActiveGame(roomName);
 
 			if (!roomInstance) {
@@ -165,7 +165,7 @@ export class MultiGameService {
 			}
 
 			const game = roomInstance.getGame();
-			game.movePiece(username, direction, socketService);
+			game.movePiece(name, direction, socketService);
 		} catch (error) {
 			logger.error(`Error in handleMovePiece: ${error.message}`);
 		}

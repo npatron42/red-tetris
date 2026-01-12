@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 16:54:46 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/29 14:53:53 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/12 15:56:13 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ const SoloGameRoom = () => {
 
 	const handleCreateSoloGame = async () => {
 		try {
-			const gameId = await createGame(user, difficulty);
+			const gameId = await createGame(difficulty);
 			navigate(`/solo/${gameId}`);
 		} catch (error) {
 			console.error(error);

@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 16:11:56 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/29 14:49:34 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/12 15:22:55 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,6 @@ export const UserProvider = ({ children }) => {
 	}, [user]);
 
 	const login = useCallback((authPayload) => {
-		// Expecting { user: {id, username}, token }
 		if (!authPayload || !authPayload.user || !authPayload.token) {
 			throw new Error("Invalid auth payload");
 		}

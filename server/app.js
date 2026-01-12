@@ -26,8 +26,8 @@ import principalRouter from "./src/routes/index.js";
 import userRouter from "./src/routes/userRoutes.js";
 import roomRouter from "./src/routes/roomRoutes.js";
 import soloGameRouter from "./src/routes/soloGameRoutes.js";
+import matchHistoryRouter from "./src/routes/matchHistoryRoutes.js";
 import socketService from "./src/services/socket/socketService.js";
-import { authenticate } from "./src/middleware/authMiddleware.js";
 
 const logger = pino({
 	level: "trace"
@@ -104,7 +104,8 @@ function onListening() {
 
 app.use("/", principalRouter);
 app.use("/user", userRouter);
-app.use("/room", authenticate, roomRouter);
-app.use("/solo", authenticate, soloGameRouter);
+app.use("/room", roomRouter);
+app.use("/solo", soloGameRouter);
+app.use("/match-history", matchHistoryRouter);
 
 export default app;

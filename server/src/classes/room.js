@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:11:28 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/29 13:50:15 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/12 15:25:48 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,10 @@ export class Room {
 		this.game = new MultiPlayerGame(this);
 	}
 
-	addPlayer(username, socketId) {
+	addPlayer(name, socketId) {
 		if (this.game.isStarted) return { success: false, error: "Game in progress" };
 
-		const newPlayer = new Player(username, socketId);
+		const newPlayer = new Player(name, socketId);
 		this.players.push(newPlayer);
 		return { success: true, player: newPlayer };
 	}

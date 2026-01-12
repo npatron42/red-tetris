@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/28 18:50:10 by fpalumbo          #+#    #+#             */
-/*   Updated: 2025/12/29 14:24:40 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/12 16:22:54 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,36 +28,37 @@ export class SocketService {
 		});
 
 		this.io.on("connection", (socket) => {
-			const username = (socket.handshake.query.username || "").toString().toLowerCase();
-			if (username) {
-				this.users[username] = socket.id;
+			const id = (socket.handshake.query.id || "")
+			console.log("id:", id);
+			if (id) {
+				this.users[id] = socket.id;
 			}
 
 			socket.on("disconnect", () => {
-				if (username && this.users[username] === socket.id) {
-					delete this.users[username];
+				if (id && this.users[id] === socket.id) {
+					delete this.users[id];
 					this.disconnectHandlers.forEach((handler) => {
 						if (handler) {
-							handler(username);
+							handler(id);
 						}
 					});
 				}
 			});
 
 			socket.on("movePieceMultiplayer", (data) => {
-				const { roomName, direction } = data;
-				if (!roomName || !username || !direction) {
+				const { roomid, direction } = data;
+				if (!roomid || !id || !direction) {
 					return;
 				}
-				this.handleMovePieceMultiplayer(roomName, username, direction);
+				this.handleMovePieceMultiplayer(roomid, id, direction);
 			});
 
 			socket.on("movePieceSolo", (data) => {
-				const { gameId, direction } = data;
-				if (!gameId || !username || !direction) {
+				const { gameId, direction, userId } = data;
+				if (!gameId || !userId || !direction) {
 					return;
 				}
-				this.handleMovePieceSolo(gameId, username, direction);
+				this.handleMovePieceSolo(gameId, userId, direction);
 			});
 		});
 
@@ -70,18 +71,16 @@ export class SocketService {
 		this.io.to(userId).emit(event, data);
 	}
 
-	emitToUsers(usernames, event, data) {
-		if (!this.io || !Array.isArray(usernames) || !event) return;
-		const uniqueUsernames = Array.from(
+	emitToUsers(ids, event, data) {
+		if (!this.io || !Array.isArray(ids) || !event) return;
+		const uniqueUserids = Array.from(
 			new Set(
-				usernames
-					.filter((username) => username !== null && username !== undefined)
-					.map((username) => username.toString().toLowerCase())
+				ids.filter((id) => id !== null && id !== undefined).map((id) => id.toString().toLowerCase())
 			)
 		);
 
-		uniqueUsernames.forEach((username) => {
-			const socketId = this.users[username];
+		uniqueUserids.forEach((id) => {
+			const socketId = this.users[id];
 			if (socketId) {
 				this.emitToUser(socketId, event, data);
 			}
@@ -102,21 +101,20 @@ export class SocketService {
 		}
 	}
 
-	handleMovePieceMultiplayer(roomName, username, direction) {
+	handleMovePieceMultiplayer(roomid, userId, direction) {
 		if (this.multiMoveHandler) {
-			this.multiMoveHandler(roomName, username, direction);
+			this.multiMoveHandler(roomid, userId, direction);
 		}
 	}
 
-	handleMovePieceSolo(gameId, username, direction) {
+	handleMovePieceSolo(gameId, userId, direction) {
 		if (this.soloMoveHandler) {
-			this.soloMoveHandler(gameId, username, direction);
+			this.soloMoveHandler(gameId, userId, direction);
 		}
 	}
 
-	getUserSocketId(username) {
-		const normalizedUsername = username.toLowerCase();
-		return this.users[normalizedUsername] || null;
+	getUserSocketId(id) {
+		return this.users[id] || null;
 	}
 }
 

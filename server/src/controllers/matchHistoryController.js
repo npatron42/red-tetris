@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 12:56:35 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/08 15:56:19 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/12 15:25:48 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,29 +14,23 @@ import matchHistoryService from "../services/matchHistoryService.js";
 
 export const createHistoryMatch = async (req, res) => {
 	try {
-		const { players, winner } = req.body;
-		const effectiveWinner = winner || req.user?.username;
-		if (!players || !winner) {
-			res.json({ failure: "Players and winner are required" });
-			return;
+		const { playerIds, winnerId } = req.body;
+		if (!playerIds || !winnerId) {
+			return res.status(400).json({ success: false, message: "Player IDs and winner ID are required" });
 		}
-		const match = await matchHistoryService.createMatchHistory(players, effectiveWinner);
-		res.json({ success: "Match history created", match });
+		const match = await matchHistoryService.createMatchHistory(playerIds, winnerId);
+		res.json({ success: true, message: "Match history created", match });
 	} catch (error) {
-		res.json({ failure: error.message || "Error creating history match" });
+		res.status(500).json({ success: false, message: error.message || "Error creating history match" });
 	}
 };
 
-export const getHistoryMatchByUsername = async (req, res) => {
+export const getHistoryMatch = async (req, res) => {
 	try {
-		const username = req.query.username || req.body.username || req.user?.username;
-		if (!username) {
-			res.json({ failure: "Username is required" });
-			return;
-		}
-		const matchHistory = await matchHistoryService.getMatchHistoryByUsername(username);
-		res.json({ success: "Match history retrieved", matchHistory });
+		const userId = req.user.id;
+		const matchHistory = await matchHistoryService.getMatchHistoryByUserId(userId);
+		res.json({ success: true, message: "Match history retrieved", matchHistory });
 	} catch (error) {
-		res.json({ failure: error.message || "Error getting history match by username" });
+		res.status(500).json({ success: false, message: error.message || "Error getting history match" });
 	}
 };

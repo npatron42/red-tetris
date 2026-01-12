@@ -308,22 +308,22 @@ export class UserService {
 <span class="cstat-no" title="statement not covered" >		this.matchDao = matchDao;</span>
 <span class="cstat-no" title="statement not covered" >	}</span>
 &nbsp;
-<span class="fstat-no" title="function not covered" >	async getUserByUsername(username) {</span>
-<span class="cstat-no" title="statement not covered" >		if (!username) {</span>
+<span class="fstat-no" title="function not covered" >	async getUserByUsername(name) {</span>
+<span class="cstat-no" title="statement not covered" >		if (!name) {</span>
 <span class="cstat-no" title="statement not covered" >			throw new Error("Username is required");</span>
 <span class="cstat-no" title="statement not covered" >		}</span>
-<span class="cstat-no" title="statement not covered" >		const user = await this.userDao.findByName(username);</span>
+<span class="cstat-no" title="statement not covered" >		const user = await this.userDao.findByName(name);</span>
 <span class="cstat-no" title="statement not covered" >		if (!user) {</span>
 <span class="cstat-no" title="statement not covered" >			throw new Error("User not found");</span>
 <span class="cstat-no" title="statement not covered" >		}</span>
 <span class="cstat-no" title="statement not covered" >		return user;</span>
 <span class="cstat-no" title="statement not covered" >	}</span>
 &nbsp;
-<span class="fstat-no" title="function not covered" >	async userExists(username) {</span>
-<span class="cstat-no" title="statement not covered" >		if (!username) {</span>
+<span class="fstat-no" title="function not covered" >	async userExists(name) {</span>
+<span class="cstat-no" title="statement not covered" >		if (!name) {</span>
 <span class="cstat-no" title="statement not covered" >			return false;</span>
 <span class="cstat-no" title="statement not covered" >		}</span>
-<span class="cstat-no" title="statement not covered" >		const user = await this.userDao.findByName(username);</span>
+<span class="cstat-no" title="statement not covered" >		const user = await this.userDao.findByName(name);</span>
 <span class="cstat-no" title="statement not covered" >		return !!user;</span>
 <span class="cstat-no" title="statement not covered" >	}</span>
 &nbsp;
@@ -338,50 +338,50 @@ export class UserService {
 <span class="cstat-no" title="statement not covered" >		return user;</span>
 <span class="cstat-no" title="statement not covered" >	}</span>
 &nbsp;
-<span class="fstat-no" title="function not covered" >	async createUser(username) {</span>
-<span class="cstat-no" title="statement not covered" >		if (!username || username.length &gt; 16) {</span>
-<span class="cstat-no" title="statement not covered" >			throw new Error("Invalid username");</span>
+<span class="fstat-no" title="function not covered" >	async createUser(name) {</span>
+<span class="cstat-no" title="statement not covered" >		if (!name || name.length &gt; 16) {</span>
+<span class="cstat-no" title="statement not covered" >			throw new Error("Invalid name");</span>
 <span class="cstat-no" title="statement not covered" >		}</span>
-<span class="cstat-no" title="statement not covered" >		const exists = await this.userExists(username);</span>
+<span class="cstat-no" title="statement not covered" >		const exists = await this.userExists(name);</span>
 <span class="cstat-no" title="statement not covered" >		if (exists) {</span>
 <span class="cstat-no" title="statement not covered" >			throw new Error("User already exists");</span>
 <span class="cstat-no" title="statement not covered" >		}</span>
 <span class="cstat-no" title="statement not covered" >		const user = await this.userDao.create({</span>
-<span class="cstat-no" title="statement not covered" >			name: username,</span>
+<span class="cstat-no" title="statement not covered" >			name: name,</span>
 <span class="cstat-no" title="statement not covered" >			multiplayerWins: 0,</span>
 <span class="cstat-no" title="statement not covered" >			multiPlayerLosses: "0"</span>
 <span class="cstat-no" title="statement not covered" >		});</span>
 <span class="cstat-no" title="statement not covered" >		return user;</span>
 <span class="cstat-no" title="statement not covered" >	}</span>
 &nbsp;
-<span class="fstat-no" title="function not covered" >	async addMatchHistory(username, match) {</span>
-<span class="cstat-no" title="statement not covered" >		if (!username || !match) {</span>
+<span class="fstat-no" title="function not covered" >	async addMatchHistory(name, match) {</span>
+<span class="cstat-no" title="statement not covered" >		if (!name || !match) {</span>
 <span class="cstat-no" title="statement not covered" >			throw new Error("Username and match are required");</span>
 <span class="cstat-no" title="statement not covered" >		}</span>
-<span class="cstat-no" title="statement not covered" >		const user = await this.userDao.findByName(username);</span>
+<span class="cstat-no" title="statement not covered" >		const user = await this.userDao.findByName(name);</span>
 <span class="cstat-no" title="statement not covered" >		if (!user) {</span>
 <span class="cstat-no" title="statement not covered" >			throw new Error("User not found");</span>
 <span class="cstat-no" title="statement not covered" >		}</span>
-<span class="cstat-no" title="statement not covered" >		const players = Array.isArray(match.players) ? match.players : [username];</span>
-<span class="cstat-no" title="statement not covered" >		const winner = match.winner ?? username;</span>
+<span class="cstat-no" title="statement not covered" >		const players = Array.isArray(match.players) ? match.players : [name];</span>
+<span class="cstat-no" title="statement not covered" >		const winner = match.winner ?? name;</span>
 <span class="cstat-no" title="statement not covered" >		return this.matchDao.create({</span>
 <span class="cstat-no" title="statement not covered" >			player1Id: user.id,</span>
 <span class="cstat-no" title="statement not covered" >			player2Id: user.id,</span>
-<span class="cstat-no" title="statement not covered" >			winnerId: winner === username ? user.id : null,</span>
+<span class="cstat-no" title="statement not covered" >			winnerId: winner === name ? user.id : null,</span>
 <span class="cstat-no" title="statement not covered" >			rngSeed: match.rngSeed ?? Date.now(),</span>
 <span class="cstat-no" title="statement not covered" >			status: match.status</span>
 <span class="cstat-no" title="statement not covered" >		});</span>
 <span class="cstat-no" title="statement not covered" >	}</span>
 &nbsp;
-<span class="fstat-no" title="function not covered" >	async getMatchHistory(username) {</span>
-<span class="cstat-no" title="statement not covered" >		if (!username) {</span>
+<span class="fstat-no" title="function not covered" >	async getMatchHistory(name) {</span>
+<span class="cstat-no" title="statement not covered" >		if (!name) {</span>
 <span class="cstat-no" title="statement not covered" >			throw new Error("Username is required");</span>
 <span class="cstat-no" title="statement not covered" >		}</span>
-<span class="cstat-no" title="statement not covered" >		return this.matchDao.findByUsername(username);</span>
+<span class="cstat-no" title="statement not covered" >		return this.matchDao.findByUsername(name);</span>
 <span class="cstat-no" title="statement not covered" >	}</span>
 &nbsp;
-<span class="fstat-no" title="function not covered" >	async updateStats(username, isWinner) {</span>
-<span class="cstat-no" title="statement not covered" >		const user = await this.userDao.findByName(username);</span>
+<span class="fstat-no" title="function not covered" >	async updateStats(name, isWinner) {</span>
+<span class="cstat-no" title="statement not covered" >		const user = await this.userDao.findByName(name);</span>
 <span class="cstat-no" title="statement not covered" >		if (!user) {</span>
 <span class="cstat-no" title="statement not covered" >			throw new Error("User not found");</span>
 <span class="cstat-no" title="statement not covered" >		}</span>
@@ -391,7 +391,7 @@ export class UserService {
 <span class="cstat-no" title="statement not covered" >			multiplayerWins: isWinner ? wins + 1 : wins,</span>
 <span class="cstat-no" title="statement not covered" >			multiPlayerLosses: (!isWinner ? lossesParsed + 1 : lossesParsed).toString()</span>
 <span class="cstat-no" title="statement not covered" >		};</span>
-<span class="cstat-no" title="statement not covered" >		return this.userDao.update(username, updates);</span>
+<span class="cstat-no" title="statement not covered" >		return this.userDao.update(name, updates);</span>
 <span class="cstat-no" title="statement not covered" >	}</span>
 }
 &nbsp;

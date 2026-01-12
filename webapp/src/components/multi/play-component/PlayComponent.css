@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 17:03:16 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/11 17:30:17 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/12 15:25:48 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@
     color: #FDD835;
 }
 
-.play-username-input {
+.play-name-input {
     width: 80%;
     height: 40px;
     padding: 12px;

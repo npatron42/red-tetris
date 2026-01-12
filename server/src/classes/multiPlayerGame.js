@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:11:25 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/30 12:19:05 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/12 15:25:48 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ export class MultiPlayerGame {
 		return linesCleared;
 	}
 
-	applyPenaltyLinesToOpponents(sourcePlayer, linesCleared) {	
+	applyPenaltyLinesToOpponents(sourcePlayer, linesCleared) {
 		const sourceUsername = sourcePlayer.getUsername();
 		const players = this.room.getPlayers();
 
@@ -113,12 +113,12 @@ export class MultiPlayerGame {
 		});
 	}
 
-	movePiece(username, direction, socketService) {
+	movePiece(name, direction, socketService) {
 		if (!this.isStarted) {
 			return null;
 		}
 
-		const player = this.room.getPlayers().find((p) => p.getUsername() === username);
+		const player = this.room.getPlayers().find((p) => p.getUsername() === name);
 		if (!player || !player.currentPiece) {
 			return null;
 		}
@@ -186,7 +186,7 @@ export class MultiPlayerGame {
 		try {
 			const players = this.room.getPlayers();
 			const gameState = players.map((player) => ({
-				username: player.getUsername(),
+				name: player.getUsername(),
 				grid: player.currentPiece
 					? player.getGrid().getGridWithPiece(player.currentPiece)
 					: player.getGrid().getGrid(),
@@ -196,8 +196,8 @@ export class MultiPlayerGame {
 				nextPieces: this.tetrominosBag.peekNextPieces(3)
 			}));
 
-			const usernames = players.map((player) => player.getUsername());
-			socketService.emitToUsers(usernames, "multiGridUpdate", {
+			const names = players.map((player) => player.getUsername());
+			socketService.emitToUsers(names, "multiGridUpdate", {
 				roomName: this.room.getRoomName(),
 				gameState
 			});

@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 02:56:25 by npatron           #+#    #+#             */
-/*   Updated: 2026/01/12 03:02:15 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/12 15:25:48 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { createSpy } from "./testUtils.js";
 
-process.env.DATABASE_URL
+process.env.DATABASE_URL;
 
 const { GameDao } = await import("../src/dao/gameDao.js");
 const { UserDao } = await import("../src/dao/userDao.js");
@@ -321,7 +321,7 @@ test("RoomDao.findByName fetches by name", async () => {
 	assert.deepEqual(findFirst.calls[0][0], { where: { name: "Room One" } });
 });
 
-test("RoomDao.resolveUserIdFromName returns null for missing username", async () => {
+test("RoomDao.resolveUserIdFromName returns null for missing name", async () => {
 	const findFirst = createSpy(async () => ({ id: "user-1" }));
 	const dao = new RoomDao({ user: { findFirst } });
 
@@ -566,7 +566,7 @@ test("MatchDao.findByPlayerId fetches by player id", async () => {
 	});
 });
 
-test("MatchDao.findByUsername returns empty array when missing username", async () => {
+test("MatchDao.findByUsername returns empty array when missing name", async () => {
 	const findFirst = createSpy(async () => ({ id: "user-1" }));
 	const dao = new MatchDao({ user: { findFirst } });
 

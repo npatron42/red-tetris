@@ -67,8 +67,8 @@ export const SocketProvider = ({ children }) => {
 	}, []);
 
 	useEffect(() => {
-		if (isAuthenticated && user) {
-			const socket = socketService.connect(user, null);
+		if (isAuthenticated && user?.user?.id) {
+			const socket = socketService.connect(user.user.id);
 
 			if (socket) {
 				socket.on("connect", () => {
@@ -91,7 +91,7 @@ export const SocketProvider = ({ children }) => {
 				socketService.disconnect();
 			}
 		};
-	}, [isAuthenticated, user]);
+	}, [isAuthenticated, user?.user?.id]);
 
 	useEffect(() => {
 		const handlePageHide = () => {
@@ -131,7 +131,7 @@ export const SocketProvider = ({ children }) => {
 	}, []);
 
 	const connect = useCallback((userId, newRoomId) => {
-		const socket = socketService.connect(userId, newRoomId);
+		const socket = socketService.connect(userId);
 		setRoomId(newRoomId);
 
 		if (socket) {

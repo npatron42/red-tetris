@@ -1,26 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   roomRoutes.js                                      :+:      :+:    :+:   */
+/*   matchHistoryRoutes.js                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/12/08 13:15:38 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/10 15:34:20 by npatron          ###   ########.fr       */
+/*   Created: 2026/01/12 16:00:00 by npatron           #+#    #+#             */
+/*   Updated: 2026/01/12 16:00:00 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import express from "express";
 import { authenticate } from "../middleware/authMiddleware.js";
-import { create, getAll, getByName, joinRoomByName, leaveRoom, startGame } from "../controllers/roomController.js";
+import { createHistoryMatch, getHistoryMatch } from "../controllers/matchHistoryController.js";
 
-const roomRouter = express.Router();
+const matchHistoryRouter = express.Router();
 
-roomRouter.post("/create", authenticate, create);
-roomRouter.get("/", authenticate, getAll);
-roomRouter.get("/:roomName", authenticate, getByName);
-roomRouter.post("/join", authenticate, joinRoomByName);
-roomRouter.post("/leave", authenticate, leaveRoom);
-roomRouter.post("/start-game", authenticate, startGame);
+matchHistoryRouter.post("/create", authenticate, createHistoryMatch);
+matchHistoryRouter.get("/me", authenticate, getHistoryMatch);
 
-export default roomRouter;
+export default matchHistoryRouter;

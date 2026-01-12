@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 13:57:35 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/29 14:49:36 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/12 16:22:29 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,12 @@ let socket = null;
 let isConnected = false;
 const eventListeners = new Map();
 
-const connect = (username) => {
+const connect = (userId) => {
 	if (socket?.connected) {
 		disconnect();
 	}
 
-	const normalizedUsername = username?.toString().toLowerCase() || "";
-	const query = { username: normalizedUsername };
+	const query = { id: userId };
 
 	socket = io("http://localhost:4000", {
 		query: query,

@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 13:02:55 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/29 16:31:57 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/12 16:22:22 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,9 @@ export const TetrisGameSolo = () => {
 	const { socket } = useSocket();
 	const [gameStatus, setGameStatus] = useState(null);
 
+	console.log("gameId:", gameId);
+	
+	
 	const getCellAttributes = (cell) => {
 		if (cell === 0) return { className: "cell empty", style: {} };
 
@@ -155,7 +158,7 @@ export const TetrisGameSolo = () => {
 				socketService.sendMoveSolo({
 					gameId,
 					direction,
-					username: user
+					userId: user.user.id
 				});
 			}
 		};

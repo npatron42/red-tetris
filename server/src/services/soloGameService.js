@@ -6,14 +6,14 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 17:39:02 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/29 14:24:40 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/12 15:46:26 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import { SoloGame } from "../classes/soloGame.js";
 import { Player } from "../classes/player.js";
 import { GameDao } from "../dao/gameDao.js";
-import { UserDao } from "../dao/userDao.js";
+import { UserDao } from "../dao/UserDao.js";
 import socketService from "./socket/socketService.js";
 
 import pino from "pino";
@@ -31,17 +31,17 @@ export class SoloGameService {
 
 	setupSocketHandler() {
 		try {
-			socketService.setSoloMoveHandler((gameId, username, direction) => {
+			socketService.setSoloMoveHandler((gameId, odentifier, direction) => {
 				try {
-					this.handleMovePiece(gameId, username, direction);
+					this.handleMovePiece(gameId, odentifier, direction);
 				} catch (error) {
 					logger.error(`Error in move handler: ${error.message}`);
 				}
 			});
 
-			socketService.addDisconnectHandler((username) => {
+			socketService.addDisconnectHandler((identifier) => {
 				try {
-					this.handlePlayerDisconnect(username);
+					this.handlePlayerDisconnect(identifier);
 				} catch (error) {
 					logger.error(`Error in disconnect handler: ${error.message}`);
 				}
@@ -51,10 +51,10 @@ export class SoloGameService {
 		}
 	}
 
-	handlePlayerDisconnect(username) {
+	handlePlayerDisconnect(identifier) {
 		for (const [gameId, game] of this.activeGames.entries()) {
-			if (game.player.getUsername() === username) {
-				logger.info(`Cleaning up game ${gameId} for disconnected player ${username}`);
+			if (game.player.getUsername() === identifier || game.playerId === identifier) {
+				logger.info(`Cleaning up game ${gameId} for disconnected player ${identifier}`);
 				game.stopGameLoop();
 				game.endGame();
 				this.activeGames.delete(gameId);
@@ -62,22 +62,23 @@ export class SoloGameService {
 		}
 	}
 
-	async createSoloGame(username, difficulty) {
+	async createSoloGame(userId, difficulty) {
 		try {
 			const gameId = uuidv4();
-			const socketId = socketService.getUserSocketId(username);
+			const socketId = socketService.getUserSocketId(userId);
 
 			if (!socketId) {
 				throw new Error("User socket not found");
 			}
 
-			const user = await this.userDao.findByName(username);
+			const user = await this.userDao.findById(userId);
 			if (!user) {
 				throw new Error("User not found");
 			}
 
-			const player = new Player(username, socketId);
+			const player = new Player(user.name, socketId);
 			const soloGame = new SoloGame(player, difficulty);
+			soloGame.playerId = userId;
 
 			this.activeGames.set(gameId, soloGame);
 			await this.gameDao.create({
@@ -90,7 +91,8 @@ export class SoloGameService {
 			soloGame.startGameLoop(socketService);
 			return {
 				gameId: gameId,
-				username,
+				odentifier: user.id,
+				name: user.name,
 				status: "IN_PROGRESS"
 			};
 		} catch (error) {
@@ -110,7 +112,7 @@ export class SoloGameService {
 				}
 				return {
 					gameId: persistedGame.id,
-					username: persistedGame.username,
+					userId: persistedGame.player_id,
 					status: persistedGame.status,
 					score: null
 				};
@@ -118,7 +120,8 @@ export class SoloGameService {
 
 			return {
 				gameId,
-				username: game.player.getUsername(),
+				userId: game.playerId,
+				name: game.player.getUsername(),
 				status: game.getGameStatus(),
 				score: game.player.currentScore
 			};
@@ -141,7 +144,7 @@ export class SoloGameService {
 			this.activeGames.delete(gameId);
 			await this.gameDao.update(gameId, { status: "COMPLETED" });
 			logger.info(`Solo game ended: ${gameId}, score: ${score}`);
-			socketService.emitToUsers([game.player.getUsername()], "soloGameEnded", {
+			socketService.emitToUsers([game.playerId], "soloGameEnded", {
 				gameId,
 				score
 			});
@@ -151,16 +154,16 @@ export class SoloGameService {
 		}
 	}
 
-	handleMovePiece(gameId, username, direction) {
+	handleMovePiece(gameId, identifier, direction) {
 		try {
 			const activeGame = this.getActiveGame(gameId);
 
 			if (!activeGame) {
-				logger.warn(`Game not found for user: ${username}`);
+				logger.warn(`Game not found for identifier: ${identifier}`);
 				return;
 			}
 
-			activeGame.movePiece(username, direction, socketService);
+			activeGame.movePiece(identifier, direction, socketService);
 		} catch (error) {
 			logger.error(`Error in handleMovePiece: ${error.message}`);
 		}

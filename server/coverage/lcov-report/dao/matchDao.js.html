@@ -371,11 +371,11 @@ export class MatchDao {
 <span class="cstat-no" title="statement not covered" >		});</span>
 <span class="cstat-no" title="statement not covered" >	}</span>
 &nbsp;
-<span class="fstat-no" title="function not covered" >	async findByUsername(username) {</span>
-<span class="cstat-no" title="statement not covered" >		if (!username) {</span>
+<span class="fstat-no" title="function not covered" >	async findByUsername(name) {</span>
+<span class="cstat-no" title="statement not covered" >		if (!name) {</span>
 <span class="cstat-no" title="statement not covered" >			return [];</span>
 <span class="cstat-no" title="statement not covered" >		}</span>
-<span class="cstat-no" title="statement not covered" >		const user = await this.db.user.findFirst({ where: { name: username } });</span>
+<span class="cstat-no" title="statement not covered" >		const user = await this.db.user.findFirst({ where: { name: name } });</span>
 <span class="cstat-no" title="statement not covered" >		if (!user) {</span>
 <span class="cstat-no" title="statement not covered" >			return [];</span>
 <span class="cstat-no" title="statement not covered" >		}</span>

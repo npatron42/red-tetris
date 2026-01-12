@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/30 15:55:35 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/30 15:55:57 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/12 15:36:52 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ export function authenticate(req, res, next) {
 		const payload = jwt.verify(token, JWT_SECRET);
 		req.user = {
 			id: payload.userId,
-			username: payload.username
+			name: payload.name
 		};
 		return next();
 	} catch (error) {
@@ -33,6 +33,6 @@ export function authenticate(req, res, next) {
 	}
 }
 
-export function generateUserToken({ userId, username }) {
-	return jwt.sign({ userId, username }, JWT_SECRET, { expiresIn: "1h" });
+export function generateUserToken({ userId, name }) {
+	return jwt.sign({ userId, name }, JWT_SECRET, { expiresIn: "1h" });
 }

@@ -237,11 +237,11 @@ export class MatchHistoryService {
 <span class="cstat-no" title="statement not covered" >		return match;</span>
 <span class="cstat-no" title="statement not covered" >	}</span>
 &nbsp;
-<span class="fstat-no" title="function not covered" >	async getMatchHistoryByUsername(username) {</span>
-<span class="cstat-no" title="statement not covered" >		if (!username) {</span>
+<span class="fstat-no" title="function not covered" >	async getMatchHistoryByUsername(name) {</span>
+<span class="cstat-no" title="statement not covered" >		if (!name) {</span>
 <span class="cstat-no" title="statement not covered" >			throw new Error("Username is required");</span>
 <span class="cstat-no" title="statement not covered" >		}</span>
-<span class="cstat-no" title="statement not covered" >		return this.matchDao.findByUsername(username);</span>
+<span class="cstat-no" title="statement not covered" >		return this.matchDao.findByUsername(name);</span>
 <span class="cstat-no" title="statement not covered" >	}</span>
 }
 &nbsp;

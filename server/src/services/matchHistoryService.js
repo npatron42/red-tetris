@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:10:54 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/09 17:59:44 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/12 15:25:48 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,39 +20,39 @@ export class MatchHistoryService {
 		this.userService = userServiceInstance;
 	}
 
-	async createMatchHistory(players, winner) {
-		if (!Array.isArray(players) || players.length === 0) {
-			throw new Error("Players array is required");
+	async createMatchHistory(playerIds, winnerId) {
+		if (!Array.isArray(playerIds) || playerIds.length === 0) {
+			throw new Error("Player IDs array is required");
 		}
-		if (!winner) {
-			throw new Error("Winner is required");
+		if (!winnerId) {
+			throw new Error("Winner ID is required");
 		}
 
-		const [p1, p2] = players;
-		const player1 = await this.userService.getUserByUsername(p1);
-		const player2 = p2 ? await this.userService.getUserByUsername(p2) : player1;
-		const winnerUser = await this.userService.getUserByUsername(winner);
+		const [player1Id, player2Id] = playerIds;
+
+		const player1 = await this.userService.getUserById(player1Id);
+		const player2 = player2Id ? await this.userService.getUserById(player2Id) : player1;
 
 		const match = await this.matchDao.create({
 			id: uuidv4(),
 			player1Id: player1.id,
 			player2Id: player2.id,
-			winnerId: winnerUser?.id ?? null,
+			winnerId: winnerId,
 			status: "FINISHED",
 			rngSeed: Date.now()
 		});
 
-		for (const player of players) {
-			await this.userService.updateStats(player, player === winner);
+		for (const playerId of playerIds) {
+			await this.userService.updateStatsById(playerId, playerId === winnerId);
 		}
 		return match;
 	}
 
-	async getMatchHistoryByUsername(username) {
-		if (!username) {
-			throw new Error("Username is required");
+	async getMatchHistoryByUserId(userId) {
+		if (!userId) {
+			throw new Error("User ID is required");
 		}
-		return this.matchDao.findByUsername(username);
+		return this.matchDao.findByPlayerId(userId);
 	}
 }
 
