@@ -6,10 +6,11 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 15:26:42 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/11 18:26:15 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/12 03:02:49 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+import "dotenv/config";
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
@@ -26,6 +27,7 @@ import userRouter from "./src/routes/userRoutes.js";
 import roomRouter from "./src/routes/roomRoutes.js";
 import soloGameRouter from "./src/routes/soloGameRoutes.js";
 import socketService from "./src/services/socket/socketService.js";
+import { authenticate } from "./src/middleware/authMiddleware.js";
 
 const logger = pino({
 	level: "trace"
@@ -102,7 +104,7 @@ function onListening() {
 
 app.use("/", principalRouter);
 app.use("/user", userRouter);
-app.use("/room", roomRouter);
-app.use("/solo", soloGameRouter);
+app.use("/room", authenticate, roomRouter);
+app.use("/solo", authenticate, soloGameRouter);
 
 export default app;

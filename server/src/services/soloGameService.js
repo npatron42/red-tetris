@@ -13,6 +13,7 @@
 import { SoloGame } from "../classes/soloGame.js";
 import { Player } from "../classes/player.js";
 import { GameDao } from "../dao/gameDao.js";
+import { UserDao } from "../dao/userDao.js";
 import socketService from "./socket/socketService.js";
 
 import pino from "pino";
@@ -21,10 +22,11 @@ import { v4 as uuidv4 } from "uuid";
 const logger = pino({ level: "info" });
 
 export class SoloGameService {
-	constructor() {
+	constructor(gameDao = new GameDao(), userDao = new UserDao()) {
 		this.activeGames = new Map();
 		this.setupSocketHandler();
-		this.gameDao = new GameDao();
+		this.gameDao = gameDao;
+		this.userDao = userDao;
 	}
 
 	setupSocketHandler() {
@@ -69,17 +71,21 @@ export class SoloGameService {
 				throw new Error("User socket not found");
 			}
 
+			const user = await this.userDao.findByName(username);
+			if (!user) {
+				throw new Error("User not found");
+			}
+
 			const player = new Player(username, socketId);
 			const soloGame = new SoloGame(player, difficulty);
 
 			this.activeGames.set(gameId, soloGame);
-			let game = {
-				gameId,
-				username,
+			await this.gameDao.create({
+				id: gameId,
+				player_id: user.id,
 				status: "IN_PROGRESS",
 				difficulty
-			};
-			await this.gameDao.create(game);
+			});
 			soloGame.startGame(difficulty);
 			soloGame.startGameLoop(socketService);
 			return {
@@ -98,7 +104,16 @@ export class SoloGameService {
 			const game = this.activeGames.get(gameId);
 
 			if (!game) {
-				return null;
+				const persistedGame = await this.gameDao.findById(gameId);
+				if (!persistedGame) {
+					return null;
+				}
+				return {
+					gameId: persistedGame.id,
+					username: persistedGame.username,
+					status: persistedGame.status,
+					score: null
+				};
 			}
 
 			return {

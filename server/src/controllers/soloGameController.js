@@ -19,14 +19,15 @@ const soloGameService = new SoloGameService();
 export const createSoloGame = async (req, res) => {
 	try {
 		const { username, difficulty } = req.body;
-		if (!username) {
+		const effectiveUser = req.user?.username || username;
+		if (!effectiveUser) {
 			return res.status(400).json({
 				success: false,
 				message: "Username is required"
 			});
 		}
 
-		const gameData = await soloGameService.createSoloGame(username, difficulty);
+		const gameData = await soloGameService.createSoloGame(effectiveUser, difficulty);
 
 		return res.status(201).json({
 			success: true,

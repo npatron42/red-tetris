@@ -16,7 +16,7 @@ import { useMemo, useState } from "react";
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
-import { createUser } from "../../composables/useApi.js";
+import { createUser, loginUser } from "../../composables/useApi.js";
 import { useUser } from "../../providers/UserProvider";
 
 import { ToastContainer, toast, Bounce } from "react-toastify";
@@ -35,32 +35,37 @@ const Login = () => {
 		}
 	}, [isAuthenticated, navigate, redirectPath]);
 
-	const handleSubmit = (event) => {
+	const handleSubmit = async (event) => {
 		event.preventDefault();
 		const trimmed = username.trim();
 		if (!trimmed) {
 			return;
 		}
-		login(trimmed);
-		navigate(redirectPath, { replace: true });
-	};
-
-	const handleLogin = async () => {
-		const response = await createUser({ username: username });
-		if (response.success) {
-			login(username);
-			toast("Wow so easy!", {
-				position: "top-right",
-				autoClose: 5000,
-				hideProgressBar: false,
-				closeOnClick: false,
-				pauseOnHover: true,
-				draggable: true,
-				progress: undefined,
-				theme: "light",
-				transition: Bounce
-			});
-		} else {
+		try {
+			// Try login first
+			let response = await loginUser(trimmed);
+			if (!response?.token) {
+				// Fallback to create
+				response = await createUser(trimmed);
+			}
+			if (response?.token && response?.user) {
+				login(response);
+				toast("Welcome!", {
+					position: "top-right",
+					autoClose: 5000,
+					hideProgressBar: false,
+					closeOnClick: false,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "light",
+					transition: Bounce
+				});
+				navigate(redirectPath, { replace: true });
+			} else {
+				toast.error("Login failed");
+			}
+		} catch (error) {
 			toast.error("Login failed");
 		}
 	};
@@ -76,12 +81,7 @@ const Login = () => {
 					onChange={(event) => setUsername(event.target.value)}
 					maxLength={16}
 				/>
-				<button
-					className="login-submit"
-					type="button"
-					onClick={handleLogin}
-					disabled={username.trim().length < 1}
-				>
+				<button className="login-submit" type="submit" disabled={username.trim().length < 1}>
 					Continue
 				</button>
 				<button className="login-helper" type="button" onClick={() => navigate(-1)}>

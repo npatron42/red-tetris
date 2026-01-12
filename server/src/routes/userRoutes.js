@@ -12,12 +12,15 @@
 
 import express from "express";
 
-import { createUser, getUser } from "../controllers/userController.js";
+import { createUser, getUser, loginUser } from "../controllers/userController.js";
+import { authenticate } from "../middleware/authMiddleware.js";
 
 const userRouter = express.Router();
 
-userRouter.get("/get", getUser);
+userRouter.get("/get", authenticate, getUser);
+userRouter.get("/me", authenticate, getUser);
 
 userRouter.post("/create", createUser);
+userRouter.post("/login", loginUser);
 
 export default userRouter;

@@ -6,23 +6,24 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/22 22:54:31 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/08 15:55:57 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/12 03:06:10 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-import jwt from "jsonwebtoken";
 import userService from "../services/userService.js";
+import { generateUserToken } from "../middleware/authMiddleware.js";
 
-function generateToken(payload, secretKey, options) {
-	return jwt.sign(payload, secretKey, options);
-}
+const buildAuthResponse = (user) => {
+	const token = generateUserToken({ userId: user.id, username: user.name });
+	return { token, user: { id: user.id, username: user.name } };
+};
 
 export const getUser = async (req, res) => {
 	try {
-		const data = await userService.getUserByUsername(req.auth.username);
-		res.json(data);
+		const data = await userService.getUserById(req.user.id);
+		res.json({ success: true, user: data });
 	} catch (error) {
-		res.json({ failure: "No user found" });
+		res.status(404).json({ success: false, failure: "No user found" });
 	}
 };
 
@@ -30,16 +31,23 @@ export const createUser = async (req, res) => {
 	try {
 		const { username } = req.body;
 		if (!username) {
+			console.log("createUser ICI 0", username);
 			res.json({ failure: "Username is required" });
 			return;
 		}
+		console.log("createUser ICI 1", username);
 		const isUserExisting = await userService.userExists(username);
+		console.log("createUser ICI 2", isUserExisting);
 		if (isUserExisting) {
+			console.log("createUser ICI 3", isUserExisting);
 			res.json({ failed: "User existing" });
 			return;
 		}
-		await userService.createUser(username);
-		res.json({ success: "User added" });
+		console.log("createUser ICI 2", username);
+		const user = await userService.createUser(username);
+		console.log("createUser ICI 3", user);
+		const auth = buildAuthResponse(user);
+		res.json({ success: "User added", ...auth });
 	} catch (error) {
 		res.json({ failure: error.message || "Error creating user" });
 	}
@@ -47,21 +55,14 @@ export const createUser = async (req, res) => {
 
 export const loginUser = async (req, res) => {
 	try {
-		const { username, password } = req.body;
-		if (!username || !password) {
-			res.json({ failure: "Username and password are required" });
+		const { username } = req.body;
+		if (!username) {
+			res.json({ failure: "Username is required" });
 			return;
 		}
-		const userExists = await userService.userExists(username);
-		if (!userExists) {
-			res.json({ failed: "User not existing" });
-			return;
-		}
-		const token = generateToken({ username }, "momo", { expiresIn: "1h" });
-		res.json({
-			success: "login",
-			token
-		});
+		const user = await userService.getUserByUsername(username);
+		const auth = buildAuthResponse(user);
+		res.json({ success: "login", ...auth });
 	} catch (error) {
 		res.json({ failure: error.message || "Error during login" });
 	}

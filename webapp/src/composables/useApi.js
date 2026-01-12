@@ -12,11 +12,23 @@
 
 import axios from "axios";
 
+const api = axios.create({
+	baseURL: "http://localhost:4000"
+});
+
+api.interceptors.request.use((config) => {
+	const token = localStorage.getItem("token");
+	if (token) {
+		config.headers.Authorization = `Bearer ${token}`;
+	}
+	return config;
+});
+
 // GET METHODS
 
 export const getUser = async () => {
 	try {
-		const response = await axios.get("http://localhost:4000/user/me");
+		const response = await api.get("/user/me");
 		return response.data;
 	} catch (error) {
 		console.error(`Error fetching user data:`, error);
@@ -26,10 +38,7 @@ export const getUser = async () => {
 
 export const getHistoryMatchByUsername = async (username) => {
 	try {
-		const body = {
-			username: username
-		};
-		const response = await axios.get(`http://localhost:4000/user/get-history-match/${username}`);
+		const response = await api.get(`/user/get-history-match/${username}`);
 		return response.data;
 	} catch (error) {
 		console.error(`Error getting history match by username:`, error);
@@ -39,7 +48,7 @@ export const getHistoryMatchByUsername = async (username) => {
 
 export const getRoomByName = async (roomName) => {
 	try {
-		const response = await axios.get(`http://localhost:4000/room/${roomName}`);
+		const response = await api.get(`/room/${roomName}`);
 		return response.data;
 	} catch (error) {
 		console.error(`Error getting room:`, error);
@@ -51,7 +60,17 @@ export const getRoomByName = async (roomName) => {
 
 export const createUser = async (username) => {
 	try {
-		const response = await axios.post("http://localhost:4000/user/create", username);
+		const response = await api.post("/user/create", { username });
+		return response.data;
+	} catch (error) {
+		console.error(`Error fetching user data:`, error);
+		throw error;
+	}
+};
+
+export const loginUser = async (username) => {
+	try {
+		const response = await api.post("/user/login", { username });
 		return response.data;
 	} catch (error) {
 		console.error(`Error fetching user data:`, error);
@@ -61,7 +80,7 @@ export const createUser = async (username) => {
 
 export const joinRoom = async (roomData) => {
 	try {
-		const response = await axios.post("http://localhost:4000/room/join", roomData);
+		const response = await api.post("/room/join", roomData);
 		return response.data;
 	} catch (error) {
 		console.error(`Error joining room:`, error);
@@ -71,7 +90,7 @@ export const joinRoom = async (roomData) => {
 
 export const leaveRoom = async (roomData) => {
 	try {
-		const response = await axios.post("http://localhost:4000/room/leave", roomData);
+		const response = await api.post("/room/leave", roomData);
 		return response.data;
 	} catch (error) {
 		console.error(`Error leaving room:`, error);
@@ -81,7 +100,7 @@ export const leaveRoom = async (roomData) => {
 
 export const createHistoryMatch = async (historyMatch) => {
 	try {
-		const response = await axios.post("http://localhost:4000/match/create-history-match", historyMatch);
+		const response = await api.post("/match/create-history-match", historyMatch);
 		return response.data;
 	} catch (error) {
 		console.error(`Error creating history match:`, error);
@@ -91,7 +110,7 @@ export const createHistoryMatch = async (historyMatch) => {
 
 export const createRoom = async (roomData) => {
 	try {
-		const response = await axios.post("http://localhost:4000/room/create", roomData);
+		const response = await api.post("/room/create", roomData);
 		return response.data;
 	} catch (error) {
 		console.error(`Error creating room:`, error);
@@ -101,7 +120,7 @@ export const createRoom = async (roomData) => {
 
 export const startGame = async (roomData) => {
 	try {
-		const response = await axios.post("http://localhost:4000/room/start-game", roomData);
+		const response = await api.post("/room/start-game", roomData);
 		return response.data;
 	} catch (error) {
 		console.error(`Error starting game:`, error);
@@ -111,7 +130,7 @@ export const startGame = async (roomData) => {
 
 export const createSoloGame = async (username, difficulty) => {
 	try {
-		const response = await axios.post("http://localhost:4000/solo/create", { username, difficulty });
+		const response = await api.post("/solo/create", { username, difficulty });
 		return response.data;
 	} catch (error) {
 		console.error(`Error creating solo game:`, error);
@@ -121,7 +140,7 @@ export const createSoloGame = async (username, difficulty) => {
 
 export const getSoloGame = async (gameId) => {
 	try {
-		const response = await axios.get(`http://localhost:4000/solo/${gameId}`);
+		const response = await api.get(`/solo/${gameId}`);
 		return response.data;
 	} catch (error) {
 		console.error(`Error getting solo game:`, error);
@@ -131,7 +150,7 @@ export const getSoloGame = async (gameId) => {
 
 export const endSoloGame = async (gameId, score) => {
 	try {
-		const response = await axios.post(`http://localhost:4000/solo/${gameId}/end`, { score });
+		const response = await api.post(`/solo/${gameId}/end`, { score });
 		return response.data;
 	} catch (error) {
 		console.error(`Error ending solo game:`, error);

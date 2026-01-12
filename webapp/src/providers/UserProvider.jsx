@@ -16,18 +16,29 @@ import { useLocation, useNavigate } from "react-router-dom";
 const UserContext = createContext(null);
 
 export const UserProvider = ({ children }) => {
-	const [user, setUser] = useState(() => localStorage.getItem("user"));
+	const [user, setUser] = useState(() => {
+		const stored = localStorage.getItem("auth");
+		return stored ? JSON.parse(stored) : null;
+	});
 
 	useEffect(() => {
 		if (user) {
-			localStorage.setItem("user", user);
+			localStorage.setItem("auth", JSON.stringify(user));
+			if (user.token) {
+				localStorage.setItem("token", user.token);
+			}
 		} else {
-			localStorage.removeItem("user");
+			localStorage.removeItem("auth");
+			localStorage.removeItem("token");
 		}
 	}, [user]);
 
-	const login = useCallback((username) => {
-		setUser(username);
+	const login = useCallback((authPayload) => {
+		// Expecting { user: {id, username}, token }
+		if (!authPayload || !authPayload.user || !authPayload.token) {
+			throw new Error("Invalid auth payload");
+		}
+		setUser(authPayload);
 	}, []);
 
 	const logout = useCallback(() => {
@@ -37,7 +48,7 @@ export const UserProvider = ({ children }) => {
 	const value = useMemo(
 		() => ({
 			user,
-			isAuthenticated: Boolean(user),
+			isAuthenticated: Boolean(user?.token),
 			login,
 			logout
 		}),

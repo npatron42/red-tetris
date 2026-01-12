@@ -11,10 +11,15 @@
 /* ************************************************************************** */
 
 import { v4 as uuidv4 } from "uuid";
-import matchHistoryDao from "../dao/matchHistoryDao.js";
+import { MatchDao } from "../dao/matchDao.js";
 import userService from "./userService.js";
 
 export class MatchHistoryService {
+	constructor(matchDao, userServiceInstance) {
+		this.matchDao = matchDao;
+		this.userService = userServiceInstance;
+	}
+
 	async createMatchHistory(players, winner) {
 		if (!Array.isArray(players) || players.length === 0) {
 			throw new Error("Players array is required");
@@ -22,15 +27,23 @@ export class MatchHistoryService {
 		if (!winner) {
 			throw new Error("Winner is required");
 		}
-		const match = {
+
+		const [p1, p2] = players;
+		const player1 = await this.userService.getUserByUsername(p1);
+		const player2 = p2 ? await this.userService.getUserByUsername(p2) : player1;
+		const winnerUser = await this.userService.getUserByUsername(winner);
+
+		const match = await this.matchDao.create({
 			id: uuidv4(),
-			players,
-			winner,
-			timestamp: new Date().toISOString()
-		};
-		matchHistoryDao.create(match);
+			player1Id: player1.id,
+			player2Id: player2.id,
+			winnerId: winnerUser?.id ?? null,
+			status: "FINISHED",
+			rngSeed: Date.now()
+		});
+
 		for (const player of players) {
-			await userService.updateStats(player, player === winner);
+			await this.userService.updateStats(player, player === winner);
 		}
 		return match;
 	}
@@ -39,8 +52,11 @@ export class MatchHistoryService {
 		if (!username) {
 			throw new Error("Username is required");
 		}
-		return matchHistoryDao.findByUsername(username);
+		return this.matchDao.findByUsername(username);
 	}
 }
 
-export default new MatchHistoryService();
+const matchDao = new MatchDao();
+const matchHistoryService = new MatchHistoryService(matchDao, userService);
+
+export default matchHistoryService;

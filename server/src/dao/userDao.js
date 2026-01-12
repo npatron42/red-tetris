@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 15:58:08 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/09 17:59:55 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/12 03:03:21 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ export class UserDao {
 	}
 
 	async create(user) {
+		console.log("user", user);
 		const { name, ...rest } = user;
 		if (!name) {
 			throw new Error("User name is required");

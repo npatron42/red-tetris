@@ -10,7 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-import roomDao from "../dao/roomDao.js";
+import { RoomDao } from "../dao/roomDao.js";
+import { UserDao } from "../dao/userDao.js";
 import socketService from "./socket/socketService.js";
 import pino from "pino";
 import multiGameService from "./multiGameService.js";
@@ -21,147 +22,174 @@ const logger = pino({
 
 logger.info("RoomService initialized");
 export class RoomService {
-	constructor() {
-		this.activeRooms = new Map();
+	constructor(roomDao, userDao) {
+		this.roomDao = roomDao;
+		this.userDao = userDao;
+		this.activeRooms = new Map(); // key: roomId, value: augmented view
 	}
 
-	createRoom(roomName, leaderUsername) {
+	async getUserNameById(id) {
+		if (!id) return null;
+		const user = await this.userDao.findById(id);
+		return user?.name ?? null;
+	}
+
+	buildRoomView(room, displayName) {
+		const players = [];
+		if (room.leader_id) {
+			if (room.leaderUsername) {
+				players.push(room.leaderUsername);
+			}
+		}
+		if (room.opponent_id && room.opponentUsername) {
+			players.push(room.opponentUsername);
+		}
+		return {
+			id: room.id,
+			name: displayName || room.name || room.id,
+			leaderId: room.leader_id,
+			opponentId: room.opponent_id,
+			leaderUsername: room.leaderUsername,
+			opponentUsername: room.opponentUsername,
+			players,
+			gameStatus: room.gameStatus || "PENDING",
+			gameOnGoing: room.gameOnGoing || false
+		};
+	}
+
+	async hydrateRoom(room, displayName) {
+		if (!room) return null;
+		const leaderUsername = room.leaderUsername || (await this.getUserNameById(room.leader_id));
+		const opponentUsername = room.opponentUsername || (await this.getUserNameById(room.opponent_id));
+		return this.buildRoomView({ ...room, leaderUsername, opponentUsername }, displayName);
+	}
+
+	async createRoom(roomName, leaderUsername) {
 		if (!roomName || !leaderUsername) {
 			throw new Error("Room name and leader username are required");
 		}
-		const existingRoom = roomDao.findByName(roomName);
+		const existingRoom = await this.roomDao.findByName(roomName);
 		if (existingRoom) {
 			throw new Error("Room already exists");
 		}
-		const room = {
+
+		const leader = await this.userDao.findByName(leaderUsername);
+		if (!leader) {
+			throw new Error("Leader user not found");
+		}
+
+		const savedRoom = await this.roomDao.create({
 			name: roomName,
-			leaderUsername: leaderUsername.toLowerCase(),
-			createdAt: new Date(),
-			players: [leaderUsername.toLowerCase()],
-			gameStatus: "PENDING",
-			gameOnGoing: false
-		};
-		const savedRoom = roomDao.create(room);
-		this.activeRooms.set(savedRoom.roomName, savedRoom);
-		return savedRoom;
+			leaderId: leader.id,
+			createdAt: new Date()
+		});
+		const view = await this.hydrateRoom(savedRoom, roomName);
+		this.activeRooms.set(savedRoom.id, view);
+		return view;
 	}
 
-	joinRoom(roomName, username) {
-		const room = this.getRoomByName(roomName);
+	async joinRoom(roomName, username) {
+		const room = await this.getRoomByName(roomName);
 		if (!room) {
 			throw new Error("Room not found");
 		}
-		const normalizedUsername = username.toLowerCase();
-		const updatedRoom = this.addPlayer(roomName, normalizedUsername);
-		this.notifyPlayersRoomUpdated(updatedRoom);
-		return updatedRoom;
+		if (room.opponentUsername) {
+			return room;
+		}
+
+		const user = await this.userDao.findByName(username);
+		if (!user) {
+			throw new Error("User not found");
+		}
+
+		await this.roomDao.updateByName(roomName, { opponentId: user.id });
+		const updated = await this.getRoomByName(roomName);
+		this.notifyPlayersRoomUpdated(updated);
+		return updated;
 	}
 
-	getRoomByName(roomName) {
+	async getRoomByName(roomName) {
 		logger.info("Getting room by name", { roomName });
-		const inMemoryRoom = this.activeRooms.get(roomName);
-		if (inMemoryRoom) {
-			const cleanedRoom = {
-				...inMemoryRoom,
-				players: inMemoryRoom.players.filter((player) => player !== null && player !== undefined)
-			};
-			return cleanedRoom;
+		const persistedRoom = await this.roomDao.findByName(roomName);
+		if (persistedRoom && this.activeRooms.has(persistedRoom.id)) {
+			return this.activeRooms.get(persistedRoom.id);
 		}
-		const persistedRoom = roomDao.findByName(roomName);
 		if (persistedRoom) {
-			const cleanedRoom = {
-				...persistedRoom,
-				players: persistedRoom.players.filter((player) => player !== null && player !== undefined)
-			};
-			this.activeRooms.set(roomName, cleanedRoom);
+			const view = await this.hydrateRoom(persistedRoom, roomName);
+			this.activeRooms.set(persistedRoom.id, view);
 			logger.info("Room found in persisted rooms", { persistedRoom });
-			return cleanedRoom;
+			return view;
 		}
 		logger.info("Room not found", { roomName });
 		return null;
 	}
 
-	getAllRooms() {
-		const persistedRooms = roomDao.findAll();
-		persistedRooms.forEach((room) => {
-			if (!this.activeRooms.has(room.name)) {
-				const cleanedRoom = {
-					...room,
-					players: room.players.filter((player) => player !== null && player !== undefined)
-				};
-				this.activeRooms.set(room.name, cleanedRoom);
+	async getAllRooms() {
+		const persistedRooms = await this.roomDao.findAll();
+		const views = [];
+		for (const room of persistedRooms) {
+			const view = await this.hydrateRoom(room);
+			if (view) {
+				this.activeRooms.set(room.id, view);
+				views.push(view);
 			}
-		});
-		return Array.from(this.activeRooms.values()).map((room) => ({
-			...room,
-			players: room.players.filter((player) => player !== null && player !== undefined)
-		}));
+		}
+		return views;
 	}
 
-	addPlayer(roomName, username) {
+	async addPlayer(roomName, username) {
 		logger.info("Adding player to room", { roomName, username });
-		const room = this.getRoomByName(roomName);
+		const room = await this.getRoomByName(roomName);
 		if (!room) {
 			throw new Error("Room not found");
 		}
-		const filteredPlayers = room.players.filter((player) => player !== null && player !== undefined);
-		if (filteredPlayers.includes(username)) {
+		if (room.players.includes(username)) {
 			return room;
 		}
-		filteredPlayers.push(username);
-		room.players = filteredPlayers;
-		this.activeRooms.set(roomName, room);
-		roomDao.update(roomName, { players: filteredPlayers });
-		return room;
+		return this.joinRoom(roomName, username);
 	}
 
-	removePlayer(roomName, username) {
-		const room = this.getRoomByName(roomName);
+	async removePlayer(roomName, username) {
+		const room = await this.getRoomByName(roomName);
 		if (!room) {
 			return null;
 		}
 		const normalizedUsername = username.toLowerCase();
-		const filteredPlayers = room.players
-			.filter((player) => player !== null && player !== undefined)
-			.filter((player) => player.toLowerCase() !== normalizedUsername);
 
-		if (filteredPlayers.length === room.players.length) {
-			return room;
+		// If leader leaves, promote opponent if any
+		if (room.leaderUsername?.toLowerCase() === normalizedUsername) {
+			if (room.opponentId) {
+				await this.roomDao.updateByName(roomName, { leaderId: room.opponentId, opponentId: null });
+				const updated = await this.getRoomByName(roomName);
+				this.notifyPlayersRoomUpdated(updated);
+				return updated;
+			} else {
+				await this.roomDao.deleteByName(roomName);
+				this.activeRooms.delete(room.id);
+				return null;
+			}
 		}
 
-		if (filteredPlayers.length === 0) {
-			this.activeRooms.delete(roomName);
-			roomDao.delete(roomName);
-			return null;
+		// If opponent leaves
+		if (room.opponentUsername?.toLowerCase() === normalizedUsername) {
+			await this.roomDao.updateByName(roomName, { opponentId: null });
+			const updated = await this.getRoomByName(roomName);
+			this.notifyPlayersRoomUpdated(updated);
+			return updated;
 		}
 
-		const newLeaderUsername =
-			room.leaderUsername && room.leaderUsername.toLowerCase() === normalizedUsername
-				? filteredPlayers[0]
-				: room.leaderUsername;
-
-		const updatedRoom = {
-			...room,
-			leaderUsername: newLeaderUsername,
-			players: filteredPlayers
-		};
-
-		this.activeRooms.set(roomName, updatedRoom);
-		roomDao.update(roomName, { players: filteredPlayers, leaderUsername: newLeaderUsername });
-		this.notifyPlayersRoomUpdated(updatedRoom);
-		return updatedRoom;
+		return room;
 	}
 
-	startGame(roomName) {
+	async startGame(roomName) {
 		try {
-			const roomData = this.getRoomByName(roomName);
+			const roomData = await this.getRoomByName(roomName);
 			if (!roomData) {
 				throw new Error("Room not found");
 			}
 			roomData.gameOnGoing = true;
 			roomData.gameStatus = "PLAYING";
-			this.activeRooms.set(roomName, roomData);
-			roomDao.update(roomName, { gameOnGoing: true, gameStatus: "PLAYING" });
+			this.activeRooms.set(roomData.id, roomData);
 
 			multiGameService.createMultiGame(roomData.name, roomData.leaderUsername, roomData.players);
 
@@ -173,14 +201,13 @@ export class RoomService {
 		}
 	}
 
-	endGame(roomName) {
-		const room = this.getRoomByName(roomName);
+	async endGame(roomName) {
+		const room = await this.getRoomByName(roomName);
 		if (!room) {
 			return null;
 		}
 		room.gameOnGoing = false;
-		this.activeRooms.set(roomName, room);
-		roomDao.update(roomName, { gameOnGoing: false });
+		this.activeRooms.set(room.id, room);
 		multiGameService.endMultiGame(roomName);
 		return room;
 	}
@@ -200,4 +227,8 @@ export class RoomService {
 	}
 }
 
-export default new RoomService();
+const roomDao = new RoomDao();
+const userDao = new UserDao();
+const roomService = new RoomService(roomDao, userDao);
+
+export default roomService;

@@ -20,12 +20,13 @@ const logger = pino({
 export const create = async (req, res) => {
 	try {
 		const { name, leaderUsername } = req.body;
+		const effectiveLeader = req.user?.username || leaderUsername;
 		if (!name || !leaderUsername) {
 			logger.error("Name and leaderUsername are required", { name, leaderUsername });
 			res.json({ failure: "Name and leaderUsername are required" });
 			return;
 		}
-		const room = roomService.createRoom(name, leaderUsername);
+		const room = await roomService.createRoom(name, effectiveLeader);
 		res.json({ success: true, room });
 	} catch (error) {
 		logger.error("Error creating room", { error });
@@ -36,7 +37,7 @@ export const create = async (req, res) => {
 export const getByName = async (req, res) => {
 	try {
 		const { roomName } = req.params;
-		const room = roomService.getRoomByName(roomName);
+		const room = await roomService.getRoomByName(roomName);
 		if (!room) {
 			logger.info("Room not found", { roomName });
 			res.json({ success: false, failure: "Room not found" });
@@ -53,8 +54,9 @@ export const getByName = async (req, res) => {
 export const joinRoomByName  = async (req, res) => {
 	try {
 		const { roomName, username } = req.body;
-        logger.info("Joining room", { roomName, username });
-		const room = roomService.joinRoom(roomName, username);
+		const effectiveUser = req.user?.username || username;
+        logger.info("Joining room", { roomName, username: effectiveUser });
+		const room = await roomService.joinRoom(roomName, effectiveUser);
 		res.json({ success: true, room });
 	} catch (error) {
 		logger.error("Error joining room", { error });
@@ -66,12 +68,13 @@ export const leaveRoom = async (req, res) => {
 	try {
 		
 		const { roomName, username } = req.body;
-		if (!roomName || !username) {
-			logger.error("Room name and username are required to leave", { roomName, username });
+		const effectiveUser = req.user?.username || username;
+		if (!roomName || !effectiveUser) {
+			logger.error("Room name and username are required to leave", { roomName, username: effectiveUser });
 			res.json({ success: false, failure: "Room name and username are required" });
 			return;
 		}
-		const room = roomService.removePlayer(roomName, username);
+		const room = await roomService.removePlayer(roomName, effectiveUser);
 		res.json({ success: true, room });
 	} catch (error) {
 		logger.error("Error leaving room", { error });
@@ -81,7 +84,7 @@ export const leaveRoom = async (req, res) => {
 
 export const getAll = async (req, res) => {
 	try {
-		const rooms = roomService.getAllRooms();
+		const rooms = await roomService.getAllRooms();
 		res.json({ success: "Rooms retrieved", rooms });
 	} catch (error) {
 		logger.error("Error getting rooms", { error });
@@ -93,7 +96,7 @@ export const startGame = async (req, res) => {
 	try {
 		logger.info("Starting game", { body: req.body });
 		const { roomName } = req.body;
-		const room = roomService.startGame(roomName);
+		const room = await roomService.startGame(roomName);
 		res.json({ success: true, room });
 	} catch (error) {
 		logger.error("Error starting game", { error });
