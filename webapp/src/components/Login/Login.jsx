@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 16:28:20 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/29 14:50:29 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/12 14:28:23 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,10 +42,8 @@ const Login = () => {
 			return;
 		}
 		try {
-			// Try login first
 			let response = await loginUser(trimmed);
 			if (!response?.token) {
-				// Fallback to create
 				response = await createUser(trimmed);
 			}
 			if (response?.token && response?.user) {

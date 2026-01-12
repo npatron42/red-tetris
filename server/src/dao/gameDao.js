@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 15:57:54 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/30 15:46:24 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/12 14:01:11 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,16 +18,26 @@ export class GameDao {
 	}
 
 	async findAll() {
-		return this.db.soloGame.findMany();
+		try {
+			return await this.db.soloGame.findMany();
+		} catch (error) {
+			console.error("GameDao.findAll error:", error.message);
+			throw new Error(`Failed to fetch all games: ${error.message}`);
+		}
 	}
 
 	async findById(gameId) {
 		if (!gameId) {
 			return null;
 		}
-		return this.db.soloGame.findUnique({
-			where: { id: gameId }
-		});
+		try {
+			return await this.db.soloGame.findUnique({
+				where: { id: gameId }
+			});
+		} catch (error) {
+			console.error("GameDao.findById error:", error.message);
+			throw new Error(`Failed to find game by id '${gameId}': ${error.message}`);
+		}
 	}
 
 	async create(game) {
@@ -38,32 +48,45 @@ export class GameDao {
 			throw new Error("Game ID is required");
 		}
 
-		return this.db.soloGame.create({
-			data: {
-				id: persistedId,
-				...rest
-			}
-		});
+		try {
+			return await this.db.soloGame.create({
+				data: {
+					id: persistedId,
+					...rest
+				}
+			});
+		} catch (error) {
+			console.error("GameDao.create error:", error.message);
+			throw new Error(`Failed to create game '${persistedId}': ${error.message}`);
+		}
 	}
 
 	async update(gameId, updates) {
+		if (!gameId) {
+			return null;
+		}
 		try {
 			return await this.db.soloGame.update({
 				where: { id: gameId },
 				data: updates
 			});
 		} catch (error) {
+			console.error("GameDao.update error:", error.message);
 			return null;
 		}
 	}
 
 	async delete(gameId) {
+		if (!gameId) {
+			return false;
+		}
 		try {
 			await this.db.soloGame.delete({
 				where: { id: gameId }
 			});
 			return true;
 		} catch (error) {
+			console.error("GameDao.delete error:", error.message);
 			return false;
 		}
 	}

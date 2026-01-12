@@ -6,11 +6,11 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:11:03 by npatron           #+#    #+#             */
-/*   Updated: 2026/01/12 03:06:33 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/12 14:27:52 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-import { UserDao } from "../dao/userDao.js";
+import { UserDao } from "../dao/UserDao.js";
 import { MatchDao } from "../dao/matchDao.js";
 
 export class UserService {
@@ -19,29 +19,28 @@ export class UserService {
 		this.matchDao = matchDao;
 	}
 
-	async getUserByUsername(username) {
-		if (!username) {
-			throw new Error("Username is required");
+	async getUserByName(name) {
+		if (!name) {
+			throw new Error("name is required");
 		}
-		const user = await this.userDao.findByName(username);
+		const user = await this.userDao.findByName(name);
 		if (!user) {
 			throw new Error("User not found");
 		}
 		return user;
 	}
 
-	async userExists(username) {
+	async userExists(name) {
 		try {
-			if (!username) {
+			if (!name) {
 				return false;
 			}
-			const user = await this.userDao.findByName(username);
+			const user = await this.userDao.findByName(name);
 			if (!user) {
 				return false;
 			}
 			return true;
 		} catch (error) {
-			console.log("userExists ICI 0", error);
 			return false;
 		}
 	}
@@ -57,51 +56,50 @@ export class UserService {
 		return user;
 	}
 
-	async createUser(username) {
-		console.log("createUser ICI", username);
-		if (!username || username.length > 16) {
-			throw new Error("Invalid username");
+	async createUser(name) {
+		if (!name || name.length > 16) {
+			throw new Error("Invalid name");
 		}
-		const exists = await this.userExists(username);
+		const exists = await this.userExists(name);
 		if (exists) {
 			throw new Error("User already exists");
 		}
 		const user = await this.userDao.create({
-			name: username,
+			name: name,
 			multiplayerWins: 0,
 			multiPlayerLosses: "0"
 		});
 		return user;
 	}
 
-	async addMatchHistory(username, match) {
-		if (!username || !match) {
-			throw new Error("Username and match are required");
+	async addMatchHistory(name, match) {
+		if (!name || !match) {
+			throw new Error("name and match are required");
 		}
-		const user = await this.userDao.findByName(username);
+		const user = await this.userDao.findByName(name);
 		if (!user) {
 			throw new Error("User not found");
 		}
-		const players = Array.isArray(match.players) ? match.players : [username];
-		const winner = match.winner ?? username;
+		const players = Array.isArray(match.players) ? match.players : [name];
+		const winner = match.winner ?? name;
 		return this.matchDao.create({
 			player1Id: user.id,
 			player2Id: user.id,
-			winnerId: winner === username ? user.id : null,
+			winnerId: winner === name ? user.id : null,
 			rngSeed: match.rngSeed ?? Date.now(),
 			status: match.status
 		});
 	}
 
-	async getMatchHistory(username) {
-		if (!username) {
-			throw new Error("Username is required");
+	async getMatchHistory(name) {
+		if (!name) {
+			throw new Error("name is required");
 		}
-		return this.matchDao.findByUsername(username);
+		return this.matchDao.findByname(name);
 	}
 
-	async updateStats(username, isWinner) {
-		const user = await this.userDao.findByName(username);
+	async updateStats(name, isWinner) {
+		const user = await this.userDao.findByName(name);
 		if (!user) {
 			throw new Error("User not found");
 		}
@@ -111,7 +109,7 @@ export class UserService {
 			multiplayerWins: isWinner ? wins + 1 : wins,
 			multiPlayerLosses: (!isWinner ? lossesParsed + 1 : lossesParsed).toString()
 		};
-		return this.userDao.update(username, updates);
+		return this.userDao.update(name, updates);
 	}
 }
 

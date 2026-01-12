@@ -26,41 +26,61 @@ export class MatchDao {
 	}
 
 	async findAll() {
-		return this.db.match.findMany({
-			orderBy: { created_at: "desc" }
-		});
+		try {
+			return await this.db.match.findMany({
+				orderBy: { created_at: "desc" }
+			});
+		} catch (error) {
+			console.error("MatchDao.findAll error:", error.message);
+			throw new Error(`Failed to fetch all matches: ${error.message}`);
+		}
 	}
 
 	async findById(id) {
 		if (!id) {
 			return null;
 		}
-		return this.db.match.findUnique({
-			where: { id }
-		});
+		try {
+			return await this.db.match.findUnique({
+				where: { id }
+			});
+		} catch (error) {
+			console.error("MatchDao.findById error:", error.message);
+			throw new Error(`Failed to find match by id '${id}': ${error.message}`);
+		}
 	}
 
 	async findByPlayerId(playerId) {
 		if (!playerId) {
 			return [];
 		}
-		return this.db.match.findMany({
-			where: {
-				OR: [{ player1_id: playerId }, { player2_id: playerId }]
-			},
-			orderBy: { created_at: "desc" }
-		});
+		try {
+			return await this.db.match.findMany({
+				where: {
+					OR: [{ player1_id: playerId }, { player2_id: playerId }]
+				},
+				orderBy: { created_at: "desc" }
+			});
+		} catch (error) {
+			console.error("MatchDao.findByPlayerId error:", error.message);
+			throw new Error(`Failed to find matches for player '${playerId}': ${error.message}`);
+		}
 	}
 
 	async findByUsername(username) {
 		if (!username) {
 			return [];
 		}
-		const user = await this.db.user.findFirst({ where: { name: username } });
-		if (!user) {
-			return [];
+		try {
+			const user = await this.db.user.findFirst({ where: { name: username } });
+			if (!user) {
+				return [];
+			}
+			return await this.findByPlayerId(user.id);
+		} catch (error) {
+			console.error("MatchDao.findByUsername error:", error.message);
+			throw new Error(`Failed to find matches for username '${username}': ${error.message}`);
 		}
-		return this.findByPlayerId(user.id);
 	}
 
 	async create(match) {
@@ -73,18 +93,23 @@ export class MatchDao {
 			throw new Error("rngSeed is required");
 		}
 
-		return this.db.match.create({
-			data: {
-				id: match.id || uuidv4(),
-				player1_id: player1Id,
-				player2_id: player2Id,
-				winner_id: winnerId,
-				status: status || "PENDING",
-				rng_seed: toBigInt(rngSeed),
-				created_at: createdAt,
-				ended_at: endedAt
-			}
-		});
+		try {
+			return await this.db.match.create({
+				data: {
+					id: match.id || uuidv4(),
+					player1_id: player1Id,
+					player2_id: player2Id,
+					winner_id: winnerId,
+					status: status || "PENDING",
+					rng_seed: toBigInt(rngSeed),
+					created_at: createdAt,
+					ended_at: endedAt
+				}
+			});
+		} catch (error) {
+			console.error("MatchDao.create error:", error.message);
+			throw new Error(`Failed to create match: ${error.message}`);
+		}
 	}
 
 	async update(id, updates) {
@@ -92,18 +117,23 @@ export class MatchDao {
 			return null;
 		}
 
-		const { player1Id, player2Id, winnerId, rngSeed, ...rest } = updates ?? {};
+		try {
+			const { player1Id, player2Id, winnerId, rngSeed, ...rest } = updates ?? {};
 
-		return this.db.match.update({
-			where: { id },
-			data: {
-				...rest,
-				player1_id: player1Id ?? undefined,
-				player2_id: player2Id ?? undefined,
-				winner_id: winnerId ?? undefined,
-				rng_seed: rngSeed !== undefined ? toBigInt(rngSeed) : undefined
-			}
-		});
+			return await this.db.match.update({
+				where: { id },
+				data: {
+					...rest,
+					player1_id: player1Id ?? undefined,
+					player2_id: player2Id ?? undefined,
+					winner_id: winnerId ?? undefined,
+					rng_seed: rngSeed !== undefined ? toBigInt(rngSeed) : undefined
+				}
+			});
+		} catch (error) {
+			console.error("MatchDao.update error:", error.message);
+			throw new Error(`Failed to update match '${id}': ${error.message}`);
+		}
 	}
 
 	async delete(id) {
@@ -115,7 +145,8 @@ export class MatchDao {
 				where: { id }
 			});
 			return true;
-		} catch {
+		} catch (error) {
+			console.error("MatchDao.delete error:", error.message);
 			return false;
 		}
 	}
