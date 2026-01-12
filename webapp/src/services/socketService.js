@@ -23,7 +23,7 @@ const connect = (userId) => {
 
 	const query = { id: userId };
 
-	socket = io("http://localhost:4000", {
+	socket = io(import.meta.env.VITE_API_URL || "http://localhost:4000", {
 		query: query,
 		transports: ["websocket"],
 		closeOnBeforeunload: true

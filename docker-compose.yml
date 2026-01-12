@@ -1,13 +1,13 @@
 services:
   db:
     container_name: postgresql
-    build:
-      context: ./hosting
-      dockerfile: Dockerfile
+    image: postgres:15-alpine
     env_file:
-      - ./hosting/.env
+      - .env
     networks:
       - app_network
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
   server:
     container_name: server
@@ -16,17 +16,21 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     depends_on:
-      - db
+      db:
+        condition: service_started
+      backoffice:
+        condition: service_healthy
     volumes:
       - ./server:/app
       - /app/node_modules
     networks:
       - app_network
     ports:
-      - "8000:8000"
+      - "4000:4000"
     env_file:
+      - .env
       - ./server/.env
-  
+
   webapp:
     container_name: webapp
     build:
@@ -43,6 +47,29 @@ services:
     ports:
       - "5173:5173"
 
+  backoffice:
+    container_name: backoffice
+    build:
+      context: ./backoffice
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - db
+    volumes:
+      - ./backoffice/data:/directus/data
+    networks:
+      - app_network
+    ports:
+      - "8055:8055"
+    env_file:
+      - ./backoffice/.env
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8055/server/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
   adminer:
     image: adminer
     container_name: adminer
@@ -54,3 +81,6 @@ services:
 networks:
   app_network:
     driver: bridge
+
+volumes:
+  postgres_data:
