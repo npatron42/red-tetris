@@ -1,6 +1,7 @@
 
 all:
 	docker-compose up --build -d
+	docker-compose logs -f
 
 clean:
 	docker-compose down

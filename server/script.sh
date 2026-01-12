@@ -1,5 +1,5 @@
 postgres_is_ready() {
-    PGPASSWORD="$PGPASSWORD" psql -h "$POSTGRES_HOST" -U "$POSTGRES_USER" -d "$POSTGRES_DB" -p "$POSTGRES_PORT" -c '\q' > /dev/null 2>&1
+    PGPASSWORD="$POSTGRES_PASSWORD" psql -h "$POSTGRES_HOST" -U "$POSTGRES_USER" -d "$POSTGRES_DB" -p "$POSTGRES_PORT" -c '\q' > /dev/null 2>&1
 }
 
 echo "Waiting for postgres..."
