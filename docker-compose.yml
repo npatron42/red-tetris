@@ -1,13 +1,13 @@
 services:
   db:
     container_name: postgresql
-    build:
-      context: ./hosting
-      dockerfile: Dockerfile
+    image: postgres:15-alpine
     env_file:
-      - ./hosting/.env
+      - .env
     networks:
       - app_network
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
   server:
     container_name: server
@@ -25,8 +25,9 @@ services:
     ports:
       - "8000:8000"
     env_file:
+      - .env
       - ./server/.env
-  
+
   webapp:
     container_name: webapp
     build:
@@ -43,6 +44,23 @@ services:
     ports:
       - "5173:5173"
 
+  backoffice:
+    container_name: backoffice
+    build:
+      context: ./backoffice
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - db
+    volumes:
+      - ./backoffice/data:/directus/data
+    networks:
+      - app_network
+    ports:
+      - "8055:8055"
+    env_file:
+      - ./backoffice/.env
+
   adminer:
     image: adminer
     container_name: adminer
@@ -54,3 +72,6 @@ services:
 networks:
   app_network:
     driver: bridge
+
+volumes:
+  postgres_data:
