@@ -14,7 +14,7 @@ FROM directus/directus:11.10.2
 
 USER root
 
-RUN apk add --no-cache postgresql-client
+RUN apk add --no-cache postgresql-client wget
 
 COPY --chown=node:node ./data /directus/data
 COPY --chown=node:node ./start.sh /directus/start.sh

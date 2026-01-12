@@ -24,7 +24,7 @@ const connect = (username) => {
 	const normalizedUsername = username?.toString().toLowerCase() || "";
 	const query = { username: normalizedUsername };
 
-	socket = io("http://localhost:4000", {
+	socket = io(import.meta.env.VITE_API_URL || "http://localhost:4000", {
 		query: query,
 		transports: ["websocket"],
 		closeOnBeforeunload: true

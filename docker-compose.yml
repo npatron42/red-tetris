@@ -16,14 +16,17 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     depends_on:
-      - db
+      db:
+        condition: service_started
+      backoffice:
+        condition: service_healthy
     volumes:
       - ./server:/app
       - /app/node_modules
     networks:
       - app_network
     ports:
-      - "8000:8000"
+      - "4000:4000"
     env_file:
       - .env
       - ./server/.env
@@ -60,6 +63,12 @@ services:
       - "8055:8055"
     env_file:
       - ./backoffice/.env
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8055/server/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   adminer:
     image: adminer

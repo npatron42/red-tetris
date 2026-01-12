@@ -10,7 +10,8 @@ done
 
 echo "PostgreSQL is ready"
 
+echo "Generating Prisma Client..."
+npx prisma generate
 
-npx prisma migrate dev --name ini
-
+echo "Starting server..."
 npm run dev
