@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 18:24:30 by npatron           #+#    #+#             */
-/*   Updated: 2026/01/12 15:29:11 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/12 17:17:23 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ const soloGameService = new SoloGameService();
 
 export const createSoloGame = async (req, res) => {
 	try {
+		console.log("createSoloGame");
 		const { difficulty } = req.body;
 		const userId = req.user.id;
 

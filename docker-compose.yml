@@ -8,7 +8,6 @@ services:
       - app_network
     volumes:
       - postgres_data:/var/lib/postgresql/data
-
   server:
     container_name: server
     build:
@@ -30,7 +29,6 @@ services:
     env_file:
       - .env
       - ./server/.env
-
   webapp:
     container_name: webapp
     build:
@@ -46,7 +44,6 @@ services:
       - app_network
     ports:
       - "5173:5173"
-
   backoffice:
     container_name: backoffice
     build:
@@ -69,7 +66,6 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
-
   adminer:
     image: adminer
     container_name: adminer
@@ -77,10 +73,8 @@ services:
       - "8080:8080"
     networks:
       - app_network
-
 networks:
   app_network:
     driver: bridge
-
 volumes:
   postgres_data:
