@@ -156,7 +156,6 @@ export class MultiGameService {
 
 	handleMovePiece(roomName, name, direction) {
 		try {
-			console.log("handleMovePiece", roomName, name, direction);
 			const roomInstance = this.getActiveGame(roomName);
 
 			if (!roomInstance) {

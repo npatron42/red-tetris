@@ -53,9 +53,6 @@ export const TetrisGameSolo = () => {
 	const { socket } = useSocket();
 	const [gameStatus, setGameStatus] = useState(null);
 
-	console.log("gameId:", gameId);
-	
-	
 	const getCellAttributes = (cell) => {
 		if (cell === 0) return { className: "cell empty", style: {} };
 
@@ -89,7 +86,6 @@ export const TetrisGameSolo = () => {
 
 	useEffect(() => {
 		const handleGridUpdate = async (data) => {
-			console.log("handleGridUpdate", data);
 			if (data.state && data.state.length > 0) {
 				const playerState = data.state[0];
 				if (playerState.grid) {

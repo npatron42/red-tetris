@@ -13,8 +13,9 @@
 import { Grid } from "./grid.js";
 
 export class Player {
-	constructor(name, socketId) {
+	constructor(name, id, socketId) {
 		this.name = name;
+		this.id = id;
 		this.socketId = socketId;
 
 		this.numberOfGamesPlayed = 0;

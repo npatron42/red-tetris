@@ -43,7 +43,6 @@ const Login = () => {
 		}
 		try {
 			const response = await createUser(trimmed);
-			console.log(response);
 
 			if (response?.token && response?.user) {
 				login(response);

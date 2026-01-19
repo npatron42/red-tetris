@@ -62,7 +62,6 @@ export const TetrisGameMultiplayer = ({ roomInfo, currentUser }) => {
 
 	useEffect(() => {
 		const handleMultiGridUpdate = (data) => {
-			console.log("handleMultiGridUpdate", data);
 			if (data.roomName !== roomInfo.name) {
 				return;
 			}

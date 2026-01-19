@@ -14,8 +14,6 @@ import { PrismaClient } from "@prisma/client";
 
 const defaultDatabaseUrl = process.env.DATABASE_URL;
 
-console.log("defaultDatabaseUrl", defaultDatabaseUrl);
-
 class MainDbClientPrisma {
 	constructor() {
 		this.client = new PrismaClient({

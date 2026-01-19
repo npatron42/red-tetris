@@ -70,7 +70,7 @@ export class SoloGame {
 				this.stopGameLoop();
 				return;
 			}
-			this.movePiece(this.player.getUsername(), "DOWN", socketService);
+			this.movePiece(this.player.id, "DOWN", socketService);
 		}, this._getDifficultySpeed());
 	}
 
@@ -108,12 +108,12 @@ export class SoloGame {
 		return grid.getGrid();
 	}
 
-	movePiece(name, direction, socketService) {
+	movePiece(userId, direction, socketService) {
 		if (!this.isStarted) {
 			return null;
 		}
 
-		if (this.player.getUsername() !== name || !this.player.currentPiece) {
+		if (this.player.id !== userId || !this.player.currentPiece) {
 			return null;
 		}
 
@@ -174,7 +174,7 @@ export class SoloGame {
 		try {
 			const state = [
 				{
-					name: this.player.getUsername(),
+					userId: this.player.id,
 					grid: this.player.currentPiece
 						? this.player.getGrid().getGridWithPiece(this.player.currentPiece)
 						: this.player.getGrid().getGrid(),
@@ -185,8 +185,9 @@ export class SoloGame {
 				}
 			];
 
-			socketService.emitToUsers([this.player.getUsername()], "soloGameUpdated", {
-				name: this.player.getUsername(),
+
+			socketService.emitToUsers([this.player.id], "soloGameUpdated", {
+				playerId: this.player.id,
 				state
 			});
 		} catch (error) {
@@ -219,7 +220,7 @@ export class SoloGame {
 				this.stopGameLoop();
 				return;
 			}
-			this.movePiece(this.player.getUsername(), "DOWN", socketService);
+			this.movePiece(this.player.id, "DOWN", socketService);
 		}, this._getDifficultySpeed());
 	}
 

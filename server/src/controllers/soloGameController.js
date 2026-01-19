@@ -18,7 +18,6 @@ const soloGameService = new SoloGameService();
 
 export const createSoloGame = async (req, res) => {
 	try {
-		console.log("createSoloGame");
 		const { difficulty } = req.body;
 		const userId = req.user.id;
 

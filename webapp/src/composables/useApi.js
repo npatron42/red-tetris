@@ -130,7 +130,6 @@ export const startGame = async (roomName) => {
 
 export const createSoloGame = async (difficulty) => {
 	try {
-		console.log("createSoloGame difficulty:", difficulty);
 		const response = await api.post("/solo/create", { difficulty });
 		return response.data;
 	} catch (error) {

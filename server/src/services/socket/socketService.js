@@ -29,7 +29,6 @@ export class SocketService {
 
 		this.io.on("connection", (socket) => {
 			const id = (socket.handshake.query.id || "")
-			console.log("id:", id);
 			if (id) {
 				this.users[id] = socket.id;
 			}
@@ -72,19 +71,23 @@ export class SocketService {
 	}
 
 	emitToUsers(ids, event, data) {
-		if (!this.io || !Array.isArray(ids) || !event) return;
-		const uniqueUserids = Array.from(
-			new Set(
-				ids.filter((id) => id !== null && id !== undefined).map((id) => id.toString().toLowerCase())
-			)
-		);
+		try {
+			if (!this.io || !Array.isArray(ids) || !event) return;
+			const uniqueUserids = Array.from(
+				new Set(
+					ids.filter((id) => id !== null && id !== undefined).map((id) => id.toString().toLowerCase())
+				)
+			);
 
-		uniqueUserids.forEach((id) => {
-			const socketId = this.users[id];
-			if (socketId) {
-				this.emitToUser(socketId, event, data);
-			}
-		});
+			uniqueUserids.forEach((id) => {
+				const socketId = this.users[id];
+				if (socketId) {
+					this.emitToUser(socketId, event, data);
+				}
+			});
+		} catch (error) {
+			console.error("Error emitting to users", error);
+		}
 	}
 
 	setSoloMoveHandler(handler) {
