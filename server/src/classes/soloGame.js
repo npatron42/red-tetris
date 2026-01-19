@@ -6,13 +6,14 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 17:39:21 by npatron           #+#    #+#             */
-/*   Updated: 2026/01/12 15:25:48 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/19 16:35:48 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+import crypto from "crypto";
+
 import { TetrominosBag } from "./tetrominosBag.js";
 import { ScoringSystem } from "./scoringSystem.js";
-import crypto from "crypto";
 
 export const Difficulty = {
 	EASY: "EASY",

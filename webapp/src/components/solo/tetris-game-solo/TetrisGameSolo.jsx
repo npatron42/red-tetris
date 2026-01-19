@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 13:02:55 by npatron           #+#    #+#             */
-/*   Updated: 2026/01/12 16:22:22 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/19 16:57:12 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ export const TetrisGameSolo = () => {
 	const [grid, setGrid] = useState(() => Array.from({ length: 20 }, () => Array(10).fill(0)));
 	const [score, setScore] = useState(0);
 	const [level, setLevel] = useState(1);
+	const [endGame, setEndGame] = useState(false);
 	const [nextPieces, setNextPieces] = useState([]);
 	const { user } = useUser();
 	const { socket } = useSocket();
@@ -87,6 +88,7 @@ export const TetrisGameSolo = () => {
 	useEffect(() => {
 		const handleGridUpdate = async (data) => {
 			if (data.state && data.state.length > 0) {
+				console.log("data", data);
 				const playerState = data.state[0];
 				if (playerState.grid) {
 					setGrid(playerState.grid);
@@ -104,8 +106,8 @@ export const TetrisGameSolo = () => {
 					setGameStatus(playerState.status);
 
 					if (playerState.status === "COMPLETED") {
+						setEndGame(true);
 						await endSoloGame(gameId, playerState.score);
-						await goToHome();
 					}
 				}
 			}
