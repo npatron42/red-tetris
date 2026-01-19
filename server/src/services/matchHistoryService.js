@@ -6,18 +6,18 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:10:54 by npatron           #+#    #+#             */
-/*   Updated: 2026/01/12 15:25:48 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/19 16:30:30 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import { v4 as uuidv4 } from "uuid";
 import { MatchDao } from "../dao/matchDao.js";
-import userService from "./userService.js";
+import { UserService } from "./userService.js";
 
 export class MatchHistoryService {
-	constructor(matchDao, userServiceInstance) {
-		this.matchDao = matchDao;
-		this.userService = userServiceInstance;
+	constructor() {
+		this.matchDao = new MatchDao();
+		this.userService = new UserService();
 	}
 
 	async createMatchHistory(playerIds, winnerId) {
@@ -56,7 +56,6 @@ export class MatchHistoryService {
 	}
 }
 
-const matchDao = new MatchDao();
-const matchHistoryService = new MatchHistoryService(matchDao, userService);
+const matchHistoryService = new MatchHistoryService();
 
 export default matchHistoryService;

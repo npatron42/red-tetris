@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 15:26:42 by npatron           #+#    #+#             */
-/*   Updated: 2026/01/12 03:02:49 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/19 16:22:15 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@ import debug from "debug";
 import pino from "pino";
 
 import { fileURLToPath } from "url";
-import { Server } from "socket.io";
 
 import principalRouter from "./src/routes/index.js";
 import userRouter from "./src/routes/userRoutes.js";

@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:11:03 by npatron           #+#    #+#             */
-/*   Updated: 2026/01/19 15:51:59 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/19 16:28:46 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,10 @@ import { MatchDao } from "../dao/matchDao.js";
 import { SoloGameDao } from "../dao/soloGameDao.js";
 
 export class UserService {
-	constructor(userDao, matchDao = new MatchDao()) {
-		this.userDao = userDao;
-		this.matchDao = matchDao;
-		this.soloGameDao = soloGameDao;
+	constructor() {
+		this.userDao = new UserDao();
+		this.matchDao = new MatchDao();
+		this.soloGameDao = new SoloGameDao();
 	}
 
 	async getUserById(id) {
@@ -27,7 +27,9 @@ export class UserService {
 		}
 		const user = await this.userDao.findById(id);
 		const matchHistory = await this.matchDao.findByPlayerId(id);
+		const soloGameHistory = await this.soloGameDao.findByUserId(id);
 		user.matchHistory = matchHistory;
+		user.soloGameHistory = soloGameHistory;
 		if (!user) {
 			throw new Error("User not found");
 		}
@@ -124,7 +126,6 @@ export class UserService {
 	}
 }
 
-const userDao = new UserDao();
-const userService = new UserService(userDao);
+const userService = new UserService();
 
 export default userService;

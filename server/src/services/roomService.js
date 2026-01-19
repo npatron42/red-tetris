@@ -6,15 +6,15 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:10:49 by npatron           #+#    #+#             */
-/*   Updated: 2026/01/12 15:28:57 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/19 16:29:05 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+import pino from "pino";
+import socketService from "./socket/socketService.js";
+import multiGameService from "./multiGameService.js";
 import { RoomDao } from "../dao/roomDao.js";
 import { UserDao } from "../dao/userDao.js";
-import socketService from "./socket/socketService.js";
-import pino from "pino";
-import multiGameService from "./multiGameService.js";
 
 const logger = pino({
 	level: "info"
@@ -22,9 +22,9 @@ const logger = pino({
 
 logger.info("RoomService initialized");
 export class RoomService {
-	constructor(roomDao, userDao) {
-		this.roomDao = roomDao;
-		this.userDao = userDao;
+	constructor() {
+		this.roomDao = new RoomDao();
+		this.userDao = new UserDao();
 		this.activeRooms = new Map();
 	}
 

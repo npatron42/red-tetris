@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 15:57:54 by npatron           #+#    #+#             */
-/*   Updated: 2026/01/12 14:01:11 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/19 16:10:51 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,20 @@ export class SoloGameDao {
 		} catch (error) {
 			console.error("SoloGameDao.delete error:", error.message);
 			return false;
+		}
+	}
+
+	async findByUserId(userId) {
+		if (!userId) {
+			return null;
+		}
+		try {
+			return await this.db.soloGame.findMany({
+				where: { player_id: userId }
+			});
+		} catch (error) {
+			console.error("SoloGameDao.findByUserId error:", error.message);
+			throw new Error(`Failed to find games by user id '${userId}': ${error.message}`);
 		}
 	}
 }

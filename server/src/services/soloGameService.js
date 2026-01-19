@@ -6,27 +6,26 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 17:39:02 by npatron           #+#    #+#             */
-/*   Updated: 2026/01/19 15:59:29 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/19 16:26:34 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import { SoloGame } from "../classes/soloGame.js";
 import { Player } from "../classes/player.js";
-import { SoloSoloGameDao } from "../dao/SoloSoloGameDao.js";
-import { UserDao } from "../dao/userDao.js";
 import socketService from "./socket/socketService.js";
-
+import { SoloGameDao } from "../dao/soloGameDao.js";
+import { UserDao } from "../dao/userDao.js";
 import pino from "pino";
 import { v4 as uuidv4 } from "uuid";
 
 const logger = pino({ level: "info" });
 
 export class SoloGameService {
-	constructor(SoloGameDao = new SoloGameDao(), userDao = new UserDao()) {
+	constructor() {
 		this.activeGames = new Map();
 		this.setupSocketHandler();
-		this.soloGameDao = SoloGameDao;
-		this.userDao = userDao;
+		this.soloGameDao = new SoloGameDao();
+		this.userDao = new UserDao();
 	}
 
 	setupSocketHandler() {
