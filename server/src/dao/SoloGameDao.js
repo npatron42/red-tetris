@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   gameDao.js                                         :+:      :+:    :+:   */
+/*   SoloGameDao.js                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,7 +12,7 @@
 
 import { prismaClient } from "../db/mainDbClientPrisma.js";
 
-export class GameDao {
+export class SoloGameDao {
 	constructor(dbClient = prismaClient) {
 		this.db = dbClient;
 	}
@@ -21,7 +21,7 @@ export class GameDao {
 		try {
 			return await this.db.soloGame.findMany();
 		} catch (error) {
-			console.error("GameDao.findAll error:", error.message);
+			console.error("SoloGameDao.findAll error:", error.message);
 			throw new Error(`Failed to fetch all games: ${error.message}`);
 		}
 	}
@@ -35,7 +35,7 @@ export class GameDao {
 				where: { id: gameId }
 			});
 		} catch (error) {
-			console.error("GameDao.findById error:", error.message);
+			console.error("SoloGameDao.findById error:", error.message);
 			throw new Error(`Failed to find game by id '${gameId}': ${error.message}`);
 		}
 	}
@@ -56,7 +56,7 @@ export class GameDao {
 				}
 			});
 		} catch (error) {
-			console.error("GameDao.create error:", error.message);
+			console.error("SoloGameDao.create error:", error.message);
 			throw new Error(`Failed to create game '${persistedId}': ${error.message}`);
 		}
 	}
@@ -71,7 +71,7 @@ export class GameDao {
 				data: updates
 			});
 		} catch (error) {
-			console.error("GameDao.update error:", error.message);
+			console.error("SoloGameDao.update error:", error.message);
 			return null;
 		}
 	}
@@ -86,10 +86,10 @@ export class GameDao {
 			});
 			return true;
 		} catch (error) {
-			console.error("GameDao.delete error:", error.message);
+			console.error("SoloGameDao.delete error:", error.message);
 			return false;
 		}
 	}
 }
 
-export default new GameDao();
+export default new SoloGameDao();

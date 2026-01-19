@@ -6,13 +6,13 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 17:39:02 by npatron           #+#    #+#             */
-/*   Updated: 2026/01/12 15:46:26 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/19 15:59:29 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import { SoloGame } from "../classes/soloGame.js";
 import { Player } from "../classes/player.js";
-import { GameDao } from "../dao/gameDao.js";
+import { SoloSoloGameDao } from "../dao/SoloSoloGameDao.js";
 import { UserDao } from "../dao/userDao.js";
 import socketService from "./socket/socketService.js";
 
@@ -22,10 +22,10 @@ import { v4 as uuidv4 } from "uuid";
 const logger = pino({ level: "info" });
 
 export class SoloGameService {
-	constructor(gameDao = new GameDao(), userDao = new UserDao()) {
+	constructor(SoloGameDao = new SoloGameDao(), userDao = new UserDao()) {
 		this.activeGames = new Map();
 		this.setupSocketHandler();
-		this.gameDao = gameDao;
+		this.soloGameDao = SoloGameDao;
 		this.userDao = userDao;
 	}
 
@@ -81,7 +81,7 @@ export class SoloGameService {
 			soloGame.playerId = userId;
 
 			this.activeGames.set(gameId, soloGame);
-			await this.gameDao.create({
+			await this.soloGameDao.create({
 				id: gameId,
 				player_id: user.id,
 				status: "IN_PROGRESS",
@@ -106,7 +106,7 @@ export class SoloGameService {
 			const game = this.activeGames.get(gameId);
 
 			if (!game) {
-				const persistedGame = await this.gameDao.findById(gameId);
+				const persistedGame = await this.soloGameDao.findById(gameId);
 				if (!persistedGame) {
 					return null;
 				}
@@ -142,7 +142,7 @@ export class SoloGameService {
 			game.stopGameLoop();
 			game.endGame();
 			this.activeGames.delete(gameId);
-			await this.gameDao.update(gameId, { status: "COMPLETED" });
+			await this.soloGameDao.update(gameId, { status: "COMPLETED" });
 			socketService.emitToUsers([game.player.id], "soloGameEnded", {
 				playerId: game.player.id,
 				gameId,

@@ -6,17 +6,19 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:11:03 by npatron           #+#    #+#             */
-/*   Updated: 2026/01/12 14:27:52 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/19 15:51:59 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import { UserDao } from "../dao/userDao.js";
 import { MatchDao } from "../dao/matchDao.js";
+import { SoloGameDao } from "../dao/soloGameDao.js";
 
 export class UserService {
 	constructor(userDao, matchDao = new MatchDao()) {
 		this.userDao = userDao;
 		this.matchDao = matchDao;
+		this.soloGameDao = soloGameDao;
 	}
 
 	async getUserById(id) {
@@ -24,6 +26,8 @@ export class UserService {
 			throw new Error("User id is required");
 		}
 		const user = await this.userDao.findById(id);
+		const matchHistory = await this.matchDao.findByPlayerId(id);
+		user.matchHistory = matchHistory;
 		if (!user) {
 			throw new Error("User not found");
 		}
