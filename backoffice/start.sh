@@ -24,7 +24,7 @@ npx directus bootstrap
 echo "Applying Directus schema snapshot..."
 
 #TODO: find a way to apply the correct snapshot in a dynamic way FABIO PALUMBOBOBOBOBOBO
-npx directus schema apply --yes ./data/snapshots/2026011900.yml
+npx directus schema apply --yes ./data/snapshots/2026011902.yml
 
 echo "Starting Directus..."
 npx directus start
