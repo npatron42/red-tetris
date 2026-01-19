@@ -17,7 +17,7 @@ import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import { createUser } from "../../composables/useApi.js";
-import { useUser } from "../../providers/UserProvider";
+import { useUser } from "../../providers/UserProvider.jsx";
 
 import { ToastContainer, toast, Bounce } from "react-toastify";
 

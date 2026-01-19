@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-import { UserDao } from "../dao/UserDao.js";
+import { UserDao } from "../dao/userDao.js";
 import { MatchDao } from "../dao/matchDao.js";
 
 export class UserService {

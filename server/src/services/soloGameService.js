@@ -13,7 +13,7 @@
 import { SoloGame } from "../classes/soloGame.js";
 import { Player } from "../classes/player.js";
 import { GameDao } from "../dao/gameDao.js";
-import { UserDao } from "../dao/UserDao.js";
+import { UserDao } from "../dao/userDao.js";
 import socketService from "./socket/socketService.js";
 
 import pino from "pino";

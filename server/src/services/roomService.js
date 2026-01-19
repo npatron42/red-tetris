@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 import { RoomDao } from "../dao/roomDao.js";
-import { UserDao } from "../dao/UserDao.js";
+import { UserDao } from "../dao/userDao.js";
 import socketService from "./socket/socketService.js";
 import pino from "pino";
 import multiGameService from "./multiGameService.js";

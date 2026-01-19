@@ -3,7 +3,7 @@ services:
     container_name: postgresql
     image: postgres:15-alpine
     env_file:
-      - .env
+      - ./hosting/.env
     networks:
       - app_network
     volumes:
@@ -27,7 +27,7 @@ services:
     ports:
       - "4000:4000"
     env_file:
-      - .env
+      - ./hosting/.env
       - ./server/.env
   webapp:
     container_name: webapp
