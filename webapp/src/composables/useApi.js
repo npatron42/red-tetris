@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 15:20:41 by npatron           #+#    #+#             */
-/*   Updated: 2026/01/19 16:41:03 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/31 10:39:28 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,6 +110,7 @@ export const createHistoryMatch = async (playerIds, winnerId) => {
 
 export const createRoom = async (name) => {
 	try {
+        console.log("Creating room", { name });
 		const response = await api.post("/room/create", { name });
 		return response.data;
 	} catch (error) {

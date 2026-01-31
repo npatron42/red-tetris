@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:10:49 by npatron           #+#    #+#             */
-/*   Updated: 2026/01/19 16:29:05 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/31 10:49:27 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,53 +20,10 @@ const logger = pino({
 	level: "info"
 });
 
-logger.info("RoomService initialized");
 export class RoomService {
 	constructor() {
 		this.roomDao = new RoomDao();
 		this.userDao = new UserDao();
-		this.activeRooms = new Map();
-	}
-
-	async getUserById(id) {
-		if (!id) return null;
-		return this.userDao.findById(id);
-	}
-
-	async getUserNameById(id) {
-		if (!id) return null;
-		const user = await this.userDao.findById(id);
-		return user?.name ?? null;
-	}
-
-	buildRoomView(room, displayName) {
-		const players = [];
-		if (room.leader_id) {
-			if (room.leaderUsername) {
-				players.push(room.leaderUsername);
-			}
-		}
-		if (room.opponent_id && room.opponentUsername) {
-			players.push(room.opponentUsername);
-		}
-		return {
-			id: room.id,
-			name: displayName || room.name || room.id,
-			leaderId: room.leader_id,
-			opponentId: room.opponent_id,
-			leaderUsername: room.leaderUsername,
-			opponentUsername: room.opponentUsername,
-			players,
-			gameStatus: room.gameStatus || "PENDING",
-			gameOnGoing: room.gameOnGoing || false
-		};
-	}
-
-	async hydrateRoom(room, displayName) {
-		if (!room) return null;
-		const leaderUsername = room.leaderUsername || (await this.getUserNameById(room.leader_id));
-		const opponentUsername = room.opponentUsername || (await this.getUserNameById(room.opponent_id));
-		return this.buildRoomView({ ...room, leaderUsername, opponentUsername }, displayName);
 	}
 
 	async createRoom(roomName, leaderId) {
@@ -88,12 +45,12 @@ export class RoomService {
 			leaderId: leader.id,
 			createdAt: new Date()
 		});
-		const view = await this.hydrateRoom(savedRoom, roomName);
-		this.activeRooms.set(savedRoom.id, view);
-		return view;
+		const enrichedRoom = await this.getRoomByName(roomName);
+		return enrichedRoom;
 	}
 
 	async joinRoom(roomName, userId) {
+		console.log("ICI --> joinRoom", { roomName, userId });
 		const room = await this.getRoomByName(roomName);
 		if (!room) {
 			throw new Error("Room not found");
@@ -108,42 +65,46 @@ export class RoomService {
 		}
 
 		await this.roomDao.updateByName(roomName, { opponentId: user.id });
-		const updated = await this.getRoomByName(roomName);
-		this.notifyPlayersRoomUpdated(updated);
-		return updated;
+		const updatedRoom = await this.getRoomByName(roomName);
+		this.notifyPlayersRoomUpdated(updatedRoom);
+		return updatedRoom;
 	}
 
 	async getRoomByName(roomName) {
-		logger.info("Getting room by name", { roomName });
-		const persistedRoom = await this.roomDao.findByName(roomName);
-		if (persistedRoom && this.activeRooms.has(persistedRoom.id)) {
-			return this.activeRooms.get(persistedRoom.id);
+		const room = await this.roomDao.findByName(roomName);
+		if (room) {
+			return this.enrichRoomData(room);
 		}
-		if (persistedRoom) {
-			const view = await this.hydrateRoom(persistedRoom, roomName);
-			this.activeRooms.set(persistedRoom.id, view);
-			logger.info("Room found in persisted rooms", { persistedRoom });
-			return view;
-		}
-		logger.info("Room not found", { roomName });
 		return null;
 	}
 
-	async getAllRooms() {
-		const persistedRooms = await this.roomDao.findAll();
-		const views = [];
-		for (const room of persistedRooms) {
-			const view = await this.hydrateRoom(room);
-			if (view) {
-				this.activeRooms.set(room.id, view);
-				views.push(view);
-			}
+	enrichRoomData(room) {
+		if (!room) return null;
+		
+		const players = [];
+		if (room.leader) {
+			players.push(room.leader.name);
 		}
-		return views;
+		if (room.opponent) {
+			players.push(room.opponent.name);
+		}
+
+		return {
+			...room,
+			leaderId: room.leader_id,
+			opponentId: room.opponent_id,
+			leaderUsername: room.leader?.name || null,
+			opponentUsername: room.opponent?.name || null,
+			players
+		};
+	}
+
+	async getAllRooms() {
+		const rooms = await this.roomDao.findAll();
+		return rooms.map(room => this.enrichRoomData(room));
 	}
 
 	async addPlayer(roomName, userId) {
-		logger.info("Adding player to room", { roomName, userId });
 		const room = await this.getRoomByName(roomName);
 		if (!room) {
 			throw new Error("Room not found");
@@ -152,8 +113,8 @@ export class RoomService {
 		if (!user) {
 			throw new Error("User not found");
 		}
-		if (room.players.includes(user.name)) {
-			return room;
+		if (room.leaderId === userId || room.opponentId === userId) {
+			throw new Error("User already in room");
 		}
 		return this.joinRoom(roomName, userId);
 	}
@@ -164,8 +125,7 @@ export class RoomService {
 			return null;
 		}
 		if (!userId) {
-			logger.warn("Invalid userId parameter in removePlayer", { userId, roomName });
-			return room;
+			throw new Error("Invalid userId parameter in removePlayer");
 		}
 
 		if (room.leaderId === userId) {
@@ -223,17 +183,21 @@ export class RoomService {
 	}
 
 	notifyPlayersRoomUpdated(room) {
-		if (!room || !room.players || !socketService.launched) {
+		if (!room  || !socketService.launched) {
 			return;
 		}
+        console.log("ICI --> room", room);
 		const payload = {
-			roomName: room.name,
+			name: room.name,
+			leaderId: room.leaderId,
+			opponentId: room.opponentId,
 			leaderUsername: room.leaderUsername,
+			opponentUsername: room.opponentUsername,
 			gameOnGoing: room.gameOnGoing,
 			gameStatus: room.gameStatus,
 			players: room.players.filter((player) => player !== null && player !== undefined)
 		};
-		socketService.emitToUsers(payload.players, "roomUpdated", payload);
+		socketService.emitToUsers([room.leaderId, room.opponentId], "roomUpdated", payload);
 	}
 }
 

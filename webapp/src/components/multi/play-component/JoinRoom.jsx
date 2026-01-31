@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/07 16:54:59 by npatron           #+#    #+#             */
-/*   Updated: 2026/01/12 15:25:48 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/31 10:39:53 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../../providers/UserProvider";
 import { useRoom } from "../../../composables/useRoom";
-import { toast, ToastContainer, Bounce } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 
 export default function JoinRoom() {
 	const [roomName, setroomName] = useState("");
@@ -34,11 +34,7 @@ export default function JoinRoom() {
 		if (trimmedRoomName.length < 1) {
 			return;
 		}
-		const roomData = {
-			roomName: trimmedRoomName,
-			name: user
-		};
-		const response = await handleJoinRoom(roomData);
+		const response = await handleJoinRoom(trimmedRoomName);
 		if (response.success && response.data?.success) {
 			navigate(`/${trimmedRoomName}/${response.data.room.leaderUsername}`);
 		} else {

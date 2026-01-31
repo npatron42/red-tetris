@@ -33,6 +33,7 @@ export const SocketProvider = ({ children }) => {
 
 	useEffect(() => {
 		const handleRoomUpdated = (data) => {
+            console.log("ICI --> handleRoomUpdated", data);
 			setRoomEvents((prev) => ({ ...prev, roomUpdated: data }));
 		};
 

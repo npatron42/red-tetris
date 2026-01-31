@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 13:08:55 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/29 14:54:19 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/31 10:06:30 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ const CreateRoom = () => {
 	const [roomName, setRoomName] = useState("");
 	const navigate = useNavigate();
 	const { user } = useUser();
-	const { handleCreateRoom, isLoading, error } = useRoom();
+	const { handleCreateRoom, isLoading } = useRoom();
 
 	if (!user) {
 		return null;
@@ -36,7 +36,7 @@ const CreateRoom = () => {
 		if (parsedRoomName.length < 1) {
 			return;
 		}
-		const result = await handleCreateRoom({ name: parsedRoomName, leaderUsername: user });
+		const result = await handleCreateRoom(parsedRoomName);
 		if (result.success) {
 			navigate(`/${parsedRoomName}/${user}`);
 		} else {

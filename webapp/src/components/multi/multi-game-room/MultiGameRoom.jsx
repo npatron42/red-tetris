@@ -6,11 +6,11 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:39:24 by npatron           #+#    #+#             */
-/*   Updated: 2026/01/12 15:25:48 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/31 10:55:28 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-import { useEffect, useMemo, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
 import { LogOutIcon, PlayIcon, UserIcon, CrownIcon } from "lucide-react";
@@ -27,19 +27,17 @@ const MultiGameRoom = () => {
 	const navigate = useNavigate();
 	const { roomName } = useParams();
 	const { user } = useUser();
-	const { roomEvents, socket } = useSocket();
+	const { roomEvents } = useSocket();
 	const { isUserAllowedToJoinARoom, handleLeaveRoom, handleStartGame, isLoading, error } = useRoom();
 
 	const [isUserAuthorized, setIsUserAuthorized] = useState(false);
 	const [roomInfo, setRoomInfo] = useState(null);
 
-	const normalizedRouteRoomName = useMemo(() => roomName?.toString().toLowerCase() || "", [roomName]);
-	const normalizedUser = useMemo(() => user?.toString().toLowerCase() || "", [user]);
 
 	const fetchRoomDetails = useCallback(async () => {
-		if (!roomName || !normalizedUser) return;
-
-		const result = await isUserAllowedToJoinARoom(roomName, normalizedUser);
+		if (!roomName) return;
+        if (!user) return;
+		const result = await isUserAllowedToJoinARoom(roomName, user.user.id);
 		if (result.success && result.data?.room) {
 			setIsUserAuthorized(true);
 			setRoomInfo(result.data.room);
@@ -47,19 +45,19 @@ const MultiGameRoom = () => {
 			setIsUserAuthorized(false);
 			setRoomInfo(null);
 		}
-	}, [isUserAllowedToJoinARoom, normalizedUser, roomName]);
+	}, [isUserAllowedToJoinARoom, roomName, user]);
 
 	useEffect(() => {
 		fetchRoomDetails();
-	}, [fetchRoomDetails]);
+	}, [fetchRoomDetails, user]);
 
 	const startGame = async () => {
-		await handleStartGame({ roomName: normalizedRouteRoomName });
+		await handleStartGame({ roomName: roomName });
 	};
 
 	const leaveRoom = async () => {
 		try {
-			const result = await handleLeaveRoom({ roomName: normalizedRouteRoomName, name: normalizedUser });
+			const result = await handleLeaveRoom({ roomName: roomName, userId: user.id });
 			if (result.data.success) {
 				navigate("/");
 			}
@@ -69,13 +67,10 @@ const MultiGameRoom = () => {
 	};
 
 	useEffect(() => {
-		if (!roomEvents.roomUpdated || !roomEvents.roomUpdated.roomName) return;
+		if (!roomEvents.roomUpdated) return;
+        setRoomInfo(roomEvents.roomUpdated);
 
-		const incomingRoomName = roomEvents.roomUpdated.roomName.toString().toLowerCase();
-		if (incomingRoomName !== normalizedRouteRoomName) return;
-
-		fetchRoomDetails();
-	}, [roomEvents.roomUpdated, normalizedRouteRoomName, fetchRoomDetails]);
+	}, [roomEvents.roomUpdated]);
 
 	if (isLoading && !roomInfo) return <div className="room-loading">Loading room...</div>;
 	if (error && !isUserAuthorized) return <div className="room-error">Error: {error}</div>;
@@ -96,7 +91,7 @@ const MultiGameRoom = () => {
 
 		switch (status) {
 			case "PLAYING":
-				return <TetrisGameMultiplayer roomInfo={roomInfo} currentUser={normalizedUser} />;
+				return <TetrisGameMultiplayer roomInfo={roomInfo} currentUser={user} />;
 
 			case "finished":
 				return <GameResults roomInfo={roomInfo} onRestart={startGame} onLeave={leaveRoom} />;
@@ -134,7 +129,7 @@ const MultiGameRoom = () => {
 							</div>
 						</div>
 						<div className="lobby-actions">
-							{normalizedUser === roomInfo.leaderUsername?.toLowerCase() && (
+							{user.user.id === roomInfo.leaderId && (
 								<button className="custom-button-play" onClick={startGame}>
 									<PlayIcon size={24} color="#039BE5" />
 									Start Game

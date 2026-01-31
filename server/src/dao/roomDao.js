@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 15:57:54 by npatron           #+#    #+#             */
-/*   Updated: 2026/01/12 15:25:48 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/31 10:33:02 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,12 @@ export class RoomDao {
 
 	async findAll() {
 		try {
-			return await this.db.room.findMany();
+			return await this.db.room.findMany({
+				include: {
+					leader: true,
+					opponent: true
+				}
+			});
 		} catch (error) {
 			console.error("RoomDao.findAll error:", error.message);
 			throw new Error(`Failed to fetch all rooms: ${error.message}`);
@@ -42,13 +47,18 @@ export class RoomDao {
 	}
 
 	async findByName(name) {
-		if (!name) {
-			return null;
-		}
-		try {
-			return await this.db.room.findFirst({
-				where: { name }
-			});
+        try {
+            if (!name) {
+                return null;
+            }
+            const room = await this.db.room.findFirst({
+                where: { name },
+                include: {
+                    leader: true,
+                    opponent: true
+                }
+            });
+            return room;
 		} catch (error) {
 			console.error("RoomDao.findByName error:", error.message);
 			throw new Error(`Failed to find room by name '${name}': ${error.message}`);

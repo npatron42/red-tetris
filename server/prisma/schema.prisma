@@ -523,8 +523,8 @@ model Room {
   opponent_id                                       String?         @db.Uuid
   created_at                                        DateTime        @default(now()) @db.Timestamptz(6)
   name                                              String?         @db.VarChar(255)
-  users_rooms_leader_idTousers                      User            @relation("rooms_leader_idTousers", fields: [leader_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "rooms_leader_id_foreign")
-  users_rooms_opponent_idTousers                    User?           @relation("rooms_opponent_idTousers", fields: [opponent_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "rooms_opponent_id_foreign")
+  leader                                            User            @relation("rooms_leader_idTousers", fields: [leader_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "rooms_leader_id_foreign")
+  opponent                                          User?           @relation("rooms_opponent_idTousers", fields: [opponent_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "rooms_opponent_id_foreign")
   directus_users_rooms_user_createdTodirectus_users directus_users? @relation("rooms_user_createdTodirectus_users", fields: [user_created], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "rooms_user_created_foreign")
   directus_users_rooms_user_updatedTodirectus_users directus_users? @relation("rooms_user_updatedTodirectus_users", fields: [user_updated], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "rooms_user_updated_foreign")
 
@@ -545,8 +545,8 @@ model User {
   matches_matches_player1_idTousers                 Match[]         @relation("matches_player1_idTousers")
   matches_matches_player2_idTousers                 Match[]         @relation("matches_player2_idTousers")
   matches_matches_winner_idTousers                  Match[]         @relation("matches_winner_idTousers")
-  rooms_rooms_leader_idTousers                      Room[]          @relation("rooms_leader_idTousers")
-  rooms_rooms_opponent_idTousers                    Room[]          @relation("rooms_opponent_idTousers")
+  rooms_as_leader                                   Room[]          @relation("rooms_leader_idTousers")
+  rooms_as_opponent                                 Room[]          @relation("rooms_opponent_idTousers")
   solo_games                                        SoloGame[]
   directus_users_users_user_createdTodirectus_users directus_users? @relation("users_user_createdTodirectus_users", fields: [user_created], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_user_created_foreign")
   directus_users_users_user_updatedTodirectus_users directus_users? @relation("users_user_updatedTodirectus_users", fields: [user_updated], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_user_updated_foreign")

@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/28 18:50:10 by fpalumbo          #+#    #+#             */
-/*   Updated: 2026/01/12 16:22:54 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/31 10:50:34 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,7 @@ export class SocketService {
 	}
 
 	emitToUsers(ids, event, data) {
+		console.log("ICI --> emitToUsers", { ids, event, data });
 		try {
 			if (!this.io || !Array.isArray(ids) || !event) return;
 			const uniqueUserids = Array.from(
@@ -82,9 +83,11 @@ export class SocketService {
 			uniqueUserids.forEach((id) => {
 				const socketId = this.users[id];
 				if (socketId) {
+                    console.log("emitted!!!!!!!!!!!!!!!!")
 					this.emitToUser(socketId, event, data);
 				}
 			});
+            console.log("ICI --> uniqueUserids", uniqueUserids);
 		} catch (error) {
 			console.error("Error emitting to users", error);
 		}

@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 14:20:43 by npatron           #+#    #+#             */
-/*   Updated: 2026/01/12 15:25:48 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/31 10:34:47 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,21 +31,21 @@ export const useRoom = () => {
 		}
 	}, []);
 
-	const isUserAllowedToJoinARoom = useCallback(async (roomName, userName) => {
+	const isUserAllowedToJoinARoom = useCallback(async (roomName, userId) => {
 		setIsLoading(true);
 		setError(null);
 		try {
 			const response = await getRoomByName(roomName);
+			console.log("response isUserAllowedToJoinARoom", response);
 			if (!response.success || !response.room) {
 				return { success: false, error: "Room not found" };
 			}
-			const normalizedUsername = userName.toLowerCase();
-			const normalizedPlayers = response.room.players
-				.filter((player) => player !== null && player !== undefined)
-				.map((player) => player.toLowerCase());
-			if (normalizedPlayers.includes(normalizedUsername)) {
-				return { success: true, data: response };
-			}
+            console.log("response.room.leaderId", response.room.leaderId);
+            console.log("userId", userId);
+            console.log("response.room.opponentId", response.room.opponentId);
+            if (response.room.leaderId === userId || response.room.opponentId === userId) {
+                return { success: true, data: response };
+            }
 			return { success: false, error: "User is not allowed to join this room" };
 		} catch (err) {
 			setError("Failed to check room access", err);
