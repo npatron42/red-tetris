@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:10:49 by npatron           #+#    #+#             */
-/*   Updated: 2026/01/31 10:49:27 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/31 11:29:07 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,11 +82,18 @@ export class RoomService {
 		if (!room) return null;
 		
 		const players = [];
+		const playerIds = [];
+		const playerNames = [];
+		
 		if (room.leader) {
-			players.push(room.leader.name);
+			players.push({ id: room.leader.id, name: room.leader.name });
+			playerIds.push(room.leader.id);
+			playerNames.push(room.leader.name);
 		}
 		if (room.opponent) {
-			players.push(room.opponent.name);
+			players.push({ id: room.opponent.id, name: room.opponent.name });
+			playerIds.push(room.opponent.id);
+			playerNames.push(room.opponent.name);
 		}
 
 		return {
@@ -95,7 +102,9 @@ export class RoomService {
 			opponentId: room.opponent_id,
 			leaderUsername: room.leader?.name || null,
 			opponentUsername: room.opponent?.name || null,
-			players
+			players,
+			playerIds,
+			playerNames
 		};
 	}
 
@@ -136,7 +145,6 @@ export class RoomService {
 				return updated;
 			} else {
 				await this.roomDao.deleteByName(roomName);
-				this.activeRooms.delete(room.id);
 				return null;
 			}
 		}
@@ -159,10 +167,9 @@ export class RoomService {
 			}
 			roomData.gameOnGoing = true;
 			roomData.gameStatus = "PLAYING";
-			this.activeRooms.set(roomData.id, roomData);
 
-			multiGameService.createMultiGame(roomData.name, roomData.leaderUsername, roomData.players);
-
+			multiGameService.createMultiGame(roomData.name, roomData.leaderId, roomData.playerIds);
+            await this.roomDao.updateByName(roomName, { gameOnGoing: true, gameStatus: "PLAYING" });
 			this.notifyPlayersRoomUpdated(roomData);
 			return roomData;
 		} catch (error) {
@@ -176,17 +183,17 @@ export class RoomService {
 		if (!room) {
 			return null;
 		}
-		room.gameOnGoing = false;
-		this.activeRooms.set(room.id, room);
+		await this.roomDao.updateByName(roomName, { gameOnGoing: false, gameStatus: "WAITING" });
 		multiGameService.endMultiGame(roomName);
-		return room;
+		const updatedRoom = await this.getRoomByName(roomName);
+		this.notifyPlayersRoomUpdated(updatedRoom);
+		return updatedRoom;
 	}
 
 	notifyPlayersRoomUpdated(room) {
 		if (!room  || !socketService.launched) {
 			return;
 		}
-        console.log("ICI --> room", room);
 		const payload = {
 			name: room.name,
 			leaderId: room.leaderId,
@@ -195,7 +202,7 @@ export class RoomService {
 			opponentUsername: room.opponentUsername,
 			gameOnGoing: room.gameOnGoing,
 			gameStatus: room.gameStatus,
-			players: room.players.filter((player) => player !== null && player !== undefined)
+			players: room.playerNames || []
 		};
 		socketService.emitToUsers([room.leaderId, room.opponentId], "roomUpdated", payload);
 	}

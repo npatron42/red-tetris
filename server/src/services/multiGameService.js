@@ -6,36 +6,39 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/29 14:00:00 by npatron           #+#    #+#             */
-/*   Updated: 2026/01/12 15:25:48 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/31 11:36:08 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import { Room } from "../classes/room.js";
 import { Player } from "../classes/player.js";
 import socketService from "./socket/socketService.js";
+import { UserDao } from "../dao/userDao.js";
 import pino from "pino";
 
 const logger = pino({ level: "info" });
 
 export class MultiGameService {
 	constructor() {
-		this.activeGames = new Map();
+		this.activeGameInstances = new Map();
+		this.userIdToUsernameMap = new Map();
+		this.userDao = new UserDao();
 		this.setupSocketHandler();
 	}
 
 	setupSocketHandler() {
 		try {
-			socketService.setMultiMoveHandler((roomName, name, direction) => {
+			socketService.setMultiMoveHandler((roomName, userId, direction) => {
 				try {
-					this.handleMovePiece(roomName, name, direction);
+					this.handleMovePiece(roomName, userId, direction);
 				} catch (error) {
 					logger.error(`Error in move handler: ${error.message}`);
 				}
 			});
 
-			socketService.addDisconnectHandler((name) => {
+			socketService.addDisconnectHandler(async (userId) => {
 				try {
-					this.handlePlayerDisconnect(name);
+					await this.handlePlayerDisconnect(userId);
 				} catch (error) {
 					logger.error(`Error in disconnect handler: ${error.message}`);
 				}
@@ -45,39 +48,77 @@ export class MultiGameService {
 		}
 	}
 
-	handlePlayerDisconnect(name) {
-		for (const [roomName, roomInstance] of this.activeGames.entries()) {
-			const game = roomInstance.getGame();
+	async handlePlayerDisconnect(userId) {
+		const username = this.userIdToUsernameMap.get(userId);
+		if (!username) {
+			logger.warn(`No username found for userId: ${userId}`);
+			return;
+		}
+
+		for (const [roomName, roomInstance] of this.activeGameInstances.entries()) {
 			const players = roomInstance.getPlayers();
-			const player = players.find((p) => p.getUsername() === name);
+			const player = players.find((p) => p.getUsername() === username);
 
 			if (player) {
-				logger.info(`Cleaning up game in room ${roomName} for disconnected player ${name}`);
+				logger.info(`Cleaning up game in room ${roomName} for disconnected player ${username}`);
+				
+				const game = roomInstance.getGame();
 				game.stopGameLoop();
 				game.endGame();
-				this.activeGames.delete(roomName);
+				
+				const playerIds = players.map((p) => {
+					return Array.from(this.userIdToUsernameMap.entries())
+						.find(([, name]) => name === p.getUsername())?.[0];
+				}).filter(Boolean);
+				
+				socketService.emitToUsers(playerIds, "multiGameEnded", {
+					roomName,
+					players: players.map((p) => ({
+						name: p.getUsername(),
+						score: p.currentScore
+					}))
+				});
+
+				this.activeGameInstances.delete(roomName);
+				
+				playerIds.forEach((id) => {
+					this.userIdToUsernameMap.delete(id);
+				});
 			}
 		}
 	}
 
-	createMultiGame(roomName, leaderUsername, players) {
+	async createMultiGame(roomName, leaderId, playerIds) {
 		try {
-			if (this.activeGames.has(roomName)) {
+			if (this.activeGameInstances.has(roomName)) {
 				throw new Error("Game already exists for this room");
 			}
 
-			const leaderSocketId = socketService.getUserSocketId(leaderUsername);
+			const leaderSocketId = socketService.getUserSocketId(leaderId);
 			if (!leaderSocketId) {
 				throw new Error("Leader socket not found");
 			}
+			
+			const leaderUser = await this.userDao.findById(leaderId);
+			if (!leaderUser) {
+				throw new Error("Leader user not found");
+			}
 
-			const roomInstance = new Room(roomName, leaderUsername, leaderSocketId);
-			roomInstance.players = players.map((name) => {
-				const socketId = socketService.getUserSocketId(name);
-				return new Player(name, socketId);
+			const roomInstance = new Room(roomName, leaderUser.name, leaderSocketId);
+			
+			const playerPromises = playerIds.map(async (userId) => {
+				const socketId = socketService.getUserSocketId(userId);
+				const user = await this.userDao.findById(userId);
+				if (!user) {
+					throw new Error(`User not found: ${userId}`);
+				}
+				this.userIdToUsernameMap.set(userId, user.name);
+				return new Player(user.name, socketId);
 			});
+			
+			roomInstance.players = await Promise.all(playerPromises);
 
-			this.activeGames.set(roomName, roomInstance);
+			this.activeGameInstances.set(roomName, roomInstance);
 
 			const game = roomInstance.getGame();
 			game.startGame();
@@ -87,7 +128,7 @@ export class MultiGameService {
 
 			return {
 				roomName,
-				players: players,
+				players: roomInstance.players.map(p => p.getUsername()),
 				status: "IN_PROGRESS"
 			};
 		} catch (error) {
@@ -98,7 +139,7 @@ export class MultiGameService {
 
 	getMultiGame(roomName) {
 		try {
-			const roomInstance = this.activeGames.get(roomName);
+			const roomInstance = this.activeGameInstances.get(roomName);
 
 			if (!roomInstance) {
 				return null;
@@ -124,7 +165,7 @@ export class MultiGameService {
 
 	endMultiGame(roomName) {
 		try {
-			const roomInstance = this.activeGames.get(roomName);
+			const roomInstance = this.activeGameInstances.get(roomName);
 
 			if (!roomInstance) {
 				throw new Error("Game not found");
@@ -135,13 +176,21 @@ export class MultiGameService {
 			game.endGame();
 
 			const players = roomInstance.getPlayers();
-			const names = players.map((p) => p.getUsername());
+			
+			const playerIds = players.map((p) => {
+				return Array.from(this.userIdToUsernameMap.entries())
+					.find(([, name]) => name === p.getUsername())?.[0];
+			}).filter(Boolean);
 
-			this.activeGames.delete(roomName);
+			this.activeGameInstances.delete(roomName);
+			
+			playerIds.forEach((id) => {
+				this.userIdToUsernameMap.delete(id);
+			});
 
 			logger.info(`Multi game ended in room: ${roomName}`);
 
-			socketService.emitToUsers(names, "multiGameEnded", {
+			socketService.emitToUsers(playerIds, "multiGameEnded", {
 				roomName,
 				players: players.map((p) => ({
 					name: p.getUsername(),
@@ -154,8 +203,14 @@ export class MultiGameService {
 		}
 	}
 
-	handleMovePiece(roomName, name, direction) {
+	handleMovePiece(roomName, userId, direction) {
 		try {
+			const username = this.userIdToUsernameMap.get(userId);
+			if (!username) {
+				logger.warn(`No username found for userId: ${userId}`);
+				return;
+			}
+
 			const roomInstance = this.getActiveGame(roomName);
 
 			if (!roomInstance) {
@@ -164,7 +219,7 @@ export class MultiGameService {
 			}
 
 			const game = roomInstance.getGame();
-			game.movePiece(name, direction, socketService);
+			game.movePiece(username, direction, socketService);
 		} catch (error) {
 			logger.error(`Error in handleMovePiece: ${error.message}`);
 		}
@@ -172,7 +227,7 @@ export class MultiGameService {
 
 	getActiveGame(roomName) {
 		try {
-			return this.activeGames.get(roomName);
+			return this.activeGameInstances.get(roomName);
 		} catch (error) {
 			logger.error(`Error in getActiveGame: ${error.message}`);
 			return null;

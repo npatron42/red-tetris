@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 14:20:43 by npatron           #+#    #+#             */
-/*   Updated: 2026/01/31 10:34:47 by npatron          ###   ########.fr       */
+/*   Updated: 2026/01/31 11:17:29 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,7 @@ export const useRoom = () => {
 		setIsLoading(true);
 		setError(null);
 		try {
+            console.log("ICI --> handleStartGame", { roomName });
 			const response = await startGame(roomName);
 			return { success: true, data: response };
 		} catch (err) {

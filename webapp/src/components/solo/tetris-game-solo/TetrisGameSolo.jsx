@@ -13,7 +13,7 @@
 import "./TetrisGameSolo.css";
 
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useUser } from "../../../providers/UserProvider";
 import { useSocket } from "../../../providers/SocketProvider";
 import { socketService } from "../../../services/socketService";
@@ -42,9 +42,9 @@ const COLORS = {
 	"Z-ghost": "#FF003C"
 };
 
-export const TetrisGameSolo = () => {
-	const navigate = useNavigate();
-	const gameId = useParams().gameId;
+export const TetrisGameSolo = ({ gameId: gameIdProp, onGameCompleted }) => {
+	const params = useParams();
+	const gameId = gameIdProp ?? params.gameId;
 	const [grid, setGrid] = useState(() => Array.from({ length: 20 }, () => Array(10).fill(0)));
 	const [score, setScore] = useState(0);
 	const [level, setLevel] = useState(1);
@@ -79,12 +79,6 @@ export const TetrisGameSolo = () => {
 		);
 	};
 
-	const goToHome = async () => {
-		setTimeout(() => {
-			navigate("/");
-		}, 3000);
-	};
-
 	useEffect(() => {
 		const handleGridUpdate = async (data) => {
 			if (data.state && data.state.length > 0) {
@@ -105,9 +99,12 @@ export const TetrisGameSolo = () => {
 				if (playerState.status) {
 					setGameStatus(playerState.status);
 
-					if (playerState.status === "COMPLETED") {
+					if (playerState.status === "COMPLETED" && !endGame) {
 						setEndGame(true);
-						await endSoloGame(gameId, playerState.score);
+						if (onGameCompleted) {
+							onGameCompleted(playerState.score ?? 0);
+						}
+						await endSoloGame(gameId, playerState.score ?? 0);
 					}
 				}
 			}
@@ -117,7 +114,7 @@ export const TetrisGameSolo = () => {
 		return () => {
 			socketService.off("soloGameUpdated", handleGridUpdate);
 		};
-	}, [user, gameId]);
+	}, [user, gameId, endGame, onGameCompleted]);
 
 	useEffect(() => {
 		const handleKeyDown = (event) => {
@@ -170,11 +167,6 @@ export const TetrisGameSolo = () => {
 
 	return (
 		<>
-			{gameStatus === "COMPLETED" && (
-				<div className="game-board-container">
-					<h1>Game Completed</h1>
-				</div>
-			)}
 			{gameStatus === "IN_PROGRESS" && (
 				<div className="tetris-game-wrapper">
 					<div className="grid">{renderGrid(grid)}</div>
