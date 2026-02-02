@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 13:08:55 by npatron           #+#    #+#             */
-/*   Updated: 2026/01/31 10:06:30 by npatron          ###   ########.fr       */
+/*   Updated: 2026/02/02 13:02:37 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,9 +38,21 @@ const CreateRoom = () => {
 		}
 		const result = await handleCreateRoom(parsedRoomName);
 		if (result.success) {
-			navigate(`/${parsedRoomName}/${user}`);
+			if (result.data.room.id) {
+				navigate(`/${parsedRoomName}/${user.user.name}`);
+			} else {
+				toast.error(result.error, {
+					position: "top-right",
+					autoClose: 5000,
+					hideProgressBar: false,
+					closeOnClick: false,
+					pauseOnHover: true,
+					draggable: true,
+					theme: "dark"
+				});
+			}
 		} else {
-			toast.error(result.error, {
+			toast.error("Romm name already taken", {
 				position: "top-right",
 				autoClose: 5000,
 				hideProgressBar: false,

@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 14:36:30 by npatron           #+#    #+#             */
-/*   Updated: 2026/01/19 14:41:25 by npatron          ###   ########.fr       */
+/*   Updated: 2026/02/02 12:43:15 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ export const MatchHistory = () => {
 
     const fetchHistoryMatch = async () => {
         const response = await getHistoryMatch();
-        console.log(response);
         if (response.success) {
             setHistoryMatch(response.matchHistory);
         } else {

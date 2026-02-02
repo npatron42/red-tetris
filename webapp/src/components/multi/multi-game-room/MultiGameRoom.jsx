@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:39:24 by npatron           #+#    #+#             */
-/*   Updated: 2026/01/31 11:17:17 by npatron          ###   ########.fr       */
+/*   Updated: 2026/02/02 13:13:37 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ const MultiGameRoom = () => {
 		if (result.success && result.data?.room) {
 			setIsUserAuthorized(true);
 			setRoomInfo(result.data.room);
+			console.log("ICI --> roomInfo", roomInfo);
 		} else {
 			setIsUserAuthorized(false);
 			setRoomInfo(null);
@@ -53,6 +54,7 @@ const MultiGameRoom = () => {
 
 	const startGame = async () => {
 		const result = await handleStartGame(roomName);
+		console.log("ICI --> result", result);
 		if (result.success) {
 			setRoomInfo(result.data.room);
 		}
@@ -60,7 +62,7 @@ const MultiGameRoom = () => {
 
 	const leaveRoom = async () => {
 		try {
-			const result = await handleLeaveRoom({ roomName: roomName, userId: user.id });
+			const result = await handleLeaveRoom(roomName);
 			if (result.data.success) {
 				navigate("/");
 			}
@@ -71,6 +73,7 @@ const MultiGameRoom = () => {
 
 	useEffect(() => {
 		if (!roomEvents.roomUpdated) return;
+		console.log("ICI --> roomEvents.roomUpdated", roomEvents.roomUpdated);
         setRoomInfo(roomEvents.roomUpdated);
 
 	}, [roomEvents.roomUpdated]);
@@ -109,30 +112,30 @@ const MultiGameRoom = () => {
 							</h1>
 						</header>
 
-						<div className="players-section">
-							<div className="players-grid">
-								{roomInfo.players.map((player) => (
-									<div
-										key={player}
-										className={`player-card ${
-											player === roomInfo.leaderUsername ? "is-leader" : ""
-										}`}
-									>
-										<div className="player-avatar">
-											<UserIcon size={24} color="#ffffff" />
-										</div>
-										<span className="player-name">
-											{player}
-											{player === roomInfo.leaderUsername && (
-												<CrownIcon size={24} color="#ffd700" />
-											)}
-										</span>
+					<div className="players-section">
+						<div className="players-grid">
+							{roomInfo.players.map((player, index) => (
+								<div
+									key={player.id || `player-${index}`}
+									className={`player-card ${
+										player.id === roomInfo.leaderId ? "is-leader" : ""
+									}`}
+								>
+									<div className="player-avatar">
+										<UserIcon size={24} color="#ffffff" />
 									</div>
-								))}
-							</div>
+									<span className="player-name">
+										{player.name}
+										{player.id === roomInfo.leaderId && (
+											<CrownIcon size={24} color="#ffd700" />
+										)}
+									</span>
+								</div>
+							))}
 						</div>
+					</div>
 						<div className="lobby-actions">
-							{user.user.id === roomInfo.leaderId && (
+							{user.user.id === roomInfo.leaderId && roomInfo.opponentId !== null && (
 								<button className="custom-button-play" onClick={startGame}>
 									<PlayIcon size={24} color="#039BE5" />
 									Start Game

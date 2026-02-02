@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 14:20:43 by npatron           #+#    #+#             */
-/*   Updated: 2026/01/31 11:17:29 by npatron          ###   ########.fr       */
+/*   Updated: 2026/02/02 13:00:48 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,13 +36,9 @@ export const useRoom = () => {
 		setError(null);
 		try {
 			const response = await getRoomByName(roomName);
-			console.log("response isUserAllowedToJoinARoom", response);
 			if (!response.success || !response.room) {
 				return { success: false, error: "Room not found" };
 			}
-            console.log("response.room.leaderId", response.room.leaderId);
-            console.log("userId", userId);
-            console.log("response.room.opponentId", response.room.opponentId);
             if (response.room.leaderId === userId || response.room.opponentId === userId) {
                 return { success: true, data: response };
             }
@@ -96,7 +92,6 @@ export const useRoom = () => {
 		setIsLoading(true);
 		setError(null);
 		try {
-            console.log("ICI --> handleStartGame", { roomName });
 			const response = await startGame(roomName);
 			return { success: true, data: response };
 		} catch (err) {

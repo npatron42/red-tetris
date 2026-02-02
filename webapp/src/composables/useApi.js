@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 15:20:41 by npatron           #+#    #+#             */
-/*   Updated: 2026/01/31 10:39:28 by npatron          ###   ########.fr       */
+/*   Updated: 2026/02/02 13:01:36 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,11 +110,10 @@ export const createHistoryMatch = async (playerIds, winnerId) => {
 
 export const createRoom = async (name) => {
 	try {
-        console.log("Creating room", { name });
 		const response = await api.post("/room/create", { name });
 		return response.data;
 	} catch (error) {
-		console.error(`Error creating room:`, error);
+		console.error(`Error creating room:`, error.response.data.message);
 		throw error;
 	}
 };
@@ -152,7 +151,6 @@ export const getSoloGame = async (gameId) => {
 export const endSoloGame = async (gameId, score) => {
 	try {
 		const response = await api.post(`/solo/${gameId}/end`, { score });
-		console.log("response endSoloGame", response);
 		return response.data;
 	} catch (error) {
 		console.error(`Error ending solo game:`, error);

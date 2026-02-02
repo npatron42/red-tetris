@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 13:02:55 by npatron           #+#    #+#             */
-/*   Updated: 2026/01/19 16:57:12 by npatron          ###   ########.fr       */
+/*   Updated: 2026/02/02 12:43:23 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,6 @@ export const TetrisGameSolo = ({ gameId: gameIdProp, onGameCompleted }) => {
 	useEffect(() => {
 		const handleGridUpdate = async (data) => {
 			if (data.state && data.state.length > 0) {
-				console.log("data", data);
 				const playerState = data.state[0];
 				if (playerState.grid) {
 					setGrid(playerState.grid);

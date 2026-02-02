@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 15:57:50 by npatron           #+#    #+#             */
-/*   Updated: 2026/01/31 11:16:40 by npatron          ###   ########.fr       */
+/*   Updated: 2026/02/02 13:08:15 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,10 @@ export const create = async (req, res) => {
 		if (!name) {
 			logger.error("Room name is required", { name });
 			return res.status(400).json({ success: false, message: "Room name is required" });
+		}
+		const isRoomNameValid = await roomService.isRoomNameValid(name);	
+		if (!isRoomNameValid) {
+			return res.status(400).json({ success: false, message: "Room name is already taken" });
 		}
 		const room = await roomService.createRoom(name, leaderId);
 		res.json({ success: true, room });

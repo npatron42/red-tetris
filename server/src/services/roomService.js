@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:10:49 by npatron           #+#    #+#             */
-/*   Updated: 2026/01/31 11:29:07 by npatron          ###   ########.fr       */
+/*   Updated: 2026/02/02 13:15:51 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,17 @@ export class RoomService {
 	constructor() {
 		this.roomDao = new RoomDao();
 		this.userDao = new UserDao();
+	}
+
+	async isRoomNameValid(roomName) {
+		if (!roomName || roomName.length < 1) {
+			return false;
+		}
+		const existingRoom = await this.roomDao.findByName(roomName);
+		if (existingRoom) {
+			return false;
+		}
+		return true;
 	}
 
 	async createRoom(roomName, leaderId) {
@@ -50,7 +61,6 @@ export class RoomService {
 	}
 
 	async joinRoom(roomName, userId) {
-		console.log("ICI --> joinRoom", { roomName, userId });
 		const room = await this.getRoomByName(roomName);
 		if (!room) {
 			throw new Error("Room not found");
@@ -165,11 +175,7 @@ export class RoomService {
 			if (!roomData) {
 				throw new Error("Room not found");
 			}
-			roomData.gameOnGoing = true;
-			roomData.gameStatus = "PLAYING";
-
 			multiGameService.createMultiGame(roomData.name, roomData.leaderId, roomData.playerIds);
-            await this.roomDao.updateByName(roomName, { gameOnGoing: true, gameStatus: "PLAYING" });
 			this.notifyPlayersRoomUpdated(roomData);
 			return roomData;
 		} catch (error) {
@@ -194,16 +200,8 @@ export class RoomService {
 		if (!room  || !socketService.launched) {
 			return;
 		}
-		const payload = {
-			name: room.name,
-			leaderId: room.leaderId,
-			opponentId: room.opponentId,
-			leaderUsername: room.leaderUsername,
-			opponentUsername: room.opponentUsername,
-			gameOnGoing: room.gameOnGoing,
-			gameStatus: room.gameStatus,
-			players: room.playerNames || []
-		};
+		const payload = this.enrichRoomData(room);
+		console.log("ICI --> PAYLOAD UPDATED", room);
 		socketService.emitToUsers([room.leaderId, room.opponentId], "roomUpdated", payload);
 	}
 }
