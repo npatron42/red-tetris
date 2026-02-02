@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/09 11:58:20 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/29 14:50:41 by npatron          ###   ########.fr       */
+/*   Updated: 2026/02/02 13:22:51 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,7 @@ const SHAPES = [
 ];
 
 const BackgroundAnimation = () => {
-	const PIECE_COUNT = 20;
+	const PIECE_COUNT = 15;
 	const pieces = useMemo(() => {
 		return Array.from({ length: PIECE_COUNT }).map((_, i) => {
 			const shape = SHAPES[Math.floor(Math.random() * SHAPES.length)];

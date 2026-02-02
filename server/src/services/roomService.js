@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:10:49 by npatron           #+#    #+#             */
-/*   Updated: 2026/02/02 13:15:51 by npatron          ###   ########.fr       */
+/*   Updated: 2026/02/02 13:16:58 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -201,7 +201,6 @@ export class RoomService {
 			return;
 		}
 		const payload = this.enrichRoomData(room);
-		console.log("ICI --> PAYLOAD UPDATED", room);
 		socketService.emitToUsers([room.leaderId, room.opponentId], "roomUpdated", payload);
 	}
 }
