@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 13:02:55 by npatron           #+#    #+#             */
-/*   Updated: 2026/02/02 14:39:10 by npatron          ###   ########.fr       */
+/*   Updated: 2026/02/02 16:57:25 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ export const TetrisGameSolo = ({ gameId: gameId, onGameCompleted }) => {
     const { user } = useUser();
     const { socket } = useSocket();
     const [gameStatus, setGameStatus] = useState(null);
-    const [isLoading, setIsLoading] = useState(false);
+    const [gameData, setGameData] = useState({ score: 0, level: 1 });
     
     const getCellAttributes = cell => {
         if (cell === 0) return { className: "cell empty", style: {} };
@@ -87,9 +87,11 @@ export const TetrisGameSolo = ({ gameId: gameId, onGameCompleted }) => {
                 }
                 if (playerState.score !== undefined) {
                     setScore(playerState.score);
+                    setGameData(prev => ({ ...prev, score: playerState.score }));
                 }
                 if (playerState.level !== undefined) {
                     setLevel(playerState.level);
+                    setGameData(prev => ({ ...prev, level: playerState.level }));
                 }
                 if (playerState.nextPieces) {
                     setNextPieces(playerState.nextPieces);
@@ -100,9 +102,9 @@ export const TetrisGameSolo = ({ gameId: gameId, onGameCompleted }) => {
                     if (playerState.status === "COMPLETED" && !endGame) {
                         setEndGame(true);
                         if (onGameCompleted) {
-                            onGameCompleted(playerState.score ?? 0);
+                            onGameCompleted(gameData.score);
                         }
-                        await endSoloGame(gameId, playerState.score ?? 0);
+                        await endSoloGame(gameId, { score: gameData.score, level: gameData.level });
                     }
                 }
             }

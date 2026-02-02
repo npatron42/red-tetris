@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 17:01:45 by npatron           #+#    #+#             */
-/*   Updated: 2026/02/02 16:37:58 by npatron          ###   ########.fr       */
+/*   Updated: 2026/02/02 16:44:20 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,9 @@ export const PlayComponent = () => {
         <div className="play-component-container">
             <div className="play-header-container">
                 <div className="play-header-center">
-                    <Joystick size={24} color="#ffc744" />
+                    <Joystick size={24} color="#FFC4D9" />
                     <span>PLAY</span>
-                    <Joystick size={24} color="#ffc744" />
+                    <Joystick size={24} color="#FFC4D9" />
                 </div>
             </div>
             {user && (

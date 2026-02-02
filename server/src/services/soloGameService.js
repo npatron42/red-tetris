@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 17:39:02 by npatron           #+#    #+#             */
-/*   Updated: 2026/01/19 16:26:34 by npatron          ###   ########.fr       */
+/*   Updated: 2026/02/02 17:02:47 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,7 +130,8 @@ export class SoloGameService {
         }
     }
 
-    async endSoloGame(gameId, score) {
+    async endSoloGame(gameId, gameData) {
+        console.log(gameData);
         try {
             const game = this.activeGames.get(gameId);
 
@@ -141,11 +142,19 @@ export class SoloGameService {
             game.stopGameLoop();
             game.endGame();
             this.activeGames.delete(gameId);
-            await this.soloGameDao.update(gameId, { status: "COMPLETED" });
+            console.log(gameData.score)
+            console.log(gameData.level)
+            if (gameData.score !== undefined && gameData.level !== undefined) {
+                let score = gameData.score;
+                let level = gameData.level;
+                await this.soloGameDao.update(gameId, { status: "COMPLETED", score: score, level: level });
+            } else {
+                await this.soloGameDao.update(gameId, { status: "COMPLETED" });
+            }
             socketService.emitToUsers([game.player.id], "soloGameEnded", {
                 playerId: game.player.id,
                 gameId,
-                score,
+                score: gameData.score,
             });
         } catch (error) {
             logger.error(`Error in endSoloGame: ${error.message}`);

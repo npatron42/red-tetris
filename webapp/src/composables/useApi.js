@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 15:20:41 by npatron           #+#    #+#             */
-/*   Updated: 2026/02/02 13:01:36 by npatron          ###   ########.fr       */
+/*   Updated: 2026/02/02 16:57:31 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,9 +148,9 @@ export const getSoloGame = async gameId => {
     }
 };
 
-export const endSoloGame = async (gameId, score) => {
+export const endSoloGame = async (gameId, gameData) => {
     try {
-        const response = await api.post(`/solo/${gameId}/end`, { score });
+        const response = await api.post(`/solo/${gameId}/end`, { gameData });
         return response.data;
     } catch (error) {
         console.error(`Error ending solo game:`, error);
