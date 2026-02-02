@@ -50,7 +50,6 @@ export class RoomService {
             name: roomName,
             leaderId: leader.id,
             createdAt: new Date(),
-            
         });
         const enrichedRoom = await this.getRoomByName(roomName);
         return enrichedRoom;
@@ -166,7 +165,7 @@ export class RoomService {
         return room;
     }
 
-        async startGame(roomName) {
+    async startGame(roomName) {
         try {
             const roomData = await this.getRoomByName(roomName);
             if (!roomData) {
@@ -175,7 +174,7 @@ export class RoomService {
             if (roomData.status !== "PENDING") {
                 throw new Error("Room is not in a waiting state");
             }
-                await this.roomDao.updateByName(roomName, { status: "PROCESSING" });
+            await this.roomDao.updateByName(roomName, { status: "PROCESSING" });
             const updatedRoom = await this.getRoomByName(roomName);
             this.notifyPlayersRoomUpdated(updatedRoom);
             console.log("roomName. leaderId, player Ids", roomName, roomData.leaderId, roomData.playerIds);

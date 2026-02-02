@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 17:39:02 by npatron           #+#    #+#             */
-/*   Updated: 2026/02/02 17:02:47 by npatron          ###   ########.fr       */
+/*   Updated: 2026/02/02 17:47:50 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,28 +131,46 @@ export class SoloGameService {
     }
 
     async endSoloGame(gameId, gameData) {
-        console.log(gameData);
         try {
-            const game = this.activeGames.get(gameId);
+            const instanceGame = this.activeGames.get(gameId);
+            if (!instanceGame) {
+                throw new Error("Game not found");
+            }
 
+            const game = await this.soloGameDao.findById(gameId);
             if (!game) {
                 throw new Error("Game not found");
             }
 
-            game.stopGameLoop();
-            game.endGame();
+            const user = await this.userDao.findById(instanceGame.playerId);
+            if (!user) {
+                throw new Error("User not found");
+            }
+
+            instanceGame.stopGameLoop();
+            instanceGame.endGame();
             this.activeGames.delete(gameId);
-            console.log(gameData.score)
-            console.log(gameData.level)
             if (gameData.score !== undefined && gameData.level !== undefined) {
                 let score = gameData.score;
                 let level = gameData.level;
-                await this.soloGameDao.update(gameId, { status: "COMPLETED", score: score, level: level });
+                let endedAt = new Date();
+                let durationMs = endedAt - game.created_at;
+                await this.soloGameDao.update(gameId, {
+                    status: "COMPLETED",
+                    score: score,
+                    level: level,
+                    ended_at: endedAt,
+                    duration_ms: durationMs,
+                });
+                if (user.bestScoreSolo < score) {
+                    await this.userDao.updateById(user.id, { bestScoreSolo: score });
+                }
             } else {
                 await this.soloGameDao.update(gameId, { status: "COMPLETED" });
             }
-            socketService.emitToUsers([game.player.id], "soloGameEnded", {
-                playerId: game.player.id,
+
+            socketService.emitToUsers([instanceGame.player.id], "soloGameEnded", {
+                playerId: instanceGame.playerId,
                 gameId,
                 score: gameData.score,
             });

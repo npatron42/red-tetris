@@ -51,7 +51,6 @@ export class RoomDao {
         }
     }
 
-
     async findById(id) {
         if (!id) {
             return null;
@@ -84,9 +83,9 @@ export class RoomDao {
     }
 
     async create(room) {
-        const {name, leaderId, createdAt } = room;
+        const { name, leaderId, createdAt } = room;
         try {
-            const leader = await this.getUserById(leaderId);    
+            const leader = await this.getUserById(leaderId);
             if (!leader) {
                 throw new Error("leaderId (or leaderid) is required to create a room");
             }

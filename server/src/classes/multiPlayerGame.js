@@ -196,7 +196,7 @@ export class MultiPlayerGame {
             }));
 
             const playerIds = players.map(player => player.id).filter(Boolean);
-            
+
             socketService.emitToUsers(playerIds, "multiGridUpdate", {
                 roomId: this.room.id,
                 gameState,

@@ -31,6 +31,7 @@ export class SoloGameDao {
             return null;
         }
         try {
+            console.log("herreeeeee");
             return await this.db.soloGame.findUnique({
                 where: { id: gameId },
             });
