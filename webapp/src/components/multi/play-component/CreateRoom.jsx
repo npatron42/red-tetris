@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 13:08:55 by npatron           #+#    #+#             */
-/*   Updated: 2026/02/02 13:02:37 by npatron          ###   ########.fr       */
+/*   Updated: 2026/02/02 16:27:28 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ const CreateRoom = () => {
                 });
             }
         } else {
-            toast.error("Romm name already taken", {
+            toast.error("Room name already taken", {
                 position: "top-right",
                 autoClose: 5000,
                 hideProgressBar: false,

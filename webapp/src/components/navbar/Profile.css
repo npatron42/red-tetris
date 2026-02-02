@@ -6,19 +6,23 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 17:41:19 by npatron           #+#    #+#             */
-/*   Updated: 2026/01/12 15:25:48 by npatron          ###   ########.fr       */
+/*   Updated: 2026/02/02 16:26:52 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 .profile-container {
-    position: absolute;
-    top: 0px;
-    right: 24px;
-    height: 20vh;
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    margin-top: 24px;
     gap: 12px;
+    padding: 16px 18px;
+    border-radius: 16px;
+    background: radial-gradient(circle at top, rgba(20, 40, 60, 0.6) 0%, rgba(5, 5, 5, 0.9) 70%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow:
+        0 18px 40px rgba(0, 0, 0, 0.55),
+        0 0 30px rgba(0, 255, 234, 0.15);
+    backdrop-filter: blur(14px);
     user-select: none;
 }
 

@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 13:02:53 by npatron           #+#    #+#             */
-/*   Updated: 2026/02/02 14:27:47 by npatron          ###   ########.fr       */
+/*   Updated: 2026/02/02 16:41:11 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,8 @@
 .solo-game-header h1 {
     font-family: "PacfontGood", sans-serif;
     font-size: 2.5rem;
-    color: #fdd835;
-    text-shadow: 0 0 15px rgba(253, 216, 53, 0.6);
+    color: #ff3179;
+    text-shadow: 0 0 15px rgba(255, 49, 121, 0.4);
     margin: 0;
 }
 
@@ -61,7 +61,7 @@
 .error {
     font-family: "PacfontGood", sans-serif;
     font-size: 1.5rem;
-    color: #fdd835;
+    color: #ff3179;
     text-shadow: 0 0 12px rgba(253, 216, 53, 0.5);
     text-align: center;
     padding: 20px;
@@ -94,7 +94,7 @@
     background: rgba(0, 0, 0, 0.8);
     padding: 20px;
     border-radius: 8px;
-    border: 2px solid rgba(0, 255, 234, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.2);
     box-shadow:
         0 4px 15px rgba(0, 0, 0, 0.5),
         0 0 20px rgba(0, 255, 234, 0.2),
@@ -109,7 +109,7 @@
 
 .info-label {
     font-size: 0.9rem;
-    color: #00ffea;
+    color: #ff3179;
     margin-bottom: 5px;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -158,7 +158,7 @@
     background: rgba(0, 0, 0, 0.8);
     padding: 10px 20px;
     border-radius: 8px;
-    border: 2px solid rgba(0, 255, 234, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.2);
     box-shadow:
         0 4px 15px rgba(0, 0, 0, 0.5),
         0 0 20px rgba(0, 255, 234, 0.2);
@@ -177,15 +177,15 @@
     display: block;
     margin-top: 5px;
     font-size: 0.7rem;
-    color: #00ffea;
+    color: #ff3179;
     text-transform: uppercase;
     letter-spacing: 1px;
-    text-shadow: 0 0 10px #00ffea;
+    text-shadow: 0 0 10px #ff3179;
 }
 
 .game-stats {
     margin-top: 10px;
-    border-top: 1px solid rgba(0, 255, 234, 0.3);
+    border-top: 1px solid rgba(255, 49, 121, 0.4);
     padding-top: 8px;
 }
 
@@ -209,7 +209,7 @@
     grid-template-rows: repeat(20, 30px);
     gap: 1px;
     padding: 4px;
-    border: 2px solid rgba(0, 255, 234, 0.4);
+    border: 2px solid rgba(255, 255, 255, 0.2);
     border-radius: 4px;
     box-shadow:
         0 0 20px rgba(0, 0, 0, 0.8),
@@ -219,7 +219,7 @@
 }
 
 .player-board .grid.active-border {
-    border-color: #00ffea;
+    border-color: #ff3179;
     box-shadow:
         0 0 30px rgba(0, 255, 234, 0.5),
         inset 0 0 30px rgba(0, 0, 0, 0.9);
@@ -271,11 +271,11 @@
 
 .cell.ghost {
     background-color: transparent !important;
-    border: 2px dashed var(--cell-color, #00ffea);
+    border: 2px dashed var(--cell-color, #ff3179);
     box-shadow:
-        0 0 3px var(--cell-color, #00ffea),
+        0 0 3px var(--cell-color, #ff3179),
         0 0 6px rgba(0, 255, 234, 0.2),
-        inset 0 0 4px var(--cell-color, #00ffea);
+        inset 0 0 4px var(--cell-color, #ff3179);
     opacity: 0.35;
     border-radius: 4px;
     animation: ghostFlicker 1.8s ease-in-out infinite;
@@ -286,15 +286,15 @@
     100% {
         opacity: 0.3;
         box-shadow:
-            0 0 2px var(--cell-color, #00ffea),
+            0 0 2px var(--cell-color, #ff3179),
             0 0 4px rgba(0, 255, 234, 0.15),
-            inset 0 0 3px var(--cell-color, #00ffea);
+            inset 0 0 3px var(--cell-color, #ff3179);
     }
     50% {
         opacity: 0.4;
         box-shadow:
-            0 0 4px var(--cell-color, #00ffea),
+            0 0 4px var(--cell-color, #ff3179),
             0 0 8px rgba(0, 255, 234, 0.25),
-            inset 0 0 5px var(--cell-color, #00ffea);
+            inset 0 0 5px var(--cell-color, #ff3179);
     }
 }

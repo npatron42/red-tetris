@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/09 11:58:43 by npatron           #+#    #+#             */
-/*   Updated: 2026/02/02 14:36:54 by npatron          ###   ########.fr       */
+/*   Updated: 2026/02/02 16:22:45 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@ import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import { Routes, Route } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
 
 import Home from "./components/home/Home";
 import Login from "./components/login/Login";
@@ -27,44 +26,15 @@ import BackgroundAnimation from "./components/animations/background/BackgroundAn
 
 import { RequireAuth, UserProvider } from "./providers/UserProvider";
 import { SocketProvider } from "./providers/SocketProvider";
-import { Profile } from "./components/navbar/Profile";
-import Jukebox from "./components/jukebox/Jukebox";
-
-const TETRIS_LETTERS = [
-    { letter: "T", color: "#f00000" },
-    { letter: "E", color: "#f0a000" },
-    { letter: "T", color: "#f0f000" },
-    { letter: "R", color: "#00f000" },
-    { letter: "I", color: "#0000f0" },
-    { letter: "S", color: "#a000f0" },
-];
+import { Navbar } from "./components/navbar/Navbar";
 
 const App = () => {
-    const navigate = useNavigate();
-    const navigateToHome = () => {
-        navigate("/");
-    };
-
     return (
         <div id="background-container">
             <BackgroundAnimation />
-
-            <div className="header">
-                <div className="header-left">
-                    <Jukebox />
-                </div>
-                <div className="header-write" onClick={navigateToHome}>
-                    {TETRIS_LETTERS.map((item, index) => (
-                        <span key={index} style={{ color: item.color }}>
-                            {item.letter}
-                        </span>
-                    ))}
-                </div>
-            </div>
-
             <UserProvider>
                 <SocketProvider>
-                    <Profile />
+                    <Navbar />
                     <Routes>
                         <Route path="/" element={<Home />} />
                         <Route path="/login" element={<Login />} />

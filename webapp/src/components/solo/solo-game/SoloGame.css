@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/31 12:00:00 by npatron           #+#    #+#             */
-/*   Updated: 2026/01/31 12:00:00 by npatron          ###   ########.fr       */
+/*   Updated: 2026/02/02 16:39:16 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,8 @@
     font-family: "Arcade", sans-serif;
     font-size: 2rem;
     letter-spacing: 2px;
-    color: #fdd835;
-    text-shadow: 0 0 12px rgba(253, 216, 53, 0.6);
+    color: #ff3179;
+    text-shadow: 0 0 12px rgba(255, 49, 121, 0.4);
 }
 
 .solo-game-result-score {

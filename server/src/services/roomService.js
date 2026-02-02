@@ -6,19 +6,14 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:10:49 by npatron           #+#    #+#             */
-/*   Updated: 2026/02/02 13:57:00 by npatron          ###   ########.fr       */
+/*   Updated: 2026/02/02 16:13:51 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-import pino from "pino";
 import socketService from "./socket/socketService.js";
 import multiGameService from "./multiGameService.js";
 import { RoomDao } from "../dao/roomDao.js";
 import { UserDao } from "../dao/userDao.js";
-
-const logger = pino({
-    level: "info",
-});
 
 export class RoomService {
     constructor() {
@@ -51,7 +46,7 @@ export class RoomService {
             throw new Error("Leader user not found");
         }
 
-        const savedRoom = await this.roomDao.create({
+        await this.roomDao.create({
             name: roomName,
             leaderId: leader.id,
             createdAt: new Date(),
@@ -75,7 +70,7 @@ export class RoomService {
             throw new Error("User not found");
         }
 
-        await this.roomDao.updateByName(roomName, { opponentId: user.id });
+        await this.roomDao.updateByName(roomName, { opponent_id: user.id });
         const updatedRoom = await this.getRoomByName(roomName);
         this.notifyPlayersRoomUpdated(updatedRoom);
         return updatedRoom;
@@ -171,7 +166,7 @@ export class RoomService {
         return room;
     }
 
-    async startGame(roomName) {
+        async startGame(roomName) {
         try {
             const roomData = await this.getRoomByName(roomName);
             if (!roomData) {
@@ -180,10 +175,11 @@ export class RoomService {
             if (roomData.status !== "PENDING") {
                 throw new Error("Room is not in a waiting state");
             }
-            await this.roomDao.updateByName(roomName, { status: "PROCESSING" });
+                await this.roomDao.updateByName(roomName, { status: "PROCESSING" });
             const updatedRoom = await this.getRoomByName(roomName);
             this.notifyPlayersRoomUpdated(updatedRoom);
-            multiGameService.createMultiGame(roomData.name, roomData.leaderId, roomData.playerIds);
+            console.log("roomName. leaderId, player Ids", roomName, roomData.leaderId, roomData.playerIds);
+            multiGameService.createMultiGame(roomData.id, roomData.leaderId, roomData.playerIds);
             this.notifyPlayersRoomUpdated(updatedRoom);
             return roomData;
         } catch (error) {
@@ -198,7 +194,7 @@ export class RoomService {
             return null;
         }
         await this.roomDao.updateByName(roomName, { gameOnGoing: false, gameStatus: "WAITING" });
-        multiGameService.endMultiGame(roomName);
+        multiGameService.endMultiGame(room.id);
         const updatedRoom = await this.getRoomByName(roomName);
         this.notifyPlayersRoomUpdated(updatedRoom);
         return updatedRoom;

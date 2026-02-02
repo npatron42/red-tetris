@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:11:25 by npatron           #+#    #+#             */
-/*   Updated: 2026/01/12 15:25:48 by npatron          ###   ########.fr       */
+/*   Updated: 2026/02/02 16:03:36 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ export class MultiPlayerGame {
             }
             const players = this.room.getPlayers();
             players.forEach(player => {
-                this.movePiece(player.getUsername(), "DOWN", socketService);
+                this.movePiece(player.id, "DOWN", socketService);
             });
         }, 1000);
     }
@@ -102,23 +102,23 @@ export class MultiPlayerGame {
     }
 
     applyPenaltyLinesToOpponents(sourcePlayer, linesCleared) {
-        const sourceUsername = sourcePlayer.getUsername();
+        const sourceId = sourcePlayer.id;
         const players = this.room.getPlayers();
 
         players.forEach(player => {
-            if (player.getUsername() === sourceUsername) {
+            if (player.id === sourceId) {
                 return;
             }
             player.getGrid().addIndestructibleLines(linesCleared);
         });
     }
 
-    movePiece(name, direction, socketService) {
+    movePiece(userId, direction, socketService) {
         if (!this.isStarted) {
             return null;
         }
 
-        const player = this.room.getPlayers().find(p => p.getUsername() === name);
+        const player = this.room.getPlayers().find(player => player.id === userId);
         if (!player || !player.currentPiece) {
             return null;
         }
@@ -186,6 +186,7 @@ export class MultiPlayerGame {
         try {
             const players = this.room.getPlayers();
             const gameState = players.map(player => ({
+                id: player.id,
                 name: player.getUsername(),
                 grid: player.currentPiece ? player.getGrid().getGridWithPiece(player.currentPiece) : player.getGrid().getGrid(),
                 score: player.currentScore,
@@ -194,9 +195,10 @@ export class MultiPlayerGame {
                 nextPieces: this.tetrominosBag.peekNextPieces(3),
             }));
 
-            const names = players.map(player => player.getUsername());
-            socketService.emitToUsers(names, "multiGridUpdate", {
-                roomName: this.room.getRoomName(),
+            const playerIds = players.map(player => player.id).filter(Boolean);
+            
+            socketService.emitToUsers(playerIds, "multiGridUpdate", {
+                roomId: this.room.id,
                 gameState,
             });
         } catch (error) {
@@ -235,7 +237,7 @@ export class MultiPlayerGame {
             }
             const players = this.room.getPlayers();
             players.forEach(player => {
-                this.movePiece(player.getUsername(), "DOWN", socketService);
+                this.movePiece(player.id, "DOWN", socketService);
             });
         }, Math.floor(calculatedSpeed));
     }

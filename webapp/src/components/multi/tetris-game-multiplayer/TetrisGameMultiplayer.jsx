@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 13:02:55 by npatron           #+#    #+#             */
-/*   Updated: 2026/02/02 12:50:31 by npatron          ###   ########.fr       */
+/*   Updated: 2026/02/02 16:05:05 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ const COLOR_MAP = {
     "Z-ghost": "#FF003C",
 };
 
-export const TetrisGameMultiplayer = ({ roomInfo, currentUser }) => {
+export const TetrisGameMultiplayer = ({ roomInfo }) => {
     const [playersState, setPlayersState] = useState([]);
     const { user } = useUser();
     const { socket } = useSocket();
@@ -62,9 +62,7 @@ export const TetrisGameMultiplayer = ({ roomInfo, currentUser }) => {
 
     useEffect(() => {
         const handleMultiGridUpdate = data => {
-            if (data.roomName !== roomInfo.name) {
-                return;
-            }
+            console.log("data", data);
             setPlayersState(data.gameState);
         };
 
@@ -104,10 +102,11 @@ export const TetrisGameMultiplayer = ({ roomInfo, currentUser }) => {
             }
 
             if (direction) {
+                console.log("roomInfo", roomInfo);
                 socketService.sendMoveMultiplayer({
-                    roomName: roomInfo.name,
+                    roomId: roomInfo.id,
                     direction,
-                    name: user,
+                    userId: user.user.id,
                 });
             }
         };

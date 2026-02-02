@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 13:02:53 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/29 16:31:57 by npatron          ###   ########.fr       */
+/*   Updated: 2026/02/02 16:39:39 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,10 @@ body {
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    padding-top: 5vh;
+    padding-top: 10vh;
     min-height: 100vh;
     color: white;
-    font-family: "Orbitron", sans-serif; /* Police futuriste */
-    background: radial-gradient(circle at center, #1a1a2e 0%, #000000 100%);
+    font-family: "Orbitron", sans-serif;
 }
 
 .players-boards {
@@ -37,6 +36,7 @@ body {
 }
 
 .player-board {
+    margin-top: 48px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -94,10 +94,10 @@ body {
     display: block;
     margin-top: 5px;
     font-size: 0.7rem;
-    color: #00ffea;
+    color: #ff3179;
     text-transform: uppercase;
     letter-spacing: 1px;
-    text-shadow: 0 0 10px #00ffea;
+    text-shadow: 0 0 10px #ff3179;
 }
 
 .game-stats {
@@ -144,7 +144,7 @@ body {
 }
 
 .player-board .grid.active-border {
-    border-color: #00ffea;
+    border-color: #ff3179;
     box-shadow:
         0 0 15px rgba(0, 255, 234, 0.3),
         inset 0 0 20px rgba(0, 0, 0, 0.8);
@@ -195,11 +195,11 @@ body {
 
 .cell.ghost {
     background-color: transparent !important;
-    border: 2px dashed var(--cell-color, #00ffea);
+    border: 2px dashed var(--cell-color, #ff3179);
     box-shadow:
-        0 0 3px var(--cell-color, #00ffea),
+        0 0 3px var(--cell-color, #ff3179),
         0 0 6px rgba(0, 255, 234, 0.2),
-        inset 0 0 4px var(--cell-color, #00ffea);
+        inset 0 0 4px var(--cell-color, #ff3179);
     opacity: 0.35;
     border-radius: 4px;
     animation: ghostFlicker 1.8s ease-in-out infinite;
@@ -210,15 +210,15 @@ body {
     100% {
         opacity: 0.3;
         box-shadow:
-            0 0 2px var(--cell-color, #00ffea),
+            0 0 2px var(--cell-color, #ff3179),
             0 0 4px rgba(0, 255, 234, 0.15),
-            inset 0 0 3px var(--cell-color, #00ffea);
+            inset 0 0 3px var(--cell-color, #ff3179);
     }
     50% {
         opacity: 0.4;
         box-shadow:
-            0 0 4px var(--cell-color, #00ffea),
+            0 0 4px var(--cell-color, #ff3179),
             0 0 8px rgba(0, 255, 234, 0.25),
-            inset 0 0 5px var(--cell-color, #00ffea);
+            inset 0 0 5px var(--cell-color, #ff3179);
     }
 }

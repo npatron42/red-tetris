@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 13:02:55 by npatron           #+#    #+#             */
-/*   Updated: 2026/02/02 14:35:23 by npatron          ###   ########.fr       */
+/*   Updated: 2026/02/02 14:39:10 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ export const TetrisGameSolo = ({ gameId: gameId, onGameCompleted }) => {
 
                     if (playerState.status === "COMPLETED" && !endGame) {
                         setEndGame(true);
-                        if (fiie) {
+                        if (onGameCompleted) {
                             onGameCompleted(playerState.score ?? 0);
                         }
                         await endSoloGame(gameId, playerState.score ?? 0);
