@@ -10,7 +10,9 @@
     "coverage": "c8 --check-coverage --statements 70 --functions 70 --lines 70 --branches 50 node --test",
     "prisma:generate": "prisma generate",
     "prisma:db-push": "prisma db push",
-    "prisma:migrate": "prisma migrate dev"
+    "prisma:migrate": "prisma migrate dev",
+    "format": "prettier --write \"**/*.{js,json,css,md}\"",
+    "lint": "eslint ."
   },
   "dependencies": {
     "@prisma/client": "^6.1.0",

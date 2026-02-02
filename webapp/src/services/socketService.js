@@ -16,113 +16,113 @@ let socket = null;
 let isConnected = false;
 const eventListeners = new Map();
 
-const connect = (userId) => {
-	if (socket?.connected) {
-		disconnect();
-	}
+const connect = userId => {
+    if (socket?.connected) {
+        disconnect();
+    }
 
-	const query = { id: userId };
+    const query = { id: userId };
 
-	socket = io(import.meta.env.VITE_API_URL || "http://localhost:4000", {
-		query: query,
-		transports: ["websocket"],
-		closeOnBeforeunload: true
-	});
+    socket = io(import.meta.env.VITE_API_URL || "http://localhost:4000", {
+        query: query,
+        transports: ["websocket"],
+        closeOnBeforeunload: true,
+    });
 
-	socket.on("connect", () => {
-		isConnected = true;
-	});
+    socket.on("connect", () => {
+        isConnected = true;
+    });
 
-	socket.on("disconnect", () => {
-		isConnected = false;
-	});
+    socket.on("disconnect", () => {
+        isConnected = false;
+    });
 
-	socket.on("enemyName", (data) => {
-		emit("enemyName", data);
-	});
+    socket.on("enemyName", data => {
+        emit("enemyName", data);
+    });
 
-	socket.on("enemyDisconnected", (data) => {
-		emit("enemyDisconnected", data);
-	});
+    socket.on("enemyDisconnected", data => {
+        emit("enemyDisconnected", data);
+    });
 
-	socket.on("tetrominosGenerated", (data) => {
-		emit("tetrominosGenerated", data);
-	});
+    socket.on("tetrominosGenerated", data => {
+        emit("tetrominosGenerated", data);
+    });
 
-	socket.on("roomUpdated", (data) => {
-		emit("roomUpdated", data);
-	});
+    socket.on("roomUpdated", data => {
+        emit("roomUpdated", data);
+    });
 
-	socket.on("multiGridUpdate", (data) => {
-		emit("multiGridUpdate", data);
-	});
-	socket.on("soloGridUpdate", (data) => {
-		emit("soloGridUpdate", data);
-	});
+    socket.on("multiGridUpdate", data => {
+        emit("multiGridUpdate", data);
+    });
+    socket.on("soloGridUpdate", data => {
+        emit("soloGridUpdate", data);
+    });
 
-	socket.on("soloGameUpdated", (data) => {
-		emit("soloGameUpdated", data);
-	});
+    socket.on("soloGameUpdated", data => {
+        emit("soloGameUpdated", data);
+    });
 
-	return socket;
+    return socket;
 };
 
 const disconnect = () => {
-	if (socket) {
-		socket.disconnect();
-		socket = null;
-		isConnected = false;
-	}
+    if (socket) {
+        socket.disconnect();
+        socket = null;
+        isConnected = false;
+    }
 };
 
 const on = (event, callback) => {
-	if (!eventListeners.has(event)) {
-		eventListeners.set(event, []);
-	}
-	eventListeners.get(event).push(callback);
+    if (!eventListeners.has(event)) {
+        eventListeners.set(event, []);
+    }
+    eventListeners.get(event).push(callback);
 };
 
 const off = (event, callback) => {
-	if (eventListeners.has(event)) {
-		const listeners = eventListeners.get(event);
-		const index = listeners.indexOf(callback);
-		if (index > -1) {
-			listeners.splice(index, 1);
-		}
-	}
+    if (eventListeners.has(event)) {
+        const listeners = eventListeners.get(event);
+        const index = listeners.indexOf(callback);
+        if (index > -1) {
+            listeners.splice(index, 1);
+        }
+    }
 };
 
 const emit = (event, data) => {
-	if (eventListeners.has(event)) {
-		eventListeners.get(event).forEach((callback) => {
-			callback(data);
-		});
-	}
+    if (eventListeners.has(event)) {
+        eventListeners.get(event).forEach(callback => {
+            callback(data);
+        });
+    }
 };
 
-const sendMoveMultiplayer = (moveData) => {
-	if (socket?.connected) {
-		socket.emit("movePieceMultiplayer", moveData);
-	}
+const sendMoveMultiplayer = moveData => {
+    if (socket?.connected) {
+        socket.emit("movePieceMultiplayer", moveData);
+    }
 };
 
-const sendMoveSolo = (moveData) => {
-	if (socket?.connected) {
-		socket.emit("movePieceSolo", moveData);
-	}
+const sendMoveSolo = moveData => {
+    if (socket?.connected) {
+        socket.emit("movePieceSolo", moveData);
+    }
 };
 
 const getSocket = () => {
-	return socket;
+    return socket;
 };
 
 export const socketService = {
-	connect,
-	disconnect,
-	on,
-	off,
-	emit,
-	sendMoveMultiplayer,
-	sendMoveSolo,
-	getSocket
+    connect,
+    disconnect,
+    on,
+    off,
+    emit,
+    sendMoveMultiplayer,
+    sendMoveSolo,
+    getSocket,
 };

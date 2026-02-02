@@ -16,16 +16,16 @@ import { useUser } from "../../providers/UserProvider";
 import { User } from "lucide-react";
 
 export const Profile = () => {
-	const { user } = useUser();
-	if (!user) {
-		return null;
-	}
-	return (
-		<div className="profile-container">
-			<div className="profile-icon-circle">
-				<User size={28} color="#fdd835" />
-			</div>
-			<span className="profile-name">{user.user?.name || user.user}</span>
-		</div>
-	);
+    const { user } = useUser();
+    if (!user) {
+        return null;
+    }
+    return (
+        <div className="profile-container">
+            <div className="profile-icon-circle">
+                <User size={28} color="#fdd835" />
+            </div>
+            <span className="profile-name">{user.user?.name || user.user}</span>
+        </div>
+    );
 };

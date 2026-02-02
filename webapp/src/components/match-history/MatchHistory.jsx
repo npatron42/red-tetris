@@ -16,7 +16,6 @@ import { useEffect } from "react";
 import { useState } from "react";
 
 export const MatchHistory = () => {
-
     const { user } = useUser();
     const [historyMatch, setHistoryMatch] = useState([]);
 
@@ -33,16 +32,17 @@ export const MatchHistory = () => {
         fetchHistoryMatch();
     }, []);
 
-
-	return (
-		<div className="match-history-container">
-			<h1>Match History</h1>
-            {historyMatch.map((match) => (
+    return (
+        <div className="match-history-container">
+            <h1>Match History</h1>
+            {historyMatch.map(match => (
                 <div key={match.id}>
-                    <h2>{match.player1.name} vs {match.player2.name}</h2>
+                    <h2>
+                        {match.player1.name} vs {match.player2.name}
+                    </h2>
                     <p>{match.winner.name} won</p>
                 </div>
             ))}
-		</div>
-	);
+        </div>
+    );
 };

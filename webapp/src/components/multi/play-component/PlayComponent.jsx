@@ -17,42 +17,42 @@ import { useNavigate } from "react-router-dom";
 import { useUser } from "../../../providers/UserProvider";
 
 export const PlayComponent = () => {
-	const navigate = useNavigate();
-	const { user } = useUser();
+    const navigate = useNavigate();
+    const { user } = useUser();
 
-	const navigateToSoloGame = () => {
-		navigate("/solo/game-room");
-	};
+    const navigateToSoloGame = () => {
+        navigate("/solo/game-room");
+    };
 
-	return (
-		<div className="play-component-container">
-			<div className="play-header-container">
-				<div className="play-header-center">
-					<Joystick size={24} color="#FDD835" />
-					<span>PLAY</span>
-					<Joystick size={24} color="#FDD835" />
-				</div>
-			</div>
-			{user && (
-				<div className="play-button-container">
-					<button className="play-button" onClick={navigateToSoloGame}>
-						SOLO
-					</button>
-					<button className="play-button" onClick={() => navigate("/create-room")}>
-						CREATE
-					</button>
-					<button className="play-button" onClick={() => navigate("/join-room")}>
-						JOIN
-					</button>
-				</div>
-			)}
-			{!user && (
-				<div className="play-button-container">
-					<button className="play-button" onClick={() => navigate("/login")}>
-						Login to continue
-					</button>
-				</div>
-			)}
-		</div>
-	);
+    return (
+        <div className="play-component-container">
+            <div className="play-header-container">
+                <div className="play-header-center">
+                    <Joystick size={24} color="#FDD835" />
+                    <span>PLAY</span>
+                    <Joystick size={24} color="#FDD835" />
+                </div>
+            </div>
+            {user && (
+                <div className="play-button-container">
+                    <button className="play-button" onClick={navigateToSoloGame}>
+                        SOLO
+                    </button>
+                    <button className="play-button" onClick={() => navigate("/create-room")}>
+                        CREATE
+                    </button>
+                    <button className="play-button" onClick={() => navigate("/join-room")}>
+                        JOIN
+                    </button>
+                </div>
+            )}
+            {!user && (
+                <div className="play-button-container">
+                    <button className="play-button" onClick={() => navigate("/login")}>
+                        Login to continue
+                    </button>
+                </div>
+            )}
+        </div>
+    );
 };

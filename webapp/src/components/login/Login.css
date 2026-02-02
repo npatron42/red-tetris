@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
 
 .login-container {
     display: flex;
@@ -10,10 +10,10 @@
     border-radius: 16px;
     height: 280px;
     width: 600px;
-    color: #ECF0F1;
-    border: 1px solid #12433D;
+    color: #ecf0f1;
+    border: 1px solid #12433d;
     box-shadow: 12px 12px 24px rgba(0, 0, 0, 0.2);
-  }
+}
 
 .login-form {
     display: flex;
@@ -28,7 +28,7 @@
 
 .login-title {
     margin: 0;
-    font-family: 'Press Start 2P', cursive;
+    font-family: "Press Start 2P", cursive;
     font-size: 18px;
     text-align: center;
     color: #e9c46a;
@@ -40,7 +40,9 @@
     border: 2px solid transparent;
     font-size: 16px;
     outline: none;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
 .login-input:focus {
@@ -73,11 +75,12 @@
     color: #c8c8dd;
     font-weight: 600;
     cursor: pointer;
-    transition: border-color 0.2s ease, color 0.2s ease;
+    transition:
+        border-color 0.2s ease,
+        color 0.2s ease;
 }
 
 .login-helper:hover {
     border-color: #2a9d8f;
     color: #2a9d8f;
 }
-

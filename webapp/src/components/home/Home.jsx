@@ -13,11 +13,11 @@
 import { PlayComponent } from "../multi/play-component/PlayComponent";
 
 const Home = () => {
-	return (
-		<div className="home-page-container">
-			<PlayComponent />
-		</div>
-	);
+    return (
+        <div className="home-page-container">
+            <PlayComponent />
+        </div>
+    );
 };
 
 export default Home;

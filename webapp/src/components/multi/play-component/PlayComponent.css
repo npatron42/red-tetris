@@ -40,15 +40,15 @@
     border: 2px solid #c8c8dd;
     background: transparent;
     color: #c8c8dd;
-    font-family: 'Arcade', sans-serif;
+    font-family: "Arcade", sans-serif;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
 }
 
 .play-button:hover {
-    border-color: #FDD835;
-    color: #FDD835;
+    border-color: #fdd835;
+    color: #fdd835;
     box-shadow: 0 0 20px rgba(253, 216, 53, 0.3);
 }
 
@@ -65,20 +65,20 @@
     border: 1px solid rgba(255, 255, 255, 0.08);
     box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.6);
     color: #ffffff;
-    font-family: 'Orbitron', sans-serif;
+    font-family: "Orbitron", sans-serif;
     font-size: 1.1rem;
     transition: all 0.2s ease;
 }
 
 .input-button::placeholder {
     color: #aebeff;
-    font-family: 'Orbitron', sans-serif;
+    font-family: "Orbitron", sans-serif;
 }
 
 .input-button:focus {
     outline: none;
     border-color: rgba(0, 255, 234, 0.3);
-    box-shadow: 
+    box-shadow:
         inset 0 0 18px rgba(0, 0, 0, 0.6),
         0 0 20px rgba(0, 255, 234, 0.2);
 }
@@ -87,11 +87,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: 'Arcade', sans-serif;
+    font-family: "Arcade", sans-serif;
     gap: 12px;
     font-size: 2rem;
     letter-spacing: 2px;
-    color: #FDD835;
+    color: #fdd835;
     text-shadow: 0 0 12px rgba(253, 216, 53, 0.6);
 }
 
@@ -99,10 +99,10 @@
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    font-family: 'Arcade', sans-serif;
+    font-family: "Arcade", sans-serif;
     gap: 12px;
     font-size: 1.5rem;
-    color: #FDD835;
+    color: #fdd835;
     cursor: pointer;
     transition: all 0.2s ease;
 }
@@ -119,7 +119,7 @@
     border: 1px solid rgba(255, 255, 255, 0.08);
     box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.6);
     color: #ffffff;
-    font-family: 'Orbitron', sans-serif;
+    font-family: "Orbitron", sans-serif;
     font-size: 1.1rem;
 }
 

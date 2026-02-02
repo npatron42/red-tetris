@@ -31,88 +31,88 @@ import { Profile } from "./components/navbar/Profile";
 import Jukebox from "./components/jukebox/Jukebox";
 
 const TETRIS_LETTERS = [
-	{ letter: "T", color: "#E53935" },
-	{ letter: "E", color: "#FB8C00" },
-	{ letter: "T", color: "#FDD835" },
-	{ letter: "R", color: "#43A047" },
-	{ letter: "I", color: "#039BE5" },
-	{ letter: "S", color: "#8E24AA" }
+    { letter: "T", color: "#E53935" },
+    { letter: "E", color: "#FB8C00" },
+    { letter: "T", color: "#FDD835" },
+    { letter: "R", color: "#43A047" },
+    { letter: "I", color: "#039BE5" },
+    { letter: "S", color: "#8E24AA" },
 ];
 
 const App = () => {
-	const navigate = useNavigate();
-	const navigateToHome = () => {
-		navigate("/");
-	};
+    const navigate = useNavigate();
+    const navigateToHome = () => {
+        navigate("/");
+    };
 
-	return (
-		<div id="background-container">
-			<BackgroundAnimation />
+    return (
+        <div id="background-container">
+            <BackgroundAnimation />
 
-			<div className="header">
-				<div className="header-left">
-					<Jukebox />
-				</div>
-				<div className="header-write" onClick={navigateToHome}>
-					{TETRIS_LETTERS.map((item, index) => (
-						<span key={index} style={{ color: item.color }}>
-							{item.letter}
-						</span>
-					))}
-				</div>
-			</div>
+            <div className="header">
+                <div className="header-left">
+                    <Jukebox />
+                </div>
+                <div className="header-write" onClick={navigateToHome}>
+                    {TETRIS_LETTERS.map((item, index) => (
+                        <span key={index} style={{ color: item.color }}>
+                            {item.letter}
+                        </span>
+                    ))}
+                </div>
+            </div>
 
-			<UserProvider>
-				<SocketProvider>
-					<Profile />
-					<Routes>
-						<Route path="/" element={<Home />} />
-						<Route path="/login" element={<Login />} />
-						<Route
-							path="/solo/:gameId"
-							element={
-								<RequireAuth>
-									<SoloGame />
-								</RequireAuth>
-							}
-						/>
-						<Route
-							path="/create-room"
-							element={
-								<RequireAuth>
-									<CreateRoom />
-								</RequireAuth>
-							}
-						/>
-						<Route
-							path="/join-room"
-							element={
-								<RequireAuth>
-									<JoinRoom />
-								</RequireAuth>
-							}
-						/>
-						<Route
-							path="/:roomName/:leaderUsername"
-							element={
-								<RequireAuth>
-									<MultiGameRoom />
-								</RequireAuth>
-							}
-						/>
-						<Route
-							path="/solo/game-room"
-							element={
-								<RequireAuth>
-									<SoloGameRoom />
-								</RequireAuth>
-							}
-						/>
-					</Routes>
-				</SocketProvider>
-			</UserProvider>
-		</div>
-	);
+            <UserProvider>
+                <SocketProvider>
+                    <Profile />
+                    <Routes>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/login" element={<Login />} />
+                        <Route
+                            path="/solo/:gameId"
+                            element={
+                                <RequireAuth>
+                                    <SoloGame />
+                                </RequireAuth>
+                            }
+                        />
+                        <Route
+                            path="/create-room"
+                            element={
+                                <RequireAuth>
+                                    <CreateRoom />
+                                </RequireAuth>
+                            }
+                        />
+                        <Route
+                            path="/join-room"
+                            element={
+                                <RequireAuth>
+                                    <JoinRoom />
+                                </RequireAuth>
+                            }
+                        />
+                        <Route
+                            path="/:roomName/:leaderUsername"
+                            element={
+                                <RequireAuth>
+                                    <MultiGameRoom />
+                                </RequireAuth>
+                            }
+                        />
+                        <Route
+                            path="/solo/game-room"
+                            element={
+                                <RequireAuth>
+                                    <SoloGameRoom />
+                                </RequireAuth>
+                            }
+                        />
+                    </Routes>
+                </SocketProvider>
+            </UserProvider>
+        </div>
+    );
 };
 
 export default App;

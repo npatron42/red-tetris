@@ -29,7 +29,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid #C2E3DF;
+    border: 2px solid #c2e3df;
 }
 
 .profile-icon-circle svg {
@@ -39,6 +39,5 @@
 .profile-name {
     font-family: "Arcade", sans-serif;
     font-size: 18px;
-    color: #C2E3DF;
+    color: #c2e3df;
 }
-

@@ -28,15 +28,15 @@
 }
 
 .solo-game-header h1 {
-    font-family: 'PacfontGood', sans-serif;
+    font-family: "PacfontGood", sans-serif;
     font-size: 2.5rem;
-    color: #FDD835;
+    color: #fdd835;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     margin: 0;
 }
 
 .back-button {
-    font-family: 'PacfontGood', sans-serif;
+    font-family: "PacfontGood", sans-serif;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border: none;
     padding: 12px 24px;
@@ -53,10 +53,11 @@
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
 }
 
-.loading, .error {
-    font-family: 'PacfontGood', sans-serif;
+.loading,
+.error {
+    font-family: "PacfontGood", sans-serif;
     font-size: 1.5rem;
-    color: #FDD835;
+    color: #fdd835;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     text-align: center;
     padding: 20px;
@@ -74,7 +75,7 @@
     padding-top: 5vh;
     min-height: 100vh;
     color: white;
-    font-family: 'Orbitron', sans-serif;
+    font-family: "Orbitron", sans-serif;
 }
 
 .side-panel {
@@ -130,7 +131,7 @@
 }
 
 .player-board::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 50%;
     left: 50%;
@@ -199,7 +200,7 @@
     padding: 4px;
     border: 2px solid #333;
     border-radius: 4px;
-    box-shadow: 
+    box-shadow:
         0 0 10px rgba(0, 0, 0, 0.8),
         0 0 20px rgba(0, 255, 255, 0.1),
         inset 0 0 20px rgba(0, 0, 0, 0.8);
@@ -208,11 +209,10 @@
 
 .player-board .grid.active-border {
     border-color: #00ffea;
-    box-shadow: 
+    box-shadow:
         0 0 15px rgba(0, 255, 234, 0.3),
         inset 0 0 20px rgba(0, 0, 0, 0.8);
 }
-
 
 .cell {
     width: 30px;
@@ -229,7 +229,7 @@
 .cell.filled {
     border: none;
     border-radius: 2px;
-    box-shadow: 
+    box-shadow:
         inset 2px 2px 2px rgba(255, 255, 255, 0.4),
         inset -2px -2px 2px rgba(0, 0, 0, 0.4),
         0 0 8px var(--cell-color);
