@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:39:24 by npatron           #+#    #+#             */
-/*   Updated: 2026/02/02 13:55:29 by npatron          ###   ########.fr       */
+/*   Updated: 2026/02/02 18:11:35 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ const MultiGameRoom = () => {
 
     const [isUserAuthorized, setIsUserAuthorized] = useState(false);
     const [roomInfo, setRoomInfo] = useState(null);
+    const [finalPlayers, setFinalPlayers] = useState(null);
 
     const fetchRoomDetails = useCallback(async () => {
         if (!roomName) return;
@@ -68,6 +69,10 @@ const MultiGameRoom = () => {
         }
     };
 
+    const handleGameEnd = players => {
+        setFinalPlayers(players);
+    };
+
     useEffect(() => {
         if (!roomEvents.roomUpdated) return;
         setRoomInfo(roomEvents.roomUpdated);
@@ -88,17 +93,20 @@ const MultiGameRoom = () => {
     if (!roomInfo) return <div className="room-loading">Loading room...</div>;
 
     const renderContent = () => {
-        const status = roomInfo.status || "WAITING";
+        const status = roomInfo.status;
 
         switch (status) {
             case "PROCESSING":
-                return <TetrisGameMultiplayer roomInfo={roomInfo} currentUser={user} />;
+                return <TetrisGameMultiplayer roomInfo={roomInfo} currentUser={user} onGameEnd={handleGameEnd} />;
 
             case "COMPLETED":
-                return <GameResults roomInfo={roomInfo} onRestart={startGame} onLeave={leaveRoom} />;
+                const roomInfoWithScores = finalPlayers 
+                    ? { ...roomInfo, players: finalPlayers }
+                    : roomInfo;
+                return <GameResults roomInfo={roomInfoWithScores} onRestart={startGame} onLeave={leaveRoom} />;
 
             case "PENDING":
-            default:
+            case "WAITING":
                 return (
                     <div className="gameroom-card">
                         <header className="room-header">
@@ -140,6 +148,8 @@ const MultiGameRoom = () => {
                         </div>
                     </div>
                 );
+            default:
+                return <div className="room-loading">Loading room...</div>;
         }
     };
 

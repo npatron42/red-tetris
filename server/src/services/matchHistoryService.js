@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:10:54 by npatron           #+#    #+#             */
-/*   Updated: 2026/01/19 16:30:30 by npatron          ###   ########.fr       */
+/*   Updated: 2026/02/02 18:15:07 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,7 @@ export class MatchHistoryService {
             player1Id: player1.id,
             player2Id: player2.id,
             winnerId: winnerId,
-            status: "FINISHED",
-            rngSeed: Date.now(),
+            status: "COMPLETED",
         });
 
         for (const playerId of playerIds) {
