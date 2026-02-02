@@ -29,8 +29,6 @@ model directus_activity {
   item               String               @db.VarChar(255)
   origin             String?              @db.VarChar(255)
   directus_revisions directus_revisions[]
-
-  @@index([timestamp], map: "directus_activity_timestamp_index")
 }
 
 model directus_collections {
@@ -113,7 +111,6 @@ model directus_fields {
   group              String?  @db.VarChar(64)
   validation         Json?    @db.Json
   validation_message String?
-  searchable         Boolean  @default(true)
 }
 
 model directus_files {
@@ -310,8 +307,6 @@ model directus_revisions {
   directus_revisions       directus_revisions?  @relation("directus_revisionsTodirectus_revisions", fields: [parent], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "directus_revisions_parent_foreign")
   other_directus_revisions directus_revisions[] @relation("directus_revisionsTodirectus_revisions")
   directus_versions        directus_versions?   @relation(fields: [version], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "directus_revisions_version_foreign")
-
-  @@index([parent], map: "directus_revisions_parent_index")
 }
 
 model directus_roles {
@@ -377,20 +372,8 @@ model directus_settings {
   public_registration_role                                           String?           @db.Uuid
   public_registration_email_filter                                   Json?             @db.Json
   visual_editor_urls                                                 Json?             @db.Json
+  accepted_terms                                                     Boolean?          @default(false)
   project_id                                                         String?           @db.Uuid
-  ai_anthropic_api_key                                               String?
-  ai_openai_api_key                                                  String?
-  ai_system_prompt                                                   String?
-  mcp_allow_deletes                                                  Boolean           @default(false)
-  mcp_enabled                                                        Boolean           @default(false)
-  mcp_prompts_collection                                             String?           @db.VarChar(255)
-  mcp_system_prompt                                                  String?
-  mcp_system_prompt_enabled                                          Boolean           @default(true)
-  org_name                                                           String?           @db.VarChar(255)
-  product_updates                                                    Boolean?
-  project_owner                                                      String?           @db.VarChar(255)
-  project_status                                                     String?           @db.VarChar(255)
-  project_usage                                                      String?           @db.VarChar(255)
   directus_files_directus_settings_project_logoTodirectus_files      directus_files?   @relation("directus_settings_project_logoTodirectus_files", fields: [project_logo], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "directus_settings_project_logo_foreign")
   directus_files_directus_settings_public_backgroundTodirectus_files directus_files?   @relation("directus_settings_public_backgroundTodirectus_files", fields: [public_background], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "directus_settings_public_background_foreign")
   directus_files_directus_settings_public_faviconTodirectus_files    directus_files?   @relation("directus_settings_public_faviconTodirectus_files", fields: [public_favicon], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "directus_settings_public_favicon_foreign")
@@ -523,6 +506,7 @@ model Room {
   opponent_id                                       String?         @db.Uuid
   created_at                                        DateTime        @default(now()) @db.Timestamptz(6)
   name                                              String?         @db.VarChar(255)
+  status                                            String?         @default("PENDING") @db.VarChar(255)
   leader                                            User            @relation("rooms_leader_idTousers", fields: [leader_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "rooms_leader_id_foreign")
   opponent                                          User?           @relation("rooms_opponent_idTousers", fields: [opponent_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "rooms_opponent_id_foreign")
   directus_users_rooms_user_createdTodirectus_users directus_users? @relation("rooms_user_createdTodirectus_users", fields: [user_created], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "rooms_user_created_foreign")
@@ -547,7 +531,6 @@ model User {
   matches_matches_winner_idTousers                  Match[]         @relation("matches_winner_idTousers")
   rooms_as_leader                                   Room[]          @relation("rooms_leader_idTousers")
   rooms_as_opponent                                 Room[]          @relation("rooms_opponent_idTousers")
-  solo_games                                        SoloGame[]
   directus_users_users_user_createdTodirectus_users directus_users? @relation("users_user_createdTodirectus_users", fields: [user_created], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_user_created_foreign")
   directus_users_users_user_updatedTodirectus_users directus_users? @relation("users_user_updatedTodirectus_users", fields: [user_updated], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_user_updated_foreign")
 
@@ -555,7 +538,7 @@ model User {
 }
 
 model Match {
-  id                                                  String          @id(map: "matchs_pkey") @db.Uuid
+  id                                                  String          @id @db.Uuid
   user_created                                        String?         @db.Uuid
   date_created                                        DateTime?       @db.Timestamptz(6)
   user_updated                                        String?         @db.Uuid
@@ -592,10 +575,9 @@ model SoloGame {
   rng_seed                                               BigInt?
   score                                                  Int             @default(0)
   status                                                 String          @default("PENDING") @db.VarChar(20)
-  users                                                  User            @relation(fields: [player_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   directus_users_solo_games_user_createdTodirectus_users directus_users? @relation("solo_games_user_createdTodirectus_users", fields: [user_created], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "solo_games_user_created_foreign")
   directus_users_solo_games_user_updatedTodirectus_users directus_users? @relation("solo_games_user_updatedTodirectus_users", fields: [user_updated], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "solo_games_user_updated_foreign")
 
-  @@index([player_id], map: "idx_solo_games_player")
+  @@index([player_id], map: "solo_games_player_id_index")
   @@map("solo_games")
 }

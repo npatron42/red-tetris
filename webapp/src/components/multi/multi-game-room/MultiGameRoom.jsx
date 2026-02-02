@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:39:24 by npatron           #+#    #+#             */
-/*   Updated: 2026/02/02 13:32:45 by npatron          ###   ########.fr       */
+/*   Updated: 2026/02/02 13:41:31 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,6 @@ const MultiGameRoom = () => {
 
     const startGame = async () => {
         const result = await handleStartGame(roomName);
-        console.log("ICI --> result", result);
         if (result.success) {
             setRoomInfo(result.data.room);
         }
@@ -93,13 +92,13 @@ const MultiGameRoom = () => {
         const status = roomInfo.gameStatus || "waiting";
 
         switch (status) {
-            case "PLAYING":
+            case "PROCESSING":
                 return <TetrisGameMultiplayer roomInfo={roomInfo} currentUser={user} />;
 
-            case "finished":
+            case "COMPLETED":
                 return <GameResults roomInfo={roomInfo} onRestart={startGame} onLeave={leaveRoom} />;
 
-            case "waiting":
+            case "PENDING":
             default:
                 return (
                     <div className="gameroom-card">
