@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:10:49 by npatron           #+#    #+#             */
-/*   Updated: 2026/02/02 13:16:58 by npatron          ###   ########.fr       */
+/*   Updated: 2026/02/02 13:57:00 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ export class RoomService {
             name: roomName,
             leaderId: leader.id,
             createdAt: new Date(),
+            
         });
         const enrichedRoom = await this.getRoomByName(roomName);
         return enrichedRoom;
@@ -108,6 +109,7 @@ export class RoomService {
 
         return {
             ...room,
+            status: room.status,
             leaderId: room.leader_id,
             opponentId: room.opponent_id,
             leaderUsername: room.leader?.name || null,
@@ -175,8 +177,14 @@ export class RoomService {
             if (!roomData) {
                 throw new Error("Room not found");
             }
+            if (roomData.status !== "PENDING") {
+                throw new Error("Room is not in a waiting state");
+            }
+            await this.roomDao.updateByName(roomName, { status: "PROCESSING" });
+            const updatedRoom = await this.getRoomByName(roomName);
+            this.notifyPlayersRoomUpdated(updatedRoom);
             multiGameService.createMultiGame(roomData.name, roomData.leaderId, roomData.playerIds);
-            this.notifyPlayersRoomUpdated(roomData);
+            this.notifyPlayersRoomUpdated(updatedRoom);
             return roomData;
         } catch (error) {
             console.error("Error starting game:", error);

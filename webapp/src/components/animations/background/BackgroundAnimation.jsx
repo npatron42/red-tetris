@@ -5,156 +5,58 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/12/09 11:58:20 by npatron           #+#    #+#             */
-/*   Updated: 2026/02/02 13:22:51 by npatron          ###   ########.fr       */
+/*   Created: 2025/12/09 11:57:40 by npatron           #+#    #+#             */
+/*   Updated: 2026/02/02 14:08:16 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-import React, { useMemo } from "react";
+import { useEffect, useState } from "react";
 import "./BackgroundAnimation.css";
 
-const SHAPES = [
-    {
-        type: "I",
-        path: (
-            <>
-                <defs>
-                    <linearGradient id="grad-I" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" stopColor="#4DD0E1" />
-                        <stop offset="100%" stopColor="#00E0E0" />
-                    </linearGradient>
-                </defs>
-                <rect x="0" y="10" width="10" height="10" fill="url(#grad-I)" stroke="#008BA3" strokeWidth="0.5" />
-                <rect x="10" y="10" width="10" height="10" fill="url(#grad-I)" stroke="#008BA3" strokeWidth="0.5" />
-                <rect x="20" y="10" width="10" height="10" fill="url(#grad-I)" stroke="#008BA3" strokeWidth="0.5" />
-                <rect x="30" y="10" width="10" height="10" fill="url(#grad-I)" stroke="#008BA3" strokeWidth="0.5" />
-            </>
-        ),
-    },
-    {
-        type: "L",
-        path: (
-            <>
-                <defs>
-                    <linearGradient id="grad-L" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" stopColor="#FFB74D" />
-                        <stop offset="100%" stopColor="#FF9800" />
-                    </linearGradient>
-                </defs>
-                <rect x="10" y="0" width="10" height="10" fill="url(#grad-L)" stroke="#E65100" strokeWidth="0.5" />
-                <rect x="10" y="10" width="10" height="10" fill="url(#grad-L)" stroke="#E65100" strokeWidth="0.5" />
-                <rect x="10" y="20" width="10" height="10" fill="url(#grad-L)" stroke="#E65100" strokeWidth="0.5" />
-                <rect x="20" y="20" width="10" height="10" fill="url(#grad-L)" stroke="#E65100" strokeWidth="0.5" />
-            </>
-        ),
-    },
-    {
-        type: "O",
-        path: (
-            <>
-                <defs>
-                    <linearGradient id="grad-O" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" stopColor="#FFF176" />
-                        <stop offset="100%" stopColor="#FFEB3B" />
-                    </linearGradient>
-                </defs>
-                <rect x="10" y="10" width="10" height="10" fill="url(#grad-O)" stroke="#F57F17" strokeWidth="0.5" />
-                <rect x="10" y="20" width="10" height="10" fill="url(#grad-O)" stroke="#F57F17" strokeWidth="0.5" />
-                <rect x="20" y="10" width="10" height="10" fill="url(#grad-O)" stroke="#F57F17" strokeWidth="0.5" />
-                <rect x="20" y="20" width="10" height="10" fill="url(#grad-O)" stroke="#F57F17" strokeWidth="0.5" />
-            </>
-        ),
-    },
-    {
-        type: "S",
-        path: (
-            <>
-                <defs>
-                    <linearGradient id="grad-S" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" stopColor="#81C784" />
-                        <stop offset="100%" stopColor="#4CAF50" />
-                    </linearGradient>
-                </defs>
-                <rect x="10" y="10" width="10" height="10" fill="url(#grad-S)" stroke="#2E7D32" strokeWidth="0.5" />
-                <rect x="20" y="10" width="10" height="10" fill="url(#grad-S)" stroke="#2E7D32" strokeWidth="0.5" />
-                <rect x="0" y="20" width="10" height="10" fill="url(#grad-S)" stroke="#2E7D32" strokeWidth="0.5" />
-                <rect x="10" y="20" width="10" height="10" fill="url(#grad-S)" stroke="#2E7D32" strokeWidth="0.5" />
-            </>
-        ),
-    },
-    {
-        type: "T",
-        path: (
-            <>
-                <defs>
-                    <linearGradient id="grad-T" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" stopColor="#BA68C8" />
-                        <stop offset="100%" stopColor="#9C27B0" />
-                    </linearGradient>
-                </defs>
-                <rect x="10" y="10" width="10" height="10" fill="url(#grad-T)" stroke="#6A1B9A" strokeWidth="0.5" />
-                <rect x="0" y="20" width="10" height="10" fill="url(#grad-T)" stroke="#6A1B9A" strokeWidth="0.5" />
-                <rect x="10" y="20" width="10" height="10" fill="url(#grad-T)" stroke="#6A1B9A" strokeWidth="0.5" />
-                <rect x="20" y="20" width="10" height="10" fill="url(#grad-T)" stroke="#6A1B9A" strokeWidth="0.5" />
-            </>
-        ),
-    },
-    {
-        type: "Z",
-        path: (
-            <>
-                <defs>
-                    <linearGradient id="grad-Z" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" stopColor="#E57373" />
-                        <stop offset="100%" stopColor="#F44336" />
-                    </linearGradient>
-                </defs>
-                <rect x="0" y="10" width="10" height="10" fill="url(#grad-Z)" stroke="#C62828" strokeWidth="0.5" />
-                <rect x="10" y="10" width="10" height="10" fill="url(#grad-Z)" stroke="#C62828" strokeWidth="0.5" />
-                <rect x="10" y="20" width="10" height="10" fill="url(#grad-Z)" stroke="#C62828" strokeWidth="0.5" />
-                <rect x="20" y="20" width="10" height="10" fill="url(#grad-Z)" stroke="#C62828" strokeWidth="0.5" />
-            </>
-        ),
-    },
-];
+const TETROMINO_TYPES = ["I", "J", "L", "O", "S", "T", "Z"];
 
-const BackgroundAnimation = () => {
-    const PIECE_COUNT = 15;
-    const pieces = useMemo(() => {
-        return Array.from({ length: PIECE_COUNT }).map((_, i) => {
-            const shape = SHAPES[Math.floor(Math.random() * SHAPES.length)];
-            const style = {
-                left: `${Math.random() * 100}vw`,
-                animationName: "fall",
-                animationDuration: `${10 + Math.random() * 20}s`,
-                animationDelay: `-${Math.random() * 20}s`,
-                animationIterationCount: "infinite",
-                animationTimingFunction: "linear",
-                color: shape.color,
-                width: "80px",
-                height: "80px",
+export default function BackgroundAnimation({ count = 15 }) {
+    const [tetrominos, setTetrominos] = useState([]);
+
+    useEffect(() => {
+        const pieces = Array.from({ length: count }, (_, index) => {
+            const type = TETROMINO_TYPES[Math.floor(Math.random() * TETROMINO_TYPES.length)];
+            const delay = Math.random() * 20;
+            const duration = 15 + Math.random() * 10;
+            const leftPosition = Math.random() * 100;
+            const size = 0.6 + Math.random() * 0.6;
+
+            return {
+                id: index,
+                type,
+                style: {
+                    left: `${leftPosition}%`,
+                    animationDelay: `${delay}s`,
+                    animationDuration: `${duration}s`,
+                    transform: `scale(${size})`,
+                    opacity: 0.3 + Math.random() * 0.3,
+                },
             };
-
-            return { id: i, shape, style };
         });
-    }, []);
+
+        setTetrominos(pieces);
+    }, [count]);
 
     return (
         <div className="tetris-bg-container">
-            {pieces.map(piece => (
-                <svg
-                    key={piece.id}
+            {tetrominos.map((tetromino) => (
+                <div
+                    key={tetromino.id}
                     className="floating-tetromino"
-                    style={piece.style}
-                    viewBox="0 0 40 40"
-                    fill="currentColor"
-                    xmlns="http://www.w3.org/2000/svg"
+                    data-type={tetromino.type}
+                    style={tetromino.style}
                 >
-                    {piece.shape.path}
-                </svg>
+                    <div className="tetromino-block block-0"></div>
+                    <div className="tetromino-block block-1"></div>
+                    <div className="tetromino-block block-2"></div>
+                    <div className="tetromino-block block-3"></div>
+                </div>
             ))}
         </div>
     );
 };
-
-export default BackgroundAnimation;

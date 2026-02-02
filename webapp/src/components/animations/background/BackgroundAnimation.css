@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/09 11:57:38 by npatron           #+#    #+#             */
-/*   Updated: 2026/02/02 13:28:10 by npatron          ###   ########.fr       */
+/*   Updated: 2026/02/02 14:11:57 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,24 +19,301 @@
     overflow: hidden;
     z-index: -1;
     pointer-events: none;
-    background: radial-gradient(circle at top, rgba(20, 40, 60, 0.6) 0%, rgba(5, 5, 5, 0.9) 70%);
+    background: radial-gradient(
+        circle at top,
+        rgba(10, 20, 40, 0.95) 0%,
+        rgba(0, 0, 10, 0.98) 70%
+    );
 }
 
 .floating-tetromino {
     position: absolute;
     top: -100px;
-    will-change: transform;
+    will-change: transform, opacity;
+}
+
+.floating-tetromino .tetromino-block {
+    width: 25px;
+    height: 25px;
+    position: absolute;
+    border: 2px solid var(--block-color);
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.floating-tetromino[data-type="I"] .tetromino-block {
+    --block-color: #00f0ff;
+    background-color: #00f0ff;
+}
+
+.floating-tetromino[data-type="J"] .tetromino-block {
+    --block-color: #0051ff;
+    background-color: #0051ff;
+}
+
+.floating-tetromino[data-type="L"] .tetromino-block {
+    --block-color: #ff7b00;
+    background-color: #ff7b00;
+}
+
+.floating-tetromino[data-type="O"] .tetromino-block {
+    --block-color: #ffea00;
+    background-color: #ffea00;
+}
+
+.floating-tetromino[data-type="S"] .tetromino-block {
+    --block-color: #00ff48;
+    background-color: #00ff48;
+}
+
+.floating-tetromino[data-type="T"] .tetromino-block {
+    --block-color: #bc13fe;
+    background-color: #bc13fe;
+}
+
+.floating-tetromino[data-type="Z"] .tetromino-block {
+    --block-color: #ff003c;
+    background-color: #ff003c;
+}
+
+.floating-tetromino[data-type="I"] .block-0 {
+    left: 0;
+    top: 0;
+    animation-delay: 0s;
+}
+.floating-tetromino[data-type="I"] .block-1 {
+    left: 25px;
+    top: 0;
+    animation-delay: 0.15s;
+}
+.floating-tetromino[data-type="I"] .block-2 {
+    left: 50px;
+    top: 0;
+    animation-delay: 0.3s;
+}
+.floating-tetromino[data-type="I"] .block-3 {
+    left: 75px;
+    top: 0;
+    animation-delay: 0.45s;
+}
+
+.floating-tetromino[data-type="O"] .block-0 {
+    left: 0;
+    top: 0;
+    animation-delay: 0s;
+}
+.floating-tetromino[data-type="O"] .block-1 {
+    left: 25px;
+    top: 0;
+    animation-delay: 0.2s;
+}
+.floating-tetromino[data-type="O"] .block-2 {
+    left: 0;
+    top: 25px;
+    animation-delay: 0.4s;
+}
+.floating-tetromino[data-type="O"] .block-3 {
+    left: 25px;
+    top: 25px;
+    animation-delay: 0.6s;
+}
+
+.floating-tetromino[data-type="T"] .block-0 {
+    left: 25px;
+    top: 0;
+    animation-delay: 0.3s;
+}
+.floating-tetromino[data-type="T"] .block-1 {
+    left: 0;
+    top: 25px;
+    animation-delay: 0s;
+}
+.floating-tetromino[data-type="T"] .block-2 {
+    left: 25px;
+    top: 25px;
+    animation-delay: 0.2s;
+}
+.floating-tetromino[data-type="T"] .block-3 {
+    left: 50px;
+    top: 25px;
+    animation-delay: 0.6s;
+}
+
+.floating-tetromino[data-type="S"] .block-0 {
+    left: 25px;
+    top: 0;
+    animation-delay: 0.2s;
+}
+.floating-tetromino[data-type="S"] .block-1 {
+    left: 50px;
+    top: 0;
+    animation-delay: 0.4s;
+}
+.floating-tetromino[data-type="S"] .block-2 {
+    left: 0;
+    top: 25px;
+    animation-delay: 0s;
+}
+.floating-tetromino[data-type="S"] .block-3 {
+    left: 25px;
+    top: 25px;
+    animation-delay: 0.6s;
+}
+
+.floating-tetromino[data-type="Z"] .block-0 {
+    left: 0;
+    top: 0;
+    animation-delay: 0s;
+}
+.floating-tetromino[data-type="Z"] .block-1 {
+    left: 25px;
+    top: 0;
+    animation-delay: 0.2s;
+}
+.floating-tetromino[data-type="Z"] .block-2 {
+    left: 25px;
+    top: 25px;
+    animation-delay: 0.4s;
+}
+.floating-tetromino[data-type="Z"] .block-3 {
+    left: 50px;
+    top: 25px;
+    animation-delay: 0.6s;
+}
+
+.floating-tetromino[data-type="J"] .block-0 {
+    left: 25px;
+    top: 0;
+    animation-delay: 0.4s;
+}
+.floating-tetromino[data-type="J"] .block-1 {
+    left: 25px;
+    top: 25px;
+    animation-delay: 0.2s;
+}
+.floating-tetromino[data-type="J"] .block-2 {
+    left: 0;
+    top: 50px;
+    animation-delay: 0s;
+}
+.floating-tetromino[data-type="J"] .block-3 {
+    left: 25px;
+    top: 50px;
+    animation-delay: 0.6s;
+}
+
+.floating-tetromino[data-type="L"] .block-0 {
+    left: 0;
+    top: 0;
+    animation-delay: 0s;
+}
+.floating-tetromino[data-type="L"] .block-1 {
+    left: 0;
+    top: 25px;
+    animation-delay: 0.2s;
+}
+.floating-tetromino[data-type="L"] .block-2 {
+    left: 0;
+    top: 50px;
+    animation-delay: 0.4s;
+}
+.floating-tetromino[data-type="L"] .block-3 {
+    left: 25px;
+    top: 50px;
+    animation-delay: 0.6s;
+}
+
+@keyframes neonPulse {
+    0%,
+    100% {
+        box-shadow:
+            0 0 10px var(--block-color),
+            0 0 20px var(--block-color),
+            0 0 30px var(--block-color),
+            inset 0 0 10px var(--block-color),
+            inset 0 0 20px var(--block-color);
+        opacity: 0.8;
+    }
+    50% {
+        box-shadow:
+            0 0 15px var(--block-color),
+            0 0 30px var(--block-color),
+            0 0 45px var(--block-color),
+            0 0 60px var(--block-color),
+            inset 0 0 15px var(--block-color),
+            inset 0 0 30px var(--block-color);
+        opacity: 1;
+    }
 }
 
 @keyframes fall {
     0% {
         transform: translateY(-30vh) rotate(0deg);
+        opacity: 0;
     }
-    10% {
+    5% {
+        opacity: 0.7;
     }
-    90% {
+    85% {
+        opacity: 0.7;
     }
     100% {
         transform: translateY(120vh) rotate(360deg);
+        opacity: 0;
     }
+}
+
+@keyframes fallAlternate {
+    0% {
+        transform: translateY(-30vh) rotate(0deg) translateX(0);
+        opacity: 0;
+    }
+    5% {
+        opacity: 0.6;
+    }
+    50% {
+        transform: translateY(45vh) rotate(180deg) translateX(30px);
+        opacity: 0.6;
+    }
+    85% {
+        opacity: 0.6;
+    }
+    100% {
+        transform: translateY(120vh) rotate(360deg) translateX(0);
+        opacity: 0;
+    }
+}
+
+@keyframes pulse {
+    0%,
+    100% {
+        filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.3));
+    }
+    50% {
+        filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.6));
+    }
+}
+
+.floating-tetromino:nth-child(odd) {
+    animation:
+        fall linear infinite,
+        pulse 3s ease-in-out infinite;
+}
+
+.floating-tetromino:nth-child(even) {
+    animation:
+        fallAlternate linear infinite,
+        pulse 4s ease-in-out infinite;
+}
+
+.floating-tetromino:hover .tetromino-block {
+    border-width: 3px;
+    box-shadow:
+        0 0 20px var(--block-color),
+        0 0 40px var(--block-color),
+        0 0 60px var(--block-color),
+        0 0 80px var(--block-color),
+        inset 0 0 20px var(--block-color),
+        inset 0 0 40px var(--block-color);
+    animation: none;
 }

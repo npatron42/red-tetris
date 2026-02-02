@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 13:02:53 by npatron           #+#    #+#             */
-/*   Updated: 2025/12/29 16:31:56 by npatron          ###   ########.fr       */
+/*   Updated: 2026/02/02 14:27:47 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@
     font-family: "PacfontGood", sans-serif;
     font-size: 2.5rem;
     color: #fdd835;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    text-shadow: 0 0 15px rgba(253, 216, 53, 0.6);
     margin: 0;
 }
 
@@ -45,12 +45,16 @@
     cursor: pointer;
     border-radius: 8px;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    box-shadow:
+        0 4px 15px rgba(0, 0, 0, 0.2),
+        0 0 20px rgba(102, 126, 234, 0.3);
 }
 
 .back-button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    box-shadow:
+        0 6px 20px rgba(0, 0, 0, 0.3),
+        0 0 30px rgba(102, 126, 234, 0.5);
 }
 
 .loading,
@@ -58,13 +62,14 @@
     font-family: "PacfontGood", sans-serif;
     font-size: 1.5rem;
     color: #fdd835;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    text-shadow: 0 0 12px rgba(253, 216, 53, 0.5);
     text-align: center;
     padding: 20px;
 }
 
 .error {
     color: #ff4444;
+    text-shadow: 0 0 12px rgba(255, 68, 68, 0.5);
 }
 
 .tetris-game-wrapper {
@@ -86,11 +91,14 @@
 }
 
 .game-info-panel {
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(0, 0, 0, 0.8);
     padding: 20px;
     border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    border: 2px solid rgba(0, 255, 234, 0.3);
+    box-shadow:
+        0 4px 15px rgba(0, 0, 0, 0.5),
+        0 0 20px rgba(0, 255, 234, 0.2),
+        inset 0 0 20px rgba(0, 255, 234, 0.05);
     min-width: 200px;
 }
 
@@ -101,17 +109,18 @@
 
 .info-label {
     font-size: 0.9rem;
-    color: #aaa;
+    color: #00ffea;
     margin-bottom: 5px;
     text-transform: uppercase;
     letter-spacing: 1px;
+    text-shadow: 0 0 8px rgba(0, 255, 234, 0.4);
 }
 
 .info-value {
     font-size: 1.8rem;
     color: #fff;
     font-weight: bold;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    text-shadow: 0 0 8px rgba(0, 255, 234, 0.6);
 }
 
 .players-boards {
@@ -138,7 +147,7 @@
     transform: translate(-50%, -50%);
     width: 100%;
     height: 100%;
-    background: radial-gradient(circle, rgba(0, 255, 255, 0.1) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(0, 255, 255, 0.15) 0%, transparent 70%);
     z-index: 0;
     pointer-events: none;
 }
@@ -146,11 +155,13 @@
 .player-info {
     text-align: center;
     z-index: 1;
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(0, 0, 0, 0.8);
     padding: 10px 20px;
     border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    border: 2px solid rgba(0, 255, 234, 0.3);
+    box-shadow:
+        0 4px 15px rgba(0, 0, 0, 0.5),
+        0 0 20px rgba(0, 255, 234, 0.2);
     min-width: 200px;
 }
 
@@ -158,7 +169,7 @@
     margin: 0;
     font-size: 1.2rem;
     color: #fff;
-    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    text-shadow: 0 0 8px rgba(0, 255, 234, 0.5);
     letter-spacing: 2px;
 }
 
@@ -174,7 +185,7 @@
 
 .game-stats {
     margin-top: 10px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid rgba(0, 255, 234, 0.3);
     padding-top: 8px;
 }
 
@@ -192,26 +203,26 @@
 .grid {
     position: relative;
     z-index: 1;
-    background-color: rgba(10, 10, 10, 0.85);
+    background-color: rgba(0, 0, 10, 0.95);
     display: grid;
     grid-template-columns: repeat(10, 30px);
     grid-template-rows: repeat(20, 30px);
     gap: 1px;
     padding: 4px;
-    border: 2px solid #333;
+    border: 2px solid rgba(0, 255, 234, 0.4);
     border-radius: 4px;
     box-shadow:
-        0 0 10px rgba(0, 0, 0, 0.8),
-        0 0 20px rgba(0, 255, 255, 0.1),
-        inset 0 0 20px rgba(0, 0, 0, 0.8);
+        0 0 20px rgba(0, 0, 0, 0.8),
+        0 0 30px rgba(0, 255, 234, 0.2),
+        inset 0 0 30px rgba(0, 0, 0, 0.9);
     backdrop-filter: blur(5px);
 }
 
 .player-board .grid.active-border {
     border-color: #00ffea;
     box-shadow:
-        0 0 15px rgba(0, 255, 234, 0.3),
-        inset 0 0 20px rgba(0, 0, 0, 0.8);
+        0 0 30px rgba(0, 255, 234, 0.5),
+        inset 0 0 30px rgba(0, 0, 0, 0.9);
 }
 
 .cell {
@@ -222,23 +233,68 @@
 }
 
 .cell.empty {
-    background-color: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.03);
+    background-color: rgba(0, 20, 30, 0.3);
+    border: 1px solid rgba(0, 255, 234, 0.05);
 }
 
 .cell.filled {
-    border: none;
-    border-radius: 2px;
+    background: linear-gradient(135deg, var(--cell-color) 0%, var(--cell-color-dark) 100%);
+    border: 2px solid var(--cell-color-light);
+    border-radius: 4px;
     box-shadow:
-        inset 2px 2px 2px rgba(255, 255, 255, 0.4),
-        inset -2px -2px 2px rgba(0, 0, 0, 0.4),
-        0 0 8px var(--cell-color);
+        0 0 4px var(--cell-color),
+        inset 0 0 8px rgba(255, 255, 255, 0.08),
+        inset -2px -2px 6px rgba(0, 0, 0, 0.3);
+    position: relative;
 }
+
+.cell.filled::before {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, transparent 50%);
+    border-radius: 2px;
+    pointer-events: none;
+}
+
+
+.cell.I { --cell-color: #00f0f0; --cell-color-dark: #00a0a0; --cell-color-light: #00ffff; }
+.cell.O { --cell-color: #f0f000; --cell-color-dark: #a0a000; --cell-color-light: #ffff00; }
+.cell.T { --cell-color: #a000f0; --cell-color-dark: #7000a0; --cell-color-light: #c000ff; }
+.cell.S { --cell-color: #00f000; --cell-color-dark: #00a000; --cell-color-light: #00ff00; }
+.cell.Z { --cell-color: #f00000; --cell-color-dark: #a00000; --cell-color-light: #ff0000; }
+.cell.J { --cell-color: #0000f0; --cell-color-dark: #0000a0; --cell-color-light: #0000ff; }
+.cell.L { --cell-color: #f0a000; --cell-color-dark: #a07000; --cell-color-light: #ffc000; }
 
 .cell.ghost {
     background-color: transparent !important;
-    border: 2px solid var(--cell-color);
-    box-shadow: 0 0 5px var(--cell-color);
-    opacity: 0.4;
-    border-radius: 2px;
+    border: 2px dashed var(--cell-color, #00ffea);
+    box-shadow:
+        0 0 3px var(--cell-color, #00ffea),
+        0 0 6px rgba(0, 255, 234, 0.2),
+        inset 0 0 4px var(--cell-color, #00ffea);
+    opacity: 0.35;
+    border-radius: 4px;
+    animation: ghostFlicker 1.8s ease-in-out infinite;
+}
+
+@keyframes ghostFlicker {
+    0%,
+    100% {
+        opacity: 0.3;
+        box-shadow:
+            0 0 2px var(--cell-color, #00ffea),
+            0 0 4px rgba(0, 255, 234, 0.15),
+            inset 0 0 3px var(--cell-color, #00ffea);
+    }
+    50% {
+        opacity: 0.4;
+        box-shadow:
+            0 0 4px var(--cell-color, #00ffea),
+            0 0 8px rgba(0, 255, 234, 0.25),
+            inset 0 0 5px var(--cell-color, #00ffea);
+    }
 }

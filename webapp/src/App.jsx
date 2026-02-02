@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/09 11:58:43 by npatron           #+#    #+#             */
-/*   Updated: 2026/01/12 16:13:46 by npatron          ###   ########.fr       */
+/*   Updated: 2026/02/02 14:36:54 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,12 +31,12 @@ import { Profile } from "./components/navbar/Profile";
 import Jukebox from "./components/jukebox/Jukebox";
 
 const TETRIS_LETTERS = [
-    { letter: "T", color: "#E53935" },
-    { letter: "E", color: "#FB8C00" },
-    { letter: "T", color: "#FDD835" },
-    { letter: "R", color: "#43A047" },
-    { letter: "I", color: "#039BE5" },
-    { letter: "S", color: "#8E24AA" },
+    { letter: "T", color: "#f00000" },
+    { letter: "E", color: "#f0a000" },
+    { letter: "T", color: "#f0f000" },
+    { letter: "R", color: "#00f000" },
+    { letter: "I", color: "#0000f0" },
+    { letter: "S", color: "#a000f0" },
 ];
 
 const App = () => {

@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:39:24 by npatron           #+#    #+#             */
-/*   Updated: 2026/02/02 13:41:31 by npatron          ###   ########.fr       */
+/*   Updated: 2026/02/02 13:55:29 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,6 @@ const MultiGameRoom = () => {
         if (result.success && result.data?.room) {
             setIsUserAuthorized(true);
             setRoomInfo(result.data.room);
-            console.log("ICI --> roomInfo", roomInfo);
         } else {
             setIsUserAuthorized(false);
             setRoomInfo(null);
@@ -89,7 +88,7 @@ const MultiGameRoom = () => {
     if (!roomInfo) return <div className="room-loading">Loading room...</div>;
 
     const renderContent = () => {
-        const status = roomInfo.gameStatus || "waiting";
+        const status = roomInfo.status || "WAITING";
 
         switch (status) {
             case "PROCESSING":

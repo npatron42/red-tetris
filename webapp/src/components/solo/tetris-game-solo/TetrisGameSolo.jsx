@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 13:02:55 by npatron           #+#    #+#             */
-/*   Updated: 2026/02/02 12:43:23 by npatron          ###   ########.fr       */
+/*   Updated: 2026/02/02 14:35:23 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,9 +42,7 @@ const COLORS = {
     "Z-ghost": "#FF003C",
 };
 
-export const TetrisGameSolo = ({ gameId: gameIdProp, onGameCompleted }) => {
-    const params = useParams();
-    const gameId = gameIdProp ?? params.gameId;
+export const TetrisGameSolo = ({ gameId: gameId, onGameCompleted }) => {
     const [grid, setGrid] = useState(() => Array.from({ length: 20 }, () => Array(10).fill(0)));
     const [score, setScore] = useState(0);
     const [level, setLevel] = useState(1);
@@ -53,7 +51,8 @@ export const TetrisGameSolo = ({ gameId: gameIdProp, onGameCompleted }) => {
     const { user } = useUser();
     const { socket } = useSocket();
     const [gameStatus, setGameStatus] = useState(null);
-
+    const [isLoading, setIsLoading] = useState(false);
+    
     const getCellAttributes = cell => {
         if (cell === 0) return { className: "cell empty", style: {} };
 
@@ -100,7 +99,7 @@ export const TetrisGameSolo = ({ gameId: gameIdProp, onGameCompleted }) => {
 
                     if (playerState.status === "COMPLETED" && !endGame) {
                         setEndGame(true);
-                        if (onGameCompleted) {
+                        if (fiie) {
                             onGameCompleted(playerState.score ?? 0);
                         }
                         await endSoloGame(gameId, playerState.score ?? 0);

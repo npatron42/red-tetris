@@ -158,23 +158,67 @@ body {
 }
 
 .cell.empty {
-    background-color: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.03);
+    background-color: rgba(0, 20, 30, 0.3);
+    border: 1px solid rgba(0, 255, 234, 0.05);
 }
 
 .cell.filled {
-    border: none;
-    border-radius: 2px;
+    background: linear-gradient(135deg, var(--cell-color) 0%, var(--cell-color-dark) 100%);
+    border: 2px solid var(--cell-color-light);
+    border-radius: 4px;
     box-shadow:
-        inset 2px 2px 2px rgba(255, 255, 255, 0.4),
-        inset -2px -2px 2px rgba(0, 0, 0, 0.4),
-        0 0 8px var(--cell-color);
+        0 0 4px var(--cell-color),
+        inset 0 0 8px rgba(255, 255, 255, 0.08),
+        inset -2px -2px 6px rgba(0, 0, 0, 0.3);
+    position: relative;
 }
+
+.cell.filled::before {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, transparent 50%);
+    border-radius: 2px;
+    pointer-events: none;
+}
+
+.cell.I { --cell-color: #00f0f0; --cell-color-dark: #00a0a0; --cell-color-light: #00ffff; }
+.cell.O { --cell-color: #f0f000; --cell-color-dark: #a0a000; --cell-color-light: #ffff00; }
+.cell.T { --cell-color: #a000f0; --cell-color-dark: #7000a0; --cell-color-light: #c000ff; }
+.cell.S { --cell-color: #00f000; --cell-color-dark: #00a000; --cell-color-light: #00ff00; }
+.cell.Z { --cell-color: #f00000; --cell-color-dark: #a00000; --cell-color-light: #ff0000; }
+.cell.J { --cell-color: #0000f0; --cell-color-dark: #0000a0; --cell-color-light: #0000ff; }
+.cell.L { --cell-color: #f0a000; --cell-color-dark: #a07000; --cell-color-light: #ffc000; }
 
 .cell.ghost {
     background-color: transparent !important;
-    border: 2px solid var(--cell-color);
-    box-shadow: 0 0 5px var(--cell-color);
-    opacity: 0.4;
-    border-radius: 2px;
+    border: 2px dashed var(--cell-color, #00ffea);
+    box-shadow:
+        0 0 3px var(--cell-color, #00ffea),
+        0 0 6px rgba(0, 255, 234, 0.2),
+        inset 0 0 4px var(--cell-color, #00ffea);
+    opacity: 0.35;
+    border-radius: 4px;
+    animation: ghostFlicker 1.8s ease-in-out infinite;
+}
+
+@keyframes ghostFlicker {
+    0%,
+    100% {
+        opacity: 0.3;
+        box-shadow:
+            0 0 2px var(--cell-color, #00ffea),
+            0 0 4px rgba(0, 255, 234, 0.15),
+            inset 0 0 3px var(--cell-color, #00ffea);
+    }
+    50% {
+        opacity: 0.4;
+        box-shadow:
+            0 0 4px var(--cell-color, #00ffea),
+            0 0 8px rgba(0, 255, 234, 0.25),
+            inset 0 0 5px var(--cell-color, #00ffea);
+    }
 }
