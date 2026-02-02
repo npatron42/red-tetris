@@ -10,40 +10,31 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-import {
-	TetrominoI,
-	TetrominoJ,
-	TetrominoL,
-	TetrominoO,
-	TetrominoS,
-	TetrominoT,
-	TetrominoZ,
-	Tetrominos,
-} from './tetrominos.js';
+import { TetrominoI, TetrominoJ, TetrominoL, TetrominoO, TetrominoS, TetrominoT, TetrominoZ, Tetrominos } from "./tetrominos.js";
 
-import { getRoom, sendToPlayer } from '../socket/socket.service.js';
+import { getRoom, sendToPlayer } from "../socket/socket.service.js";
 
-import { allSockets } from '../socket/socket.service.js';
+import { allSockets } from "../socket/socket.service.js";
 
 const piecesInMovement = new Map();
 
 export class Game {
-	constructor() {
-		this.tetrominosGenerated = [];
-		this.tetrominos = new Tetrominos();
-	}
+    constructor() {
+        this.tetrominosGenerated = [];
+        this.tetrominos = new Tetrominos();
+    }
 
-	generateTetrominos() {
-		const max = 6;
-		const min = 0;
-		const tetrominosGenerated = 100;
+    generateTetrominos() {
+        const max = 6;
+        const min = 0;
+        const tetrominosGenerated = 100;
 
-		for (let i = 0; i <= tetrominosGenerated; i++) {
-			let pieceChoice = Math.floor(Math.random() * (max - min + 1)) + min;
-			const tetromino = new this.tetrominos.pieces[pieceChoice]();
+        for (let i = 0; i <= tetrominosGenerated; i++) {
+            let pieceChoice = Math.floor(Math.random() * (max - min + 1)) + min;
+            const tetromino = new this.tetrominos.pieces[pieceChoice]();
 
-			this.tetrominosGenerated.push(tetromino.getName());
-		}
-		return;
-	}
+            this.tetrominosGenerated.push(tetromino.getName());
+        }
+        return;
+    }
 }

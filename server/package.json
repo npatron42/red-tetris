@@ -11,8 +11,8 @@
     "prisma:generate": "prisma generate",
     "prisma:db-push": "prisma db push",
     "prisma:migrate": "prisma migrate dev",
-    "format": "prettier --write \"**/*.{js,json,css,md}\"",
-    "lint": "eslint ."
+    "format": "npx prettier --write \"**/*.{js,json,css,md}\"",
+    "lint": "npx eslint ."
   },
   "dependencies": {
     "@prisma/client": "^6.1.0",

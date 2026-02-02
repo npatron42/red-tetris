@@ -15,7 +15,7 @@ import userRouter from "./userRoutes.js";
 var principalRouter = express.Router();
 
 principalRouter.get("/", function (req, res, next) {
-	res.json({ test: "qwdqwdqwdqwdqwdqwdd" });
+    res.json({ test: "qwdqwdqwdqwdqwdqwdd" });
 });
 
 principalRouter.use("/user", userRouter);

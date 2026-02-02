@@ -11,17 +11,17 @@
 /* ************************************************************************** */
 
 export class ScoringSystem {
-	constructor() {
-		this.rules = {
-			1: 100,
-			2: 300,
-			3: 500,
-			4: 800
-		};
-	}
-	calculateScore(playerScore, gameLevel, numberOfLinesCleared) {
-		const points = this.rules[numberOfLinesCleared] || 0;
-		playerScore += points * gameLevel;
-		return playerScore;
-	}
+    constructor() {
+        this.rules = {
+            1: 100,
+            2: 300,
+            3: 500,
+            4: 800,
+        };
+    }
+    calculateScore(playerScore, gameLevel, numberOfLinesCleared) {
+        const points = this.rules[numberOfLinesCleared] || 0;
+        playerScore += points * gameLevel;
+        return playerScore;
+    }
 }

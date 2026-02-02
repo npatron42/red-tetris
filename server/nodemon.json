@@ -1,6 +1,6 @@
 {
-	"watch": ["src"],
-	"ignore": ["src/db"],
-	"ext": "js",
-	"exec": "node app.js"
+  "watch": ["src"],
+  "ignore": ["src/db"],
+  "ext": "js",
+  "exec": "node app.js"
 }

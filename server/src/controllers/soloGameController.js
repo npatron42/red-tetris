@@ -17,81 +17,81 @@ const logger = pino({ level: "info" });
 const soloGameService = new SoloGameService();
 
 export const createSoloGame = async (req, res) => {
-	try {
-		const { difficulty } = req.body;
-		const userId = req.user.id;
+    try {
+        const { difficulty } = req.body;
+        const userId = req.user.id;
 
-		const gameData = await soloGameService.createSoloGame(userId, difficulty);
+        const gameData = await soloGameService.createSoloGame(userId, difficulty);
 
-		return res.status(201).json({
-			success: true,
-			data: gameData
-		});
-	} catch (error) {
-		logger.error("Error creating solo game:", error);
-		return res.status(500).json({
-			success: false,
-			message: "Failed to create solo game"
-		});
-	}
+        return res.status(201).json({
+            success: true,
+            data: gameData,
+        });
+    } catch (error) {
+        logger.error("Error creating solo game:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Failed to create solo game",
+        });
+    }
 };
 
 export const getSoloGame = async (req, res) => {
-	try {
-		const { gameId } = req.params;
+    try {
+        const { gameId } = req.params;
 
-		if (!gameId) {
-			return res.status(400).json({
-				success: false,
-				message: "Game ID is required"
-			});
-		}
+        if (!gameId) {
+            return res.status(400).json({
+                success: false,
+                message: "Game ID is required",
+            });
+        }
 
-		const gameData = await soloGameService.getSoloGame(gameId);
+        const gameData = await soloGameService.getSoloGame(gameId);
 
-		if (!gameData) {
-			return res.status(404).json({
-				success: false,
-				message: "Game not found"
-			});
-		}
+        if (!gameData) {
+            return res.status(404).json({
+                success: false,
+                message: "Game not found",
+            });
+        }
 
-		return res.status(200).json({
-			success: true,
-			data: gameData
-		});
-	} catch (error) {
-		logger.error("Error getting solo game:", error);
-		return res.status(500).json({
-			success: false,
-			message: "Failed to get solo game"
-		});
-	}
+        return res.status(200).json({
+            success: true,
+            data: gameData,
+        });
+    } catch (error) {
+        logger.error("Error getting solo game:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Failed to get solo game",
+        });
+    }
 };
 
 export const endSoloGame = async (req, res) => {
-	try {
-		const { gameId } = req.params;
-		const { score } = req.body;
+    try {
+        const { gameId } = req.params;
+        const { score } = req.body;
 
-		if (!gameId) {
-			return res.status(400).json({
-				success: false,
-				message: "Game ID is required"
-			});
-		}
+        if (!gameId) {
+            return res.status(400).json({
+                success: false,
+                message: "Game ID is required",
+            });
+        }
 
-		await soloGameService.endSoloGame(gameId, score);
+        await soloGameService.endSoloGame(gameId, score);
 
-		return res.status(200).json({
-			success: true,
-			message: "Game ended successfully"
-		});
-	} catch (error) {
-		logger.error("Error ending solo game:", error);
-		return res.status(500).json({
-			success: false,
-			message: "Failed to end solo game"
-		});
-	}
+        return res.status(200).json({
+            success: true,
+            message: "Game ended successfully",
+        });
+    } catch (error) {
+        logger.error("Error ending solo game:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Failed to end solo game",
+        });
+    }
 };

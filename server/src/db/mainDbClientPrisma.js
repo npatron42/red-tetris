@@ -15,23 +15,23 @@ import { PrismaClient } from "@prisma/client";
 const defaultDatabaseUrl = process.env.DATABASE_URL;
 
 class MainDbClientPrisma {
-	constructor() {
-		this.client = new PrismaClient({
-			datasources: {
-				db: {
-					url: defaultDatabaseUrl
-				}
-			}
-		});
-	}
+    constructor() {
+        this.client = new PrismaClient({
+            datasources: {
+                db: {
+                    url: defaultDatabaseUrl,
+                },
+            },
+        });
+    }
 
-	getClient() {
-		return this.client;
-	}
+    getClient() {
+        return this.client;
+    }
 
-	async disconnect() {
-		await this.client.$disconnect();
-	}
+    async disconnect() {
+        await this.client.$disconnect();
+    }
 }
 
 export const mainDbClientPrisma = new MainDbClientPrisma();

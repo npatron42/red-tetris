@@ -14,39 +14,39 @@ import { v4 as uuidv4 } from "uuid";
 import { prismaClient } from "../db/mainDbClientPrisma.js";
 
 export class RoomDao {
-	constructor(dbClient = prismaClient) {
-		this.db = dbClient;
-	}
+    constructor(dbClient = prismaClient) {
+        this.db = dbClient;
+    }
 
-	async findAll() {
-		try {
-			return await this.db.room.findMany({
-				include: {
-					leader: true,
-					opponent: true
-				}
-			});
-		} catch (error) {
-			console.error("RoomDao.findAll error:", error.message);
-			throw new Error(`Failed to fetch all rooms: ${error.message}`);
-		}
-	}
+    async findAll() {
+        try {
+            return await this.db.room.findMany({
+                include: {
+                    leader: true,
+                    opponent: true,
+                },
+            });
+        } catch (error) {
+            console.error("RoomDao.findAll error:", error.message);
+            throw new Error(`Failed to fetch all rooms: ${error.message}`);
+        }
+    }
 
-	async findById(id) {
-		if (!id) {
-			return null;
-		}
-		try {
-			return await this.db.room.findUnique({
-				where: { id }
-			});
-		} catch (error) {
-			console.error("RoomDao.findById error:", error.message);
-			throw new Error(`Failed to find room by id '${id}': ${error.message}`);
-		}
-	}
+    async findById(id) {
+        if (!id) {
+            return null;
+        }
+        try {
+            return await this.db.room.findUnique({
+                where: { id },
+            });
+        } catch (error) {
+            console.error("RoomDao.findById error:", error.message);
+            throw new Error(`Failed to find room by id '${id}': ${error.message}`);
+        }
+    }
 
-	async findByName(name) {
+    async findByName(name) {
         try {
             if (!name) {
                 return null;
@@ -55,133 +55,127 @@ export class RoomDao {
                 where: { name },
                 include: {
                     leader: true,
-                    opponent: true
-                }
+                    opponent: true,
+                },
             });
             return room;
-		} catch (error) {
-			console.error("RoomDao.findByName error:", error.message);
-			throw new Error(`Failed to find room by name '${name}': ${error.message}`);
-		}
-	}
+        } catch (error) {
+            console.error("RoomDao.findByName error:", error.message);
+            throw new Error(`Failed to find room by name '${name}': ${error.message}`);
+        }
+    }
 
-	async resolveUserIdFromName(name) {
-		if (!name) {
-			return null;
-		}
-		try {
-			const user = await this.db.user.findFirst({ where: { name: name } });
-			return user ? user.id : null;
-		} catch (error) {
-			console.error("RoomDao.resolveUserIdFromName error:", error.message);
-			throw new Error(`Failed to resolve user id from name '${name}': ${error.message}`);
-		}
-	}
+    async resolveUserIdFromName(name) {
+        if (!name) {
+            return null;
+        }
+        try {
+            const user = await this.db.user.findFirst({ where: { name: name } });
+            return user ? user.id : null;
+        } catch (error) {
+            console.error("RoomDao.resolveUserIdFromName error:", error.message);
+            throw new Error(`Failed to resolve user id from name '${name}': ${error.message}`);
+        }
+    }
 
-	async create(room) {
-		const { leaderId, leaderName, opponentId = null, opponentName = null, name, createdAt } = room;
+    async create(room) {
+        const { leaderId, leaderName, opponentId = null, opponentName = null, name, createdAt } = room;
 
-		if (!name) {
-			throw new Error("name is required to create a room");
-		}
+        if (!name) {
+            throw new Error("name is required to create a room");
+        }
 
-		try {
-			const resolvedLeaderId = leaderId || (await this.resolveUserIdFromName(leaderName));
-			const resolvedOpponentId =
-				opponentId || (opponentName ? await this.resolveUserIdFromName(opponentName) : null);
+        try {
+            const resolvedLeaderId = leaderId || (await this.resolveUserIdFromName(leaderName));
+            const resolvedOpponentId = opponentId || (opponentName ? await this.resolveUserIdFromName(opponentName) : null);
 
-			if (!resolvedLeaderId) {
-				throw new Error("leaderId (or leaderName) is required to create a room");
-			}
+            if (!resolvedLeaderId) {
+                throw new Error("leaderId (or leaderName) is required to create a room");
+            }
 
-			return await this.db.room.create({
-				data: {
-					id: room.id || uuidv4(),
-					name,
-					leader_id: resolvedLeaderId,
-					opponent_id: resolvedOpponentId,
-					created_at: createdAt
-				}
-			});
-		} catch (error) {
-			console.error("RoomDao.create error:", error.message);
-			throw new Error(`Failed to create room '${name}': ${error.message}`);
-		}
-	}
+            return await this.db.room.create({
+                data: {
+                    id: room.id || uuidv4(),
+                    name,
+                    leader_id: resolvedLeaderId,
+                    opponent_id: resolvedOpponentId,
+                    created_at: createdAt,
+                },
+            });
+        } catch (error) {
+            console.error("RoomDao.create error:", error.message);
+            throw new Error(`Failed to create room '${name}': ${error.message}`);
+        }
+    }
 
-	async update(id, updates) {
-		if (!id) {
-			return null;
-		}
+    async update(id, updates) {
+        if (!id) {
+            return null;
+        }
 
-		try {
-			const { leaderId, leaderName, opponentId, opponentName, createdAt, name, ...rest } = updates ?? {};
+        try {
+            const { leaderId, leaderName, opponentId, opponentName, createdAt, name, ...rest } = updates ?? {};
 
-			const resolvedLeaderId =
-				leaderId || (leaderName ? await this.resolveUserIdFromName(leaderName) : undefined);
-			const resolvedOpponentId =
-				opponentId !== undefined
-					? opponentId
-					: opponentName
-					? await this.resolveUserIdFromName(opponentName)
-					: undefined;
+            const resolvedLeaderId = leaderId || (leaderName ? await this.resolveUserIdFromName(leaderName) : undefined);
+            const resolvedOpponentId =
+                opponentId !== undefined ? opponentId : opponentName ? await this.resolveUserIdFromName(opponentName) : undefined;
 
-			return await this.db.room.update({
-				where: { id },
-				data: {
-					...rest,
-					name: name ?? undefined,
-					leader_id: resolvedLeaderId,
-					opponent_id: resolvedOpponentId,
-					created_at: createdAt ?? undefined
-				}
-			});
-		} catch (error) {
-			console.error("RoomDao.update error:", error.message);
-			throw new Error(`Failed to update room '${id}': ${error.message}`);
-		}
-	}
+            return await this.db.room.update({
+                where: { id },
+                data: {
+                    ...rest,
+                    name: name ?? undefined,
+                    leader_id: resolvedLeaderId,
+                    opponent_id: resolvedOpponentId,
+                    created_at: createdAt ?? undefined,
+                },
+            });
+        } catch (error) {
+            console.error("RoomDao.update error:", error.message);
+            throw new Error(`Failed to update room '${id}': ${error.message}`);
+        }
+    }
 
-	async updateByName(name, updates) {
-		try {
-			const existing = await this.findByName(name);
-			if (!existing) {
-				return null;
-			}
-			return await this.update(existing.id, updates);
-		} catch (error) {
-			console.error("RoomDao.updateByName error:", error.message);
-			throw new Error(`Failed to update room by name '${name}': ${error.message}`);
-		}
-	}
+    async updateByName(name, updates) {
+        try {
+            const existing = await this.findByName(name);
+            if (!existing) {
+                return null;
+            }
+            return await this.update(existing.id, updates);
+        } catch (error) {
+            console.error("RoomDao.updateByName error:", error.message);
+            throw new Error(`Failed to update room by name '${name}': ${error.message}`);
+        }
+    }
 
-	async delete(id) {
-		if (!id) {
-			return false;
-		}
-		try {
-			await this.db.room.delete({
-				where: { id }
-			});
-			return true;
-		} catch (error) {
-			console.error("RoomDao.delete error:", error.message);
-			return false;
-		}
-	}
+    async delete(id) {
+        if (!id) {
+            return false;
+        }
+        try {
+            await this.db.room.delete({
+                where: { id },
+            });
+            return true;
+        } catch (error) {
+            console.error("RoomDao.delete error:", error.message);
+            return false;
+        }
+    }
 
-	async deleteByName(name) {
-		try {
-			const existing = await this.findByName(name);
-			if (!existing) {
-				return false;
-			}
-			return await this.delete(existing.id);
-		} catch (error) {
-			console.error("RoomDao.deleteByName error:", error.message);
-			return false;
-		}
-	}
+    async deleteByName(name) {
+        try {
+            const existing = await this.findByName(name);
+            if (!existing) {
+                return false;
+            }
+            return await this.delete(existing.id);
+        } catch (error) {
+            console.error("RoomDao.deleteByName error:", error.message);
+            return false;
+        }
+    }
 }
 
 export default new RoomDao();

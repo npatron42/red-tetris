@@ -10,12 +10,11 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-
 export const createSpy = (impl = () => undefined) => {
-	const fn = (...args) => {
-		fn.calls.push(args);
-		return impl(...args);
-	};
-	fn.calls = [];
-	return fn;
+    const fn = (...args) => {
+        fn.calls.push(args);
+        return impl(...args);
+    };
+    fn.calls = [];
+    return fn;
 };

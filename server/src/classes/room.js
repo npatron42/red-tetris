@@ -14,36 +14,36 @@ import { Player } from "./player.js";
 import { MultiPlayerGame } from "./multiPlayerGame.js";
 
 export class Room {
-	constructor(roomName, leaderUsername, leaderSocketId) {
-		this.roomName = roomName;
-		this.leaderUsername = leaderUsername;
-		this.players = [new Player(leaderUsername, leaderSocketId)];
+    constructor(roomName, leaderUsername, leaderSocketId) {
+        this.roomName = roomName;
+        this.leaderUsername = leaderUsername;
+        this.players = [new Player(leaderUsername, leaderSocketId)];
 
-		this.game = new MultiPlayerGame(this);
-	}
+        this.game = new MultiPlayerGame(this);
+    }
 
-	addPlayer(name, socketId) {
-		if (this.game.isStarted) return { success: false, error: "Game in progress" };
+    addPlayer(name, socketId) {
+        if (this.game.isStarted) return { success: false, error: "Game in progress" };
 
-		const newPlayer = new Player(name, socketId);
-		this.players.push(newPlayer);
-		return { success: true, player: newPlayer };
-	}
+        const newPlayer = new Player(name, socketId);
+        this.players.push(newPlayer);
+        return { success: true, player: newPlayer };
+    }
 
-	removePlayer(socketId) {
-		this.players = this.players.filter((player) => player.socketId !== socketId);
-	}
+    removePlayer(socketId) {
+        this.players = this.players.filter(player => player.socketId !== socketId);
+    }
 
-	getPlayers() {
-		return this.players;
-	}
-	getLeaderUsername() {
-		return this.leaderUsername;
-	}
-	getRoomName() {
-		return this.roomName;
-	}
-	getGame() {
-		return this.game;
-	}
+    getPlayers() {
+        return this.players;
+    }
+    getLeaderUsername() {
+        return this.leaderUsername;
+    }
+    getRoomName() {
+        return this.roomName;
+    }
+    getGame() {
+        return this.game;
+    }
 }
