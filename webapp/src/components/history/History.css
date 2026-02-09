@@ -1,0 +1,276 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   History.css                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/02/09 10:11:46 by npatron           #+#    #+#             */
+/*   Updated: 2026/02/09 10:11:47 by npatron          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+.history-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 32px 40px;
+    gap: 16px;
+    height: 350px;
+    width: min(520px, 90vw);
+    border-radius: 20px;
+    color: #fff;
+    background: radial-gradient(circle at top, rgba(20, 40, 60, 0.6) 0%, rgba(5, 5, 5, 0.9) 70%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow:
+        0 18px 40px rgba(0, 0, 0, 0.55),
+        0 0 30px rgba(0, 255, 234, 0.15);
+    backdrop-filter: blur(14px);
+    overflow: hidden;
+}
+
+.history-view {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 16px;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.history-view::-webkit-scrollbar {
+    width: 8px;
+}
+
+.history-view::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+}
+
+.history-view::-webkit-scrollbar-thumb {
+    background: rgba(255, 196, 217, 0.3);
+    border-radius: 4px;
+}
+
+.history-view::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 196, 217, 0.5);
+}
+
+.history-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 8px;
+    position: relative;
+    width: 100%;
+}
+
+.history-header h2 {
+    margin: 0;
+    font-family: "Arcade", sans-serif;
+    font-size: 1.5rem;
+    letter-spacing: 2px;
+    color: #ff3179;
+    text-shadow: 0 0 12px rgba(255, 49, 121, 0.4);
+}
+
+.history-back-btn {
+    position: absolute;
+    left: 0;
+    background: none;
+    border: none;
+    color: #FFC4D9;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.history-back-btn:hover {
+    background: rgba(255, 196, 217, 0.1);
+    transform: scale(1.1);
+}
+
+.history-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.history-loading,
+.history-error {
+    text-align: center;
+    padding: 40px 24px;
+    color: #ffc4d9;
+}
+
+.history-error {
+    color: #ff6b6b;
+}
+
+.history-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+.stat-card {
+    background: rgba(0, 0, 0, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.6);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.2s ease;
+}
+
+.stat-card:hover {
+    border-color: rgba(255, 49, 121, 0.4);
+    box-shadow:
+        inset 0 0 18px rgba(0, 0, 0, 0.6),
+        0 0 20px rgba(0, 255, 234, 0.2);
+}
+
+.stat-icon {
+    color: #FFC4D9;
+}
+
+.stat-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.stat-label {
+    color: #aebeff;
+    font-family: "Orbitron", sans-serif;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.stat-value {
+    color: #ff6c9f;
+    font-family: "Arcade", sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.history-section {
+    margin-bottom: 32px;
+}
+
+.history-section:last-child {
+    margin-bottom: 0;
+}
+
+.history-section h3 {
+    color: #ff6c9f;
+    font-family: "Arcade", sans-serif;
+    font-size: 1rem;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    letter-spacing: 1px;
+}
+
+.history-empty {
+    text-align: center;
+    color: #aebeff;
+    font-family: "Orbitron", sans-serif;
+    padding: 20px;
+    font-size: 0.9rem;
+}
+
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.history-item {
+    background: rgba(0, 0, 0, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.6);
+    border-radius: 8px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.2s ease;
+}
+
+.history-item:hover {
+    border-color: rgba(255, 49, 121, 0.4);
+    box-shadow:
+        inset 0 0 18px rgba(0, 0, 0, 0.6),
+        0 0 20px rgba(0, 255, 234, 0.2);
+}
+
+.history-item.win {
+    border-color: rgba(76, 175, 80, 0.4);
+}
+
+.history-item.loss {
+    border-color: rgba(244, 67, 54, 0.4);
+}
+
+.history-item.solo {
+    border-color: rgba(255, 196, 217, 0.2);
+}
+
+.history-item-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.history-item.win .history-item-icon {
+    background: rgba(76, 175, 80, 0.2);
+    color: #4caf50;
+}
+
+.history-item.loss .history-item-icon {
+    background: rgba(244, 67, 54, 0.2);
+    color: #f44336;
+}
+
+.history-item.solo .history-item-icon {
+    background: rgba(255, 196, 217, 0.2);
+    color: #ffc4d9;
+}
+
+.history-item-info {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.history-item-result {
+    color: #ffffff;
+    font-family: "Orbitron", sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.history-item-date {
+    color: #aebeff;
+    font-family: "Orbitron", sans-serif;
+    font-size: 11px;
+}

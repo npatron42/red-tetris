@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 15:20:41 by npatron           #+#    #+#             */
-/*   Updated: 2026/02/02 16:57:31 by npatron          ###   ########.fr       */
+/*   Updated: 2026/02/09 09:52:45 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,16 +32,6 @@ export const getUser = async () => {
         return response.data;
     } catch (error) {
         console.error(`Error fetching user data:`, error);
-        throw error;
-    }
-};
-
-export const getHistoryMatch = async () => {
-    try {
-        const response = await api.get("/match-history/me");
-        return response.data;
-    } catch (error) {
-        console.error(`Error getting history match:`, error);
         throw error;
     }
 };

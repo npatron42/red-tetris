@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:11:03 by npatron           #+#    #+#             */
-/*   Updated: 2026/01/19 16:28:46 by npatron          ###   ########.fr       */
+/*   Updated: 2026/02/09 09:56:25 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,13 +26,13 @@ export class UserService {
             throw new Error("User id is required");
         }
         const user = await this.userDao.findById(id);
+        if (!user) {
+            throw new Error("User not found");
+        }
         const matchHistory = await this.matchDao.findByPlayerId(id);
         const soloGameHistory = await this.soloGameDao.findByUserId(id);
         user.matchHistory = matchHistory;
         user.soloGameHistory = soloGameHistory;
-        if (!user) {
-            throw new Error("User not found");
-        }
         return user;
     }
 

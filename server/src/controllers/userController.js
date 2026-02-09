@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/22 22:54:31 by npatron           #+#    #+#             */
-/*   Updated: 2026/01/19 16:29:44 by npatron          ###   ########.fr       */
+/*   Updated: 2026/02/09 09:58:19 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,19 @@ const buildAuthResponse = user => {
     return { token, user: { id: user.id, name: user.name } };
 };
 
+const serializeBigInt = obj => {
+    return JSON.parse(
+        JSON.stringify(obj, (key, value) =>
+            typeof value === "bigint" ? Number(value) : value
+        )
+    );
+};
+
 export const getUser = async (req, res) => {
     try {
         const data = await userService.getUserById(req.user.id);
-        res.json({ success: true, user: data });
+        const serializedData = serializeBigInt(data);
+        res.json({ success: true, user: serializedData });
     } catch (error) {
         res.status(404).json({ success: false, message: "No user found" });
     }
