@@ -15,10 +15,10 @@ import { MatchDao } from "../dao/matchDao.js";
 import { SoloGameDao } from "../dao/soloGameDao.js";
 
 export class UserService {
-    constructor() {
-        this.userDao = new UserDao();
-        this.matchDao = new MatchDao();
-        this.soloGameDao = new SoloGameDao();
+    constructor(userDao, matchDao, soloGameDao) {
+        this.userDao = userDao || new UserDao();
+        this.matchDao = matchDao || new MatchDao();
+        this.soloGameDao = soloGameDao || new SoloGameDao();
     }
 
     async getUserById(id) {

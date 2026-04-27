@@ -15,9 +15,9 @@ import { MatchDao } from "../dao/matchDao.js";
 import { UserService } from "./userService.js";
 
 export class MatchHistoryService {
-    constructor() {
-        this.matchDao = new MatchDao();
-        this.userService = new UserService();
+    constructor(matchDao, userService) {
+        this.matchDao = matchDao || new MatchDao();
+        this.userService = userService || new UserService();
     }
 
     async createMatchHistory(playerIds, winnerId) {
