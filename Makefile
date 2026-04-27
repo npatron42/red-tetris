@@ -16,3 +16,9 @@ fclean:
 re:
 	make fclean
 	make all
+
+test:
+	docker-compose exec server npm test
+
+coverage:
+	docker-compose exec server npm run coverage
