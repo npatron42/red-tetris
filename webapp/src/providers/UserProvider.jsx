@@ -12,14 +12,31 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { getUser } from "../composables/useApi";
 
 const UserContext = createContext(null);
 
+const clearStoredAuth = () => {
+    localStorage.removeItem("auth");
+    localStorage.removeItem("token");
+};
+
+const readStoredAuth = () => {
+    const stored = localStorage.getItem("auth");
+    if (!stored) {
+        return null;
+    }
+    try {
+        return JSON.parse(stored);
+    } catch (error) {
+        clearStoredAuth();
+        return null;
+    }
+};
+
 export const UserProvider = ({ children }) => {
-    const [user, setUser] = useState(() => {
-        const stored = localStorage.getItem("auth");
-        return stored ? JSON.parse(stored) : null;
-    });
+    const [user, setUser] = useState(readStoredAuth);
+    const [isAuthLoading, setIsAuthLoading] = useState(() => Boolean(readStoredAuth()?.token));
 
     useEffect(() => {
         if (user) {
@@ -28,10 +45,54 @@ export const UserProvider = ({ children }) => {
                 localStorage.setItem("token", user.token);
             }
         } else {
-            localStorage.removeItem("auth");
-            localStorage.removeItem("token");
+            clearStoredAuth();
         }
     }, [user]);
+
+    useEffect(() => {
+        let isCancelled = false;
+
+        const validateStoredUser = async () => {
+            if (!user?.token) {
+                setIsAuthLoading(false);
+                return;
+            }
+
+            setIsAuthLoading(true);
+            try {
+                const response = await getUser();
+                if (isCancelled) {
+                    return;
+                }
+                if (!response?.user?.id) {
+                    setUser(null);
+                    return;
+                }
+                setUser(currentUser =>
+                    currentUser?.token
+                        ? {
+                              ...currentUser,
+                              user: response.user,
+                          }
+                        : currentUser,
+                );
+            } catch (error) {
+                if (!isCancelled) {
+                    setUser(null);
+                }
+            } finally {
+                if (!isCancelled) {
+                    setIsAuthLoading(false);
+                }
+            }
+        };
+
+        validateStoredUser();
+
+        return () => {
+            isCancelled = true;
+        };
+    }, [user?.token]);
 
     const login = useCallback(authPayload => {
         if (!authPayload || !authPayload.user || !authPayload.token) {
@@ -47,11 +108,12 @@ export const UserProvider = ({ children }) => {
     const value = useMemo(
         () => ({
             user,
-            isAuthenticated: Boolean(user?.token),
+            isAuthenticated: Boolean(user?.token) && !isAuthLoading,
+            isAuthLoading,
             login,
             logout,
         }),
-        [login, logout, user],
+        [isAuthLoading, login, logout, user],
     );
 
     return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
@@ -66,17 +128,17 @@ export const useUser = () => {
 };
 
 export const RequireAuth = ({ children }) => {
-    const { isAuthenticated } = useUser();
+    const { isAuthenticated, isAuthLoading } = useUser();
     const navigate = useNavigate();
     const location = useLocation();
 
     useEffect(() => {
-        if (!isAuthenticated) {
+        if (!isAuthLoading && !isAuthenticated) {
             navigate("/login", { replace: true, state: { from: location } });
         }
-    }, [isAuthenticated, location, navigate]);
+    }, [isAuthLoading, isAuthenticated, location, navigate]);
 
-    if (!isAuthenticated) {
+    if (isAuthLoading || !isAuthenticated) {
         return null;
     }
 

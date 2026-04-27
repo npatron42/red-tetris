@@ -27,7 +27,11 @@ api.interceptors.request.use(config => {
 api.interceptors.response.use(
     response => response,
     error => {
-        if (error.response?.status === 401) {
+        const status = error.response?.status;
+        const requestUrl = error.config?.url || "";
+        const isMissingCurrentUser = status === 404 && requestUrl.includes("/user/me");
+
+        if (status === 401 || isMissingCurrentUser) {
             localStorage.removeItem("auth");
             localStorage.removeItem("token");
             window.location.href = "/login";
