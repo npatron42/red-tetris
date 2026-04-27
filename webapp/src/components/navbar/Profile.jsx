@@ -25,7 +25,7 @@ export const Profile = () => {
             <div className="profile-icon-circle">
                 <User size={28} color="#ff3179" />
             </div>
-            <span className="profile-name">{user.user?.name || user.user}</span>
+            <span className="profile-name">{user.user?.name || user.user?.username || ""}</span>
         </div>
     );
 };

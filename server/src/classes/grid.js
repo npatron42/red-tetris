@@ -120,6 +120,17 @@ export class Grid {
 
         return gridCopy;
     }
+    applyWallKick(piece) {
+        const offsets = [1, -1, 2, -2];
+        for (const offset of offsets) {
+            if (this.isValidPosition(piece, piece.getX() + offset, piece.getY())) {
+                piece.setPosition(piece.getX() + offset, piece.getY());
+                return true;
+            }
+        }
+        return false;
+    }
+
     gameIsLost() {
         return this.grid.slice(0, 2).some(row => row.some(cell => cell !== 0));
     }
