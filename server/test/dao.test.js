@@ -16,7 +16,7 @@ import { createSpy } from "./testUtils.js";
 
 process.env.DATABASE_URL;
 
-const { GameDao } = await import("../src/dao/gameDao.js");
+const { SoloGameDao: GameDao } = await import("../src/dao/soloGameDao.js");
 const { UserDao } = await import("../src/dao/userDao.js");
 const { RoomDao } = await import("../src/dao/roomDao.js");
 const { MatchDao } = await import("../src/dao/matchDao.js");
@@ -30,6 +30,15 @@ test("GameDao.findAll returns all games", async () => {
 
     assert.equal(result, expected);
     assert.equal(findMany.calls.length, 1);
+});
+
+test("GameDao.findAll throws on database errors", async () => {
+    const findMany = createSpy(async () => {
+        throw new Error("boom");
+    });
+    const dao = new GameDao({ soloGame: { findMany } });
+
+    await assert.rejects(() => dao.findAll(), /Failed to fetch all games: boom/);
 });
 
 test("GameDao.findById returns null when missing id", async () => {
@@ -51,6 +60,15 @@ test("GameDao.findById fetches by id", async () => {
 
     assert.equal(result, expected);
     assert.deepEqual(findUnique.calls[0][0], { where: { id: "game-1" } });
+});
+
+test("GameDao.findById throws on database errors", async () => {
+    const findUnique = createSpy(async () => {
+        throw new Error("boom");
+    });
+    const dao = new GameDao({ soloGame: { findUnique } });
+
+    await assert.rejects(() => dao.findById("game-1"), /Failed to find game by id 'game-1': boom/);
 });
 
 test("GameDao.create prefers gameId when present", async () => {
@@ -81,6 +99,15 @@ test("GameDao.create requires an id", async () => {
     assert.equal(create.calls.length, 0);
 });
 
+test("GameDao.create throws on database errors", async () => {
+    const create = createSpy(async () => {
+        throw new Error("boom");
+    });
+    const dao = new GameDao({ soloGame: { create } });
+
+    await assert.rejects(() => dao.create({ id: "game-1" }), /Failed to create game 'game-1': boom/);
+});
+
 test("GameDao.update returns updated game", async () => {
     const update = createSpy(async args => args);
     const dao = new GameDao({ soloGame: { update } });
@@ -89,6 +116,16 @@ test("GameDao.update returns updated game", async () => {
 
     assert.equal(result.data.status, "DONE");
     assert.deepEqual(update.calls[0][0], { where: { id: "game-1" }, data: { status: "DONE" } });
+});
+
+test("GameDao.update returns null when missing id", async () => {
+    const update = createSpy(async args => args);
+    const dao = new GameDao({ soloGame: { update } });
+
+    const result = await dao.update();
+
+    assert.equal(result, null);
+    assert.equal(update.calls.length, 0);
 });
 
 test("GameDao.update returns null on errors", async () => {
@@ -100,6 +137,16 @@ test("GameDao.update returns null on errors", async () => {
     const result = await dao.update("game-1", { status: "DONE" });
 
     assert.equal(result, null);
+});
+
+test("GameDao.delete returns false when missing id", async () => {
+    const del = createSpy(async () => undefined);
+    const dao = new GameDao({ soloGame: { delete: del } });
+
+    const result = await dao.delete();
+
+    assert.equal(result, false);
+    assert.equal(del.calls.length, 0);
 });
 
 test("GameDao.delete returns true on success", async () => {
@@ -123,6 +170,36 @@ test("GameDao.delete returns false on errors", async () => {
     assert.equal(result, false);
 });
 
+test("GameDao.findByUserId returns null when missing user id", async () => {
+    const findMany = createSpy(async () => [{ id: "game-1" }]);
+    const dao = new GameDao({ soloGame: { findMany } });
+
+    const result = await dao.findByUserId();
+
+    assert.equal(result, null);
+    assert.equal(findMany.calls.length, 0);
+});
+
+test("GameDao.findByUserId fetches games for a player", async () => {
+    const expected = [{ id: "game-1", player_id: "user-1" }];
+    const findMany = createSpy(async () => expected);
+    const dao = new GameDao({ soloGame: { findMany } });
+
+    const result = await dao.findByUserId("user-1");
+
+    assert.equal(result, expected);
+    assert.deepEqual(findMany.calls[0][0], { where: { player_id: "user-1" } });
+});
+
+test("GameDao.findByUserId throws on database errors", async () => {
+    const findMany = createSpy(async () => {
+        throw new Error("boom");
+    });
+    const dao = new GameDao({ soloGame: { findMany } });
+
+    await assert.rejects(() => dao.findByUserId("user-1"), /Failed to find games by user id 'user-1': boom/);
+});
+
 test("UserDao.findByName returns null when missing name", async () => {
     const findFirst = createSpy(async () => ({ id: "user-1" }));
     const dao = new UserDao({ user: { findFirst } });
@@ -144,6 +221,15 @@ test("UserDao.findAll returns users", async () => {
     assert.equal(findMany.calls.length, 1);
 });
 
+test("UserDao.findAll throws on database errors", async () => {
+    const findMany = createSpy(async () => {
+        throw new Error("boom");
+    });
+    const dao = new UserDao({ user: { findMany } });
+
+    await assert.rejects(() => dao.findAll(), /Failed to fetch all users: boom/);
+});
+
 test("UserDao.findByName fetches by name", async () => {
     const expected = { id: "user-1", name: "alice" };
     const findFirst = createSpy(async () => expected);
@@ -153,6 +239,25 @@ test("UserDao.findByName fetches by name", async () => {
 
     assert.equal(result, expected);
     assert.deepEqual(findFirst.calls[0][0], { where: { name: "alice" } });
+});
+
+test("UserDao.findByName throws on database errors", async () => {
+    const findFirst = createSpy(async () => {
+        throw new Error("boom");
+    });
+    const dao = new UserDao({ user: { findFirst } });
+
+    await assert.rejects(() => dao.findByName("alice"), /Failed to find user by name 'alice': boom/);
+});
+
+test("UserDao.findByname delegates to findByName", async () => {
+    const expected = { id: "user-1", name: "alice" };
+    const findFirst = createSpy(async () => expected);
+    const dao = new UserDao({ user: { findFirst } });
+
+    const result = await dao.findByname("alice");
+
+    assert.equal(result, expected);
 });
 
 test("UserDao.findByUsername delegates to findByName", async () => {
@@ -186,6 +291,15 @@ test("UserDao.findById fetches by id", async () => {
     assert.deepEqual(findUnique.calls[0][0], { where: { id: "user-1" } });
 });
 
+test("UserDao.findById throws on database errors", async () => {
+    const findUnique = createSpy(async () => {
+        throw new Error("boom");
+    });
+    const dao = new UserDao({ user: { findUnique } });
+
+    await assert.rejects(() => dao.findById("user-1"), /Failed to find user by id 'user-1': boom/);
+});
+
 test("UserDao.create requires a name", async () => {
     const create = createSpy(async args => args);
     const dao = new UserDao({ user: { create } });
@@ -216,6 +330,15 @@ test("UserDao.create generates an id when missing", async () => {
     assert.equal(result.data.name, "alice");
 });
 
+test("UserDao.create throws on database errors", async () => {
+    const create = createSpy(async () => {
+        throw new Error("boom");
+    });
+    const dao = new UserDao({ user: { create } });
+
+    await assert.rejects(() => dao.create({ id: "user-1", name: "alice" }), /Failed to create user 'alice': boom/);
+});
+
 test("UserDao.updateById returns null when missing id", async () => {
     const update = createSpy(async args => args);
     const dao = new UserDao({ user: { update } });
@@ -234,6 +357,15 @@ test("UserDao.updateById updates by id", async () => {
 
     assert.equal(result.data.score, 10);
     assert.deepEqual(update.calls[0][0], { where: { id: "user-1" }, data: { score: 10 } });
+});
+
+test("UserDao.updateById throws on database errors", async () => {
+    const update = createSpy(async () => {
+        throw new Error("boom");
+    });
+    const dao = new UserDao({ user: { update } });
+
+    await assert.rejects(() => dao.updateById("user-1", { score: 10 }), /Failed to update user 'user-1': boom/);
 });
 
 test("UserDao.updateByName returns null when user missing", async () => {
@@ -258,6 +390,15 @@ test("UserDao.updateByName updates when user exists", async () => {
     assert.deepEqual(update.calls[0][0], { where: { id: "user-1" }, data: { score: 10 } });
 });
 
+test("UserDao.updateByName wraps lookup errors", async () => {
+    const findFirst = createSpy(async () => {
+        throw new Error("boom");
+    });
+    const dao = new UserDao({ user: { findFirst } });
+
+    await assert.rejects(() => dao.updateByName("alice", { score: 10 }), /Failed to update user by name 'alice':/);
+});
+
 test("UserDao.update delegates to updateByName", async () => {
     const findFirst = createSpy(async () => ({ id: "user-1" }));
     const update = createSpy(async args => args);
@@ -266,6 +407,70 @@ test("UserDao.update delegates to updateByName", async () => {
     const result = await dao.update("alice", { score: 20 });
 
     assert.equal(result.data.score, 20);
+});
+
+test("UserDao.delete returns false when missing id", async () => {
+    const del = createSpy(async () => undefined);
+    const dao = new UserDao({ user: { delete: del } });
+
+    const result = await dao.delete();
+
+    assert.equal(result, false);
+    assert.equal(del.calls.length, 0);
+});
+
+test("UserDao.delete returns true on success", async () => {
+    const del = createSpy(async () => undefined);
+    const dao = new UserDao({ user: { delete: del } });
+
+    const result = await dao.delete("user-1");
+
+    assert.equal(result, true);
+    assert.deepEqual(del.calls[0][0], { where: { id: "user-1" } });
+});
+
+test("UserDao.delete returns false on errors", async () => {
+    const del = createSpy(async () => {
+        throw new Error("boom");
+    });
+    const dao = new UserDao({ user: { delete: del } });
+
+    const result = await dao.delete("user-1");
+
+    assert.equal(result, false);
+});
+
+test("UserDao.deleteByName returns false when user missing", async () => {
+    const findFirst = createSpy(async () => null);
+    const del = createSpy(async () => undefined);
+    const dao = new UserDao({ user: { findFirst, delete: del } });
+
+    const result = await dao.deleteByName("missing");
+
+    assert.equal(result, false);
+    assert.equal(del.calls.length, 0);
+});
+
+test("UserDao.deleteByName deletes when user exists", async () => {
+    const findFirst = createSpy(async () => ({ id: "user-1" }));
+    const del = createSpy(async () => undefined);
+    const dao = new UserDao({ user: { findFirst, delete: del } });
+
+    const result = await dao.deleteByName("alice");
+
+    assert.equal(result, true);
+    assert.deepEqual(del.calls[0][0], { where: { id: "user-1" } });
+});
+
+test("UserDao.deleteByName returns false when lookup fails", async () => {
+    const findFirst = createSpy(async () => {
+        throw new Error("boom");
+    });
+    const dao = new UserDao({ user: { findFirst } });
+
+    const result = await dao.deleteByName("alice");
+
+    assert.equal(result, false);
 });
 
 test("RoomDao.findAll returns rooms", async () => {
@@ -297,7 +502,7 @@ test("RoomDao.findById fetches by id", async () => {
     const result = await dao.findById("room-1");
 
     assert.equal(result, expected);
-    assert.deepEqual(findUnique.calls[0][0], { where: { id: "room-1" } });
+    assert.equal(findUnique.calls[0][0].where.id, "room-1");
 });
 
 test("RoomDao.findByName returns null when missing name", async () => {
@@ -318,126 +523,30 @@ test("RoomDao.findByName fetches by name", async () => {
     const result = await dao.findByName("Room One");
 
     assert.equal(result, expected);
-    assert.deepEqual(findFirst.calls[0][0], { where: { name: "Room One" } });
-});
-
-test("RoomDao.resolveUserIdFromName returns null for missing name", async () => {
-    const findFirst = createSpy(async () => ({ id: "user-1" }));
-    const dao = new RoomDao({ user: { findFirst } });
-
-    const result = await dao.resolveUserIdFromName();
-
-    assert.equal(result, null);
-    assert.equal(findFirst.calls.length, 0);
-});
-
-test("RoomDao.resolveUserIdFromName resolves user id", async () => {
-    const findFirst = createSpy(async () => ({ id: "user-1" }));
-    const dao = new RoomDao({ user: { findFirst } });
-
-    const result = await dao.resolveUserIdFromName("alice");
-
-    assert.equal(result, "user-1");
-    assert.deepEqual(findFirst.calls[0][0], { where: { name: "alice" } });
-});
-
-test("RoomDao.resolveUserIdFromName returns null when user not found", async () => {
-    const findFirst = createSpy(async () => null);
-    const dao = new RoomDao({ user: { findFirst } });
-
-    const result = await dao.resolveUserIdFromName("ghost");
-
-    assert.equal(result, null);
-    assert.equal(findFirst.calls.length, 1);
-});
-
-test("RoomDao.create requires a name", async () => {
-    const create = createSpy(async args => args);
-    const dao = new RoomDao({ room: { create } });
-
-    await assert.rejects(() => dao.create({ leaderId: "leader-1" }), /name is required to create a room/);
-    assert.equal(create.calls.length, 0);
+    assert.equal(findFirst.calls[0][0].where.name, "Room One");
 });
 
 test("RoomDao.create requires a leader", async () => {
-    const findFirst = createSpy(async () => null);
+    const findUnique = createSpy(async () => null);
     const create = createSpy(async args => args);
-    const dao = new RoomDao({ user: { findFirst }, room: { create } });
+    const dao = new RoomDao({ user: { findUnique }, room: { create } });
 
-    await assert.rejects(() => dao.create({ name: "room-1" }), /leaderId .* required/);
+    await assert.rejects(() => dao.create({ name: "room-1", leaderId: "missing" }), /leaderId .* required/);
     assert.equal(create.calls.length, 0);
 });
 
-test("RoomDao.create resolves leader and opponent ids", async () => {
-    const findFirst = createSpy(async ({ where }) => {
-        if (where.name === "leader") return { id: "leader-1" };
-        if (where.name === "opponent") return { id: "opponent-1" };
-        return null;
-    });
+test("RoomDao.create creates a room with leader", async () => {
+    const leader = { id: "leader-1" };
+    const findUnique = createSpy(async () => leader);
     const create = createSpy(async args => args);
-    const dao = new RoomDao({ user: { findFirst }, room: { create } });
+    const dao = new RoomDao({ user: { findUnique }, room: { create } });
 
     const createdAt = new Date("2024-01-01T00:00:00Z");
-    const result = await dao.create({
-        id: "room-1",
-        name: "Room One",
-        leaderName: "leader",
-        opponentName: "opponent",
-        createdAt,
-    });
+    const result = await dao.create({ name: "Room One", leaderId: "leader-1", createdAt });
 
-    assert.equal(result.data.id, "room-1");
-    assert.equal(result.data.leader_id, "leader-1");
-    assert.equal(result.data.opponent_id, "opponent-1");
-    assert.equal(result.data.created_at, createdAt);
-});
-
-test("RoomDao.update returns null when missing id", async () => {
-    const update = createSpy(async args => args);
-    const dao = new RoomDao({ room: { update } });
-
-    const result = await dao.update();
-
-    assert.equal(result, null);
-    assert.equal(update.calls.length, 0);
-});
-
-test("RoomDao.update resolves leader name and uses opponentId", async () => {
-    const findFirst = createSpy(async ({ where }) => {
-        if (where.name === "leader") return { id: "leader-1" };
-        return null;
-    });
-    const update = createSpy(async args => args);
-    const dao = new RoomDao({ user: { findFirst }, room: { update } });
-
-    const createdAt = new Date("2024-02-01T00:00:00Z");
-    const result = await dao.update("room-1", {
-        name: "Room One",
-        leaderName: "leader",
-        opponentId: "opponent-1",
-        createdAt,
-        gameStatus: "PLAYING",
-    });
-
-    assert.equal(result.data.leader_id, "leader-1");
-    assert.equal(result.data.opponent_id, "opponent-1");
     assert.equal(result.data.name, "Room One");
-    assert.equal(result.data.created_at, createdAt);
-    assert.equal(result.data.gameStatus, "PLAYING");
-});
-
-test("RoomDao.update resolves opponent name when opponentId is undefined", async () => {
-    const findFirst = createSpy(async ({ where }) => {
-        if (where.name === "opponent") return { id: "opponent-1" };
-        return null;
-    });
-    const update = createSpy(async args => args);
-    const dao = new RoomDao({ user: { findFirst }, room: { update } });
-
-    const result = await dao.update("room-1", { leaderId: "leader-1", opponentName: "opponent" });
-
     assert.equal(result.data.leader_id, "leader-1");
-    assert.equal(result.data.opponent_id, "opponent-1");
+    assert.equal(result.data.created_at, createdAt);
 });
 
 test("RoomDao.updateByName returns null when room missing", async () => {

@@ -45,6 +45,10 @@ export class UserDao {
         return this.findByName(name);
     }
 
+    async findByUsername(name) {
+        return this.findByName(name);
+    }
+
     async findById(id) {
         if (!id) {
             return null;

@@ -41,6 +41,11 @@
   "c8": {
     "all": true,
     "include": [
+      "src/classes/grid.js",
+      "src/classes/piece.js",
+      "src/classes/tetrominosBag.js",
+      "src/classes/soloGame.js",
+      "src/classes/multiPlayerGame.js",
       "src/dao/**/*.js",
       "src/services/userService.js",
       "src/services/matchHistoryService.js"

@@ -16,8 +16,8 @@ import { useUser } from "../../providers/UserProvider";
 import { User } from "lucide-react";
 
 export const Profile = () => {
-    const { user } = useUser();
-    if (!user) {
+    const { user, isAuthenticated, isAuthLoading } = useUser();
+    if (isAuthLoading || !isAuthenticated || !user) {
         return null;
     }
     return (

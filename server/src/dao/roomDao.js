@@ -47,7 +47,7 @@ export class RoomDao {
             return room;
         } catch (error) {
             console.error("RoomDao.findByName error:", error.message);
-            throw new Error(`Failed to find room by id '${id}': ${error.message}`);
+            throw new Error(`Failed to find room by name '${name}': ${error.message}`);
         }
     }
 
@@ -99,7 +99,7 @@ export class RoomDao {
             });
         } catch (error) {
             console.error("RoomDao.create error:", error.message);
-            throw new Error(`Failed to create room '${id}': ${error.message}`);
+            throw new Error(`Failed to create room '${name}': ${error.message}`);
         }
     }
 
