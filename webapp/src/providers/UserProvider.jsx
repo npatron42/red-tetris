@@ -77,7 +77,11 @@ export const UserProvider = ({ children }) => {
                         : currentUser,
                 );
             } catch (error) {
-                if (!isCancelled) {
+                const status = error.response?.status;
+                const requestUrl = error.config?.url || "";
+                const shouldClearAuth = status === 401 || (status === 404 && requestUrl.includes("/user/me"));
+
+                if (!isCancelled && shouldClearAuth) {
                     setUser(null);
                 }
             } finally {
