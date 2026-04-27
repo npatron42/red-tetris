@@ -104,12 +104,17 @@ export class MultiPlayerGame {
     applyPenaltyLinesToOpponents(sourcePlayer, linesCleared) {
         const sourceId = sourcePlayer.id;
         const players = this.room.getPlayers();
+        const penaltyLines = Math.max(0, linesCleared - 1);
+
+        if (penaltyLines === 0) {
+            return;
+        }
 
         players.forEach(player => {
             if (player.id === sourceId) {
                 return;
             }
-            player.getGrid().addIndestructibleLines(linesCleared);
+            player.getGrid().addIndestructibleLines(penaltyLines);
         });
     }
 
