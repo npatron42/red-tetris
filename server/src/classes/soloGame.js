@@ -151,7 +151,9 @@ export class SoloGame {
             case "ROTATE":
                 piece.rotate();
                 if (!grid.isValidPosition(piece, piece.getX(), piece.getY())) {
-                    piece.rotationIndex = oldRotation;
+                    if (!grid.applyWallKick(piece)) {
+                        piece.rotationIndex = oldRotation;
+                    }
                 }
                 break;
             case "DROP":
