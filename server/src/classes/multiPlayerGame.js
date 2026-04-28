@@ -245,6 +245,7 @@ export class MultiPlayerGame {
                 if (!grid.isValidPosition(piece, piece.getX(), piece.getY())) {
                     if (!grid.applyWallKick(piece)) {
                         piece.rotationIndex = oldRotation;
+                        piece.setPosition(oldX, oldY);
                     }
                 }
                 break;
