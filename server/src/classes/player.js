@@ -31,6 +31,7 @@ export class Player {
     resetGameData() {
         this.grid = new Grid();
         this.currentScore = 0;
+        this.totalLinesCleared = 0;
         this.isSpectrum = false;
         this.linesResistant = 0;
         this.currentPiece = null;

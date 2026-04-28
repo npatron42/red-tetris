@@ -17,7 +17,6 @@ import { useUser } from "../../../providers/UserProvider";
 import { useSocket } from "../../../providers/SocketProvider";
 import { socketService } from "../../../services/socketService";
 import { TetrominosBag } from "../../tetrominos-bag/TetrominosBag";
-import { createHistoryMatch } from "../../../composables/useApi";
 
 const COLOR_MAP = {
     I: "#00F0FF",
@@ -72,8 +71,6 @@ export const TetrisGameMultiplayer = ({ roomInfo, onGameEnd }) => {
                     setGameEnded(true);
                     const winnerId = data.winnerId || data.gameState.find(player => player.isWinner)?.id;
                     const loserId = data.loserId || data.gameState.find(player => player.isLoser)?.id;
-                    const rngSeed = data.rngSeed;
-                    const playerIds = data.gameState.map(p => p.id);
                     const playersWithResults = data.gameState.map(player => ({
                         id: player.id,
                         name: player.name,
@@ -81,14 +78,6 @@ export const TetrisGameMultiplayer = ({ roomInfo, onGameEnd }) => {
                         isWinner: player.id === winnerId,
                         isLoser: player.id === loserId,
                     }));
-
-                    try {
-                        if (winnerId && user?.user?.id === roomInfo.leaderId) {
-                            await createHistoryMatch(playerIds, winnerId, rngSeed);
-                        }
-                    } catch (error) {
-                        console.error("Error creating match history:", error);
-                    }
 
                     if (onGameEnd) {
                         onGameEnd(playersWithResults, winnerId, loserId);
@@ -101,7 +90,7 @@ export const TetrisGameMultiplayer = ({ roomInfo, onGameEnd }) => {
         return () => {
             socketService.off("multiGridUpdate", handleMultiGridUpdate);
         };
-    }, [roomInfo.leaderId, roomInfo.name, gameEnded, onGameEnd, user]);
+    }, [gameEnded, onGameEnd]);
 
     useEffect(() => {
         const handleKeyDown = event => {

@@ -455,6 +455,8 @@ model directus_users {
   directus_versions_directus_versions_user_updatedTodirectus_users        directus_versions[]      @relation("directus_versions_user_updatedTodirectus_users")
   matches_matches_user_createdTodirectus_users                            Match[]                  @relation("matches_user_createdTodirectus_users")
   matches_matches_user_updatedTodirectus_users                            Match[]                  @relation("matches_user_updatedTodirectus_users")
+  match_players_match_players_user_createdTodirectus_users                MatchPlayer[]            @relation("match_players_user_createdTodirectus_users")
+  match_players_match_players_user_updatedTodirectus_users                MatchPlayer[]            @relation("match_players_user_updatedTodirectus_users")
   rooms_rooms_user_createdTodirectus_users                                Room[]                   @relation("rooms_user_createdTodirectus_users")
   rooms_rooms_user_updatedTodirectus_users                                Room[]                   @relation("rooms_user_updatedTodirectus_users")
   solo_games_solo_games_user_createdTodirectus_users                      SoloGame[]               @relation("solo_games_user_createdTodirectus_users")
@@ -529,6 +531,7 @@ model User {
   matches_matches_player1_idTousers                 Match[]         @relation("matches_player1_idTousers")
   matches_matches_player2_idTousers                 Match[]         @relation("matches_player2_idTousers")
   matches_matches_winner_idTousers                  Match[]         @relation("matches_winner_idTousers")
+  match_players_match_players_player_idTousers      MatchPlayer[]   @relation("match_players_player_idTousers")
   rooms_as_leader                                   Room[]          @relation("rooms_leader_idTousers")
   rooms_as_opponent                                 Room[]          @relation("rooms_opponent_idTousers")
   directus_users_users_user_createdTodirectus_users directus_users? @relation("users_user_createdTodirectus_users", fields: [user_created], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_user_created_foreign")
@@ -555,8 +558,31 @@ model Match {
   directus_users_matches_user_createdTodirectus_users directus_users? @relation("matches_user_createdTodirectus_users", fields: [user_created], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "matchs_user_created_foreign")
   directus_users_matches_user_updatedTodirectus_users directus_users? @relation("matches_user_updatedTodirectus_users", fields: [user_updated], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "matchs_user_updated_foreign")
   users_matches_winner_idTousers                      User?           @relation("matches_winner_idTousers", fields: [winner_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "matchs_winner_id_foreign")
+  match_players_match_players_match_idTomatches       MatchPlayer[]   @relation("match_players_match_idTomatches")
 
   @@map("matches")
+}
+
+model MatchPlayer {
+  id                                                       String          @id @db.Uuid
+  user_created                                             String?         @db.Uuid
+  date_created                                             DateTime?       @db.Timestamptz(6)
+  user_updated                                             String?         @db.Uuid
+  date_updated                                             DateTime?       @db.Timestamptz(6)
+  match_id                                                 String          @db.Uuid
+  player_id                                                String          @db.Uuid
+  score                                                    Int             @default(0)
+  level                                                    Int             @default(1)
+  lines_cleared                                            Int             @default(0)
+  duration_ms                                              BigInt?
+  matches_match_players_match_idTomatches                  Match           @relation("match_players_match_idTomatches", fields: [match_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "match_players_match_id_foreign")
+  users_match_players_player_idTousers                     User            @relation("match_players_player_idTousers", fields: [player_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "match_players_player_id_foreign")
+  directus_users_match_players_user_createdTodirectus_users directus_users? @relation("match_players_user_createdTodirectus_users", fields: [user_created], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "match_players_user_created_foreign")
+  directus_users_match_players_user_updatedTodirectus_users directus_users? @relation("match_players_user_updatedTodirectus_users", fields: [user_updated], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "match_players_user_updated_foreign")
+
+  @@index([match_id], map: "match_players_match_id_index")
+  @@index([player_id], map: "match_players_player_id_index")
+  @@map("match_players")
 }
 
 model SoloGame {

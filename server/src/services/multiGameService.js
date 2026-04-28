@@ -1,6 +1,7 @@
 import { Room } from "../classes/room.js";
 import { Player } from "../classes/player.js";
 import socketService from "./socket/socketService.js";
+import matchHistoryService from "./matchHistoryService.js";
 import { RoomDao } from "../dao/roomDao.js";
 import { UserDao } from "../dao/userDao.js";
 import pino from "pino";
@@ -8,10 +9,11 @@ import pino from "pino";
 const logger = pino({ level: "info" });
 
 export class MultiGameService {
-    constructor() {
+    constructor(matchHistoryServiceInstance) {
         this.activeGames = new Map();
         this.roomDao = new RoomDao();
         this.userDao = new UserDao();
+        this.matchHistoryService = matchHistoryServiceInstance || matchHistoryService;
         this.setupSocketHandler();
     }
 
@@ -231,9 +233,12 @@ export class MultiGameService {
     async finalizeCompletedGame(roomId, roomInstance, result) {
         const players = roomInstance.getPlayers();
         const playerIds = players.map(player => player.id).filter(Boolean);
+        const game = roomInstance.getGame();
 
         this.activeGames.delete(roomId);
         await this.roomDao.updateById(roomId, { status: "COMPLETED" });
+
+        await this.persistMatchResult(game, players, playerIds, result);
 
         const updatedRoom = await this.roomDao.findById(roomId);
         const roomPayload = this.buildRoomPayload(updatedRoom) || {
@@ -254,6 +259,29 @@ export class MultiGameService {
         });
 
         logger.info(`Multi game completed in room ${roomId}, winner: ${result.winnerId}`);
+    }
+
+    async persistMatchResult(game, players, playerIds, result) {
+        if (!result?.winnerId || playerIds.length < 2) {
+            return;
+        }
+        const durationMs = game.gameStartTime ? Date.now() - game.gameStartTime : null;
+        const playerStats = players
+            .filter(player => player.id)
+            .map(player => ({
+                playerId: player.id,
+                score: player.currentScore || 0,
+                level: game.level || 1,
+                linesCleared: player.totalLinesCleared || 0,
+                durationMs,
+            }));
+
+        try {
+            await this.matchHistoryService.createMatchHistory(playerIds, result.winnerId, game.rngSeed, playerStats);
+            console.log("Match history persisted HIHIHIHIHIIHIHIH");
+        } catch (error) {
+            logger.error(`Failed to persist match result: ${error.message}`);
+        }
     }
 
     async handleMovePiece(roomId, userId, direction) {

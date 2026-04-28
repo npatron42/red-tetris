@@ -139,6 +139,7 @@ export class MultiPlayerGame {
         const linesCleared = grid.clearLines();
         if (linesCleared > 0) {
             player.currentScore = this.scoringSystem.calculateScore(player.currentScore, this.level, linesCleared);
+            player.totalLinesCleared = (player.totalLinesCleared || 0) + linesCleared;
         }
         this._assignNextPieceToPlayer(player);
         return linesCleared;

@@ -100,23 +100,28 @@ test("UserService.getUserById throws when user missing", async () => {
     const userDao = { findById: createSpy(async () => null) };
     const matchDao = { findByPlayerId: createSpy(async () => []) };
     const soloGameDao = { findByUserId: createSpy(async () => []) };
-    const service = new UserService(userDao, matchDao, soloGameDao);
+    const matchPlayerDao = { findByPlayerId: createSpy(async () => []) };
+    const service = new UserService(userDao, matchDao, soloGameDao, matchPlayerDao);
 
     await assert.rejects(() => service.getUserById("user-1"), /User not found/);
 });
 
-test("UserService.getUserById returns user with history", async () => {
+test("UserService.getUserById returns user with history and matchPlayers", async () => {
     const user = { id: "user-1", name: "alice" };
+    const matchPlayers = [{ id: "mp-1", match_id: "match-1", player_id: "user-1", score: 500, lines_cleared: 7 }];
     const userDao = { findById: createSpy(async () => user) };
     const matchDao = { findByPlayerId: createSpy(async () => []) };
     const soloGameDao = { findByUserId: createSpy(async () => []) };
-    const service = new UserService(userDao, matchDao, soloGameDao);
+    const matchPlayerDao = { findByPlayerId: createSpy(async () => matchPlayers) };
+    const service = new UserService(userDao, matchDao, soloGameDao, matchPlayerDao);
 
     const result = await service.getUserById("user-1");
 
     assert.equal(result.id, "user-1");
     assert.deepEqual(result.matchHistory, []);
     assert.deepEqual(result.soloGameHistory, []);
+    assert.equal(result.matchPlayers, matchPlayers);
+    assert.equal(matchPlayerDao.findByPlayerId.calls[0][0], "user-1");
 });
 
 test("UserService.createUser rejects invalid names", async () => {

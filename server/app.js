@@ -6,12 +6,17 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 15:26:42 by npatron           #+#    #+#             */
-/*   Updated: 2026/01/19 16:22:15 by npatron          ###   ########.fr       */
+/*   Updated: 2026/04/28 16:12:42 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import "dotenv/config";
 import express from "express";
+
+BigInt.prototype.toJSON = function () {
+    return this.toString();
+};
+
 import morgan from "morgan";
 import cors from "cors";
 import path from "path";
@@ -47,7 +52,7 @@ app.set("port", port);
 const server = http.createServer(app);
 
 const corsOptions = {
-    origin: "http://localhost:5173",
+    origin: "*",
     methods: ["GET", "POST"],
     allowedHeaders: ["Content-Type"],
     credentials: true,

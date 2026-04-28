@@ -97,6 +97,47 @@
     transform: scale(1.1);
 }
 
+.statistics-tabs {
+    display: flex;
+    gap: 8px;
+    padding: 4px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    width: 100%;
+}
+
+.statistics-tab {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    color: #aebeff;
+    font-family: "Orbitron", sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.statistics-tab:hover {
+    color: #FFC4D9;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.statistics-tab.active {
+    color: #ff3179;
+    background: rgba(255, 49, 121, 0.12);
+    box-shadow: inset 0 0 12px rgba(255, 49, 121, 0.18);
+    text-shadow: 0 0 10px rgba(255, 49, 121, 0.5);
+}
+
 .statistics-content {
     display: flex;
     flex-direction: column;

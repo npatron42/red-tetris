@@ -12,15 +12,17 @@
 
 import { v4 as uuidv4 } from "uuid";
 import { MatchDao } from "../dao/matchDao.js";
+import { MatchPlayerDao } from "../dao/matchPlayerDao.js";
 import { UserService } from "./userService.js";
 
 export class MatchHistoryService {
-    constructor(matchDao, userService) {
+    constructor(matchDao, userService, matchPlayerDao) {
         this.matchDao = matchDao || new MatchDao();
+        this.matchPlayerDao = matchPlayerDao || new MatchPlayerDao();
         this.userService = userService || new UserService();
     }
 
-    async createMatchHistory(playerIds, winnerId, rngSeed) {
+    async createMatchHistory(playerIds, winnerId, rngSeed, playerStats = null) {
         if (!Array.isArray(playerIds) || playerIds.length === 0) {
             throw new Error("Player IDs array is required");
         }
@@ -43,7 +45,21 @@ export class MatchHistoryService {
             winnerId: winnerId,
             rngSeed,
             status: "COMPLETED",
+            endedAt: new Date(),
         });
+
+        if (Array.isArray(playerStats) && playerStats.length > 0) {
+            await this.matchPlayerDao.createMany(
+                playerStats.map(stat => ({
+                    matchId: match.id,
+                    playerId: stat.playerId,
+                    score: stat.score,
+                    level: stat.level,
+                    linesCleared: stat.linesCleared,
+                    durationMs: stat.durationMs,
+                })),
+            );
+        }
 
         for (const playerId of playerIds) {
             await this.userService.updateStatsById(playerId, playerId === winnerId);

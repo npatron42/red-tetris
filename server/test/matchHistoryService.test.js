@@ -116,3 +116,52 @@ test("MatchHistoryService.getMatchHistoryByUserId returns matches", async () => 
 
     assert.equal(result, matches);
 });
+
+test("MatchHistoryService.createMatchHistory persists match_players when stats provided", async () => {
+    const users = new Map([
+        ["user-1", { id: "user-1", name: "alice" }],
+        ["user-2", { id: "user-2", name: "bob" }],
+    ]);
+    const userService = {
+        getUserById: createSpy(async id => users.get(id)),
+        updateStatsById: createSpy(async () => {}),
+    };
+    const matchDao = { create: createSpy(async data => ({ ...data, id: "match-1" })) };
+    const matchPlayerDao = { createMany: createSpy(async () => []) };
+    const service = new MatchHistoryService(matchDao, userService, matchPlayerDao);
+
+    const playerStats = [
+        { playerId: "user-1", score: 1200, level: 3, linesCleared: 14, durationMs: 60000 },
+        { playerId: "user-2", score: 800, level: 3, linesCleared: 9, durationMs: 60000 },
+    ];
+
+    await service.createMatchHistory(["user-1", "user-2"], "user-1", 99, playerStats);
+
+    assert.equal(matchPlayerDao.createMany.calls.length, 1);
+    const rows = matchPlayerDao.createMany.calls[0][0];
+    assert.equal(rows.length, 2);
+    assert.equal(rows[0].matchId, "match-1");
+    assert.equal(rows[0].playerId, "user-1");
+    assert.equal(rows[0].score, 1200);
+    assert.equal(rows[0].linesCleared, 14);
+    assert.equal(rows[1].playerId, "user-2");
+    assert.equal(rows[1].score, 800);
+});
+
+test("MatchHistoryService.createMatchHistory skips match_players when stats omitted", async () => {
+    const users = new Map([
+        ["user-1", { id: "user-1", name: "alice" }],
+        ["user-2", { id: "user-2", name: "bob" }],
+    ]);
+    const userService = {
+        getUserById: createSpy(async id => users.get(id)),
+        updateStatsById: createSpy(async () => {}),
+    };
+    const matchDao = { create: createSpy(async data => ({ ...data, id: "match-1" })) };
+    const matchPlayerDao = { createMany: createSpy(async () => []) };
+    const service = new MatchHistoryService(matchDao, userService, matchPlayerDao);
+
+    await service.createMatchHistory(["user-1", "user-2"], "user-1", 42);
+
+    assert.equal(matchPlayerDao.createMany.calls.length, 0);
+});

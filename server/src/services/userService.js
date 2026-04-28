@@ -12,14 +12,16 @@
 
 import { UserDao } from "../dao/userDao.js";
 import { MatchDao } from "../dao/matchDao.js";
+import { MatchPlayerDao } from "../dao/matchPlayerDao.js";
 import { SoloGameDao } from "../dao/soloGameDao.js";
 import { isUserNameFormatValid, parseUserName } from "../utils/userName.js";
 
 export class UserService {
-    constructor(userDao, matchDao, soloGameDao) {
+    constructor(userDao, matchDao, soloGameDao, matchPlayerDao) {
         this.userDao = userDao || new UserDao();
         this.matchDao = matchDao || new MatchDao();
         this.soloGameDao = soloGameDao || new SoloGameDao();
+        this.matchPlayerDao = matchPlayerDao || new MatchPlayerDao();
     }
 
     async getUserById(id) {
@@ -30,10 +32,14 @@ export class UserService {
         if (!user) {
             throw new Error("User not found");
         }
-        const matchHistory = await this.matchDao.findByPlayerId(id);
-        const soloGameHistory = await this.soloGameDao.findByUserId(id);
+        const [matchHistory, soloGameHistory, matchPlayers] = await Promise.all([
+            this.matchDao.findByPlayerId(id),
+            this.soloGameDao.findByUserId(id),
+            this.matchPlayerDao.findByPlayerId(id),
+        ]);
         user.matchHistory = matchHistory;
         user.soloGameHistory = soloGameHistory;
+        user.matchPlayers = matchPlayers;
         return user;
     }
 

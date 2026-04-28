@@ -16,6 +16,7 @@ import { getUser } from "./useApi";
 export const useHistory = () => {
     const [matchHistory, setMatchHistory] = useState([]);
     const [soloGameHistory, setSoloGameHistory] = useState([]);
+    const [matchPlayers, setMatchPlayers] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
@@ -27,6 +28,7 @@ export const useHistory = () => {
             if (response.success && response.user) {
                 setMatchHistory(response.user.matchHistory || []);
                 setSoloGameHistory(response.user.soloGameHistory || []);
+                setMatchPlayers(response.user.matchPlayers || []);
             }
         } catch (error) {
             setError(error.message || "Failed to fetch history");
@@ -42,6 +44,7 @@ export const useHistory = () => {
     return {
         matchHistory,
         soloGameHistory,
+        matchPlayers,
         isLoading,
         error,
         refetch: fetchUserHistory,

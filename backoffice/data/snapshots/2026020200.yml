@@ -1031,56 +1031,6 @@ fields:
       foreign_key_table: null
       foreign_key_column: null
   - collection: rooms
-    field: __workflow
-    type: alias
-    meta:
-      collection: rooms
-      conditions: null
-      display: null
-      display_options: null
-      field: __workflow
-      group: tabs-iliawb
-      hidden: false
-      interface: group-raw
-      note: null
-      options: null
-      readonly: false
-      required: false
-      sort: 2
-      special:
-        - alias
-        - no-data
-        - group
-      translations: null
-      validation: null
-      validation_message: null
-      width: full
-  - collection: rooms
-    field: __informations
-    type: alias
-    meta:
-      collection: rooms
-      conditions: null
-      display: null
-      display_options: null
-      field: __informations
-      group: tabs-iliawb
-      hidden: false
-      interface: group-raw
-      note: null
-      options: null
-      readonly: false
-      required: false
-      sort: 1
-      special:
-        - alias
-        - no-data
-        - group
-      translations: null
-      validation: null
-      validation_message: null
-      width: full
-  - collection: rooms
     field: name
     type: string
     meta:
@@ -1178,6 +1128,56 @@ fields:
       has_auto_increment: false
       foreign_key_table: null
       foreign_key_column: null
+  - collection: rooms
+    field: __workflow
+    type: alias
+    meta:
+      collection: rooms
+      conditions: null
+      display: null
+      display_options: null
+      field: __workflow
+      group: tabs-iliawb
+      hidden: false
+      interface: group-raw
+      note: null
+      options: null
+      readonly: false
+      required: false
+      sort: 2
+      special:
+        - alias
+        - no-data
+        - group
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+  - collection: rooms
+    field: __informations
+    type: alias
+    meta:
+      collection: rooms
+      conditions: null
+      display: null
+      display_options: null
+      field: __informations
+      group: tabs-iliawb
+      hidden: false
+      interface: group-raw
+      note: null
+      options: null
+      readonly: false
+      required: false
+      sort: 1
+      special:
+        - alias
+        - no-data
+        - group
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
   - collection: solo_games
     field: status
     type: string
