@@ -6,13 +6,13 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 17:01:45 by npatron           #+#    #+#             */
-/*   Updated: 2026/04/28 14:29:50 by npatron          ###   ########.fr       */
+/*   Updated: 2026/04/28 14:30:26 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import "./PlayComponent.css";
 
-import { BarChart3, Joystick, Swords } from "lucide-react";
+import { BarChart3, Swords } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../../providers/UserProvider";
 
