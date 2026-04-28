@@ -1,7 +1,10 @@
 
-all:
+all: env
 	docker compose up --build -d
 	docker compose logs -f
+
+env:
+	@bash hosting/gen-env.sh
 
 clean:
 	docker compose down
@@ -13,6 +16,7 @@ fclean:
 	docker network prune -f
 	docker network rm $$(docker network ls -q) 2>/dev/null || true
 	docker volume rm $$(docker volume ls -qf dangling=true) 2>/dev/null || true
+	rm -f hosting/.env server/.env backoffice/.env
 re:
 	make fclean
 	make all

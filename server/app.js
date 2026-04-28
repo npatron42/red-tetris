@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 15:26:42 by npatron           #+#    #+#             */
-/*   Updated: 2026/04/28 16:12:42 by npatron          ###   ########.fr       */
+/*   Updated: 2026/04/28 16:34:27 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,9 @@ app.use(cors());
 app.use(express.json());
 
 app.use(express.static(path.join(__dirname, "public")));
+
+const clientDist = process.env.CLIENT_DIST || path.join(__dirname, "..", "webapp", "dist");
+app.use(express.static(clientDist));
 
 const port = normalizePort(process.env.PORT || "4000");
 app.set("port", port);
@@ -111,5 +114,11 @@ app.use("/user", userRouter);
 app.use("/room", roomRouter);
 app.use("/solo", soloGameRouter);
 app.use("/match-history", matchHistoryRouter);
+
+app.get(/^\/(?!user|room|solo|match-history|socket\.io).*/, (_req, res, next) => {
+    res.sendFile(path.join(clientDist, "index.html"), err => {
+        if (err) next();
+    });
+});
 
 export default app;

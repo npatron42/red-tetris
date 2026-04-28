@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 13:30:00 by npatron           #+#    #+#             */
-/*   Updated: 2026/04/28 13:30:00 by npatron          ###   ########.fr       */
+/*   Updated: 2026/04/28 16:42:50 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,6 @@ const Statistics = () => {
     const [activeTab, setActiveTab] = useState("solo");
 
     const currentUserId = user?.user?.id;
-
     const soloScores = soloGameHistory.map(game => Number(game.score) || 0);
     const soloLines = soloGameHistory.map(game => Number(game.lines_cleared) || 0);
     const soloDurations = soloGameHistory
@@ -65,9 +64,8 @@ const Statistics = () => {
 
     const multiScores = matchPlayers.map(mp => Number(mp.score) || 0);
     const multiLines = matchPlayers.map(mp => Number(mp.lines_cleared) || 0);
-    const matchDurations = matchHistory
-        .filter(match => match.created_at && match.ended_at)
-        .map(match => new Date(match.ended_at).getTime() - new Date(match.created_at).getTime())
+    const matchDurations = matchPlayers
+        .map(mp => Number(mp.duration_ms) || 0)
         .filter(duration => duration > 0);
 
     const soloStats = {

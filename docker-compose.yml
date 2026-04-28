@@ -11,8 +11,8 @@ services:
   server:
     container_name: server
     build:
-      context: ./server
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./server/Dockerfile
     restart: unless-stopped
     depends_on:
       db:
@@ -29,21 +29,6 @@ services:
     env_file:
       - ./hosting/.env
       - ./server/.env
-  webapp:
-    container_name: webapp
-    build:
-      context: ./webapp
-      dockerfile: ./docker/Dockerfile
-    restart: unless-stopped
-    depends_on:
-      - server
-    volumes:
-      - ./webapp:/app
-      - /app/node_modules
-    networks:
-      - app_network
-    ports:
-      - "5173:5173"
   backoffice:
     container_name: backoffice
     build:

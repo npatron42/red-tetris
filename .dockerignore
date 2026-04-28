@@ -1,0 +1,9 @@
+**/node_modules
+**/.git
+**/coverage
+**/.env
+**/.env.bak
+backoffice/
+hosting/
+*.pdf
+*.md
