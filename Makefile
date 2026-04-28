@@ -1,10 +1,10 @@
 
 all:
-	docker-compose up --build -d
-	docker-compose logs -f
+	docker compose up --build -d
+	docker compose logs -f
 
 clean:
-	docker-compose down
+	docker compose down
 
 fclean:
 	make clean
@@ -18,7 +18,7 @@ re:
 	make all
 
 test:
-	docker-compose exec server npm test
+	docker compose exec server npm test
 
 coverage:
-	docker-compose exec server npm run coverage
+	docker compose exec server npm run coverage
