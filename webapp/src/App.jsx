@@ -16,6 +16,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { Routes, Route } from "react-router-dom";
 
 import Home from "./components/home/Home";
+import History from "./components/history/History";
 import Login from "./components/login/Login";
 import CreateRoom from "./components/multi/play-component/CreateRoom";
 import JoinRoom from "./components/multi/play-component/JoinRoom";
@@ -38,6 +39,14 @@ const App = () => {
                     <Routes>
                         <Route path="/" element={<Home />} />
                         <Route path="/login" element={<Login />} />
+                        <Route
+                            path="/history"
+                            element={
+                                <RequireAuth>
+                                    <History />
+                                </RequireAuth>
+                            }
+                        />
                         <Route
                             path="/solo/:gameId"
                             element={
