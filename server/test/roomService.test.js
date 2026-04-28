@@ -2,6 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 
 import { RoomService } from "../src/services/roomService.js";
+import { parseRoomName } from "../src/utils/roomName.js";
 import { createSpy } from "./testUtils.js";
 
 const createRoom = overrides => ({
@@ -13,6 +14,46 @@ const createRoom = overrides => ({
     leader_id: "leader-1",
     opponent_id: "opponent-1",
     ...overrides,
+});
+
+test("parseRoomName returns an URL-safe room name", () => {
+    assert.equal(parseRoomName("  drôle room !! / test  "), "drole-room-test");
+    assert.equal(parseRoomName("___"), "");
+    assert.equal(parseRoomName("a".repeat(40)), "a".repeat(32));
+});
+
+test("RoomService.isRoomNameValid checks the parsed room name", async () => {
+    const service = new RoomService();
+    const findByName = createSpy(async () => null);
+
+    service.roomDao = {
+        findByName,
+    };
+
+    const result = await service.isRoomNameValid("  weird room!!  ");
+
+    assert.equal(result, true);
+    assert.deepEqual(findByName.calls[0], ["weird-room"]);
+});
+
+test("RoomService.createRoom stores the parsed room name", async () => {
+    const service = new RoomService();
+    const findByName = createSpy(async name => (name === "nice-room" && findByName.calls.length > 1 ? createRoom({ name }) : null));
+    const create = createSpy(async () => undefined);
+    const findById = createSpy(async () => ({ id: "leader-1", name: "alice" }));
+
+    service.roomDao = {
+        findByName,
+        create,
+    };
+    service.userDao = {
+        findById,
+    };
+
+    const result = await service.createRoom("  nice room!!  ", "leader-1");
+
+    assert.equal(result.name, "nice-room");
+    assert.deepEqual(create.calls[0][0].name, "nice-room");
 });
 
 test("RoomService.removePlayer promotes opponent using Prisma column names", async () => {

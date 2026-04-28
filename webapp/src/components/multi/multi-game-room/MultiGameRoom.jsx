@@ -124,7 +124,7 @@ const MultiGameRoom = () => {
                     <div className="gameroom-card">
                         <header className="room-header">
                             <h1 className="room-title">
-                                <span>{roomName}</span>
+                                <span>{roomInfo.name}</span>
                             </h1>
                         </header>
 

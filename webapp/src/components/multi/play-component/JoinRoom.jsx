@@ -17,6 +17,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../../providers/UserProvider";
 import { useRoom } from "../../../composables/useRoom";
+import { parseRoomName, sanitizeRoomNameInput } from "../../../utils/roomName";
 import { toast, ToastContainer } from "react-toastify";
 
 export default function JoinRoom() {
@@ -24,19 +25,19 @@ export default function JoinRoom() {
     const navigate = useNavigate();
     const { user } = useUser();
     const { handleJoinRoom } = useRoom();
+    const parsedRoomName = parseRoomName(roomName);
     if (!user) {
         return null;
     }
 
     const handleSubmit = async event => {
         event.preventDefault();
-        const trimmedRoomName = roomName.trim();
-        if (trimmedRoomName.length < 1) {
+        if (parsedRoomName.length < 1) {
             return;
         }
-        const response = await handleJoinRoom(trimmedRoomName);
+        const response = await handleJoinRoom(parsedRoomName);
         if (response.success && response.data?.success) {
-            navigate(`/${trimmedRoomName}/${response.data.room.leaderUsername}`);
+            navigate(`/${encodeURIComponent(response.data.room.name)}/${encodeURIComponent(response.data.room.leaderUsername)}`);
         } else {
             const errorMessage = response.error || response.data?.failure || "Failed to join room";
             toast.error(errorMessage);
@@ -58,12 +59,12 @@ export default function JoinRoom() {
                     type="text"
                     placeholder="Room name"
                     value={roomName}
-                    onChange={event => setroomName(event.target.value)}
+                    onChange={event => setroomName(sanitizeRoomNameInput(event.target.value))}
                     maxLength={32}
                     minLength={1}
                     className="input-button"
                 />
-                <button className="play-button" type="submit" disabled={roomName.trim().length < 1}>
+                <button className="play-button" type="submit" disabled={parsedRoomName.length < 1}>
                     Join
                     <MoveRight size={16} />
                 </button>

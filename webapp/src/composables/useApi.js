@@ -54,7 +54,7 @@ export const getUser = async () => {
 
 export const getRoomByName = async roomName => {
     try {
-        const response = await api.get(`/room/${roomName}`);
+        const response = await api.get(`/room/${encodeURIComponent(roomName)}`);
         return response.data;
     } catch (error) {
         console.error(`Error getting room:`, error);

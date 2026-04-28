@@ -14,6 +14,7 @@ import socketService from "./socket/socketService.js";
 import multiGameService from "./multiGameService.js";
 import { RoomDao } from "../dao/roomDao.js";
 import { UserDao } from "../dao/userDao.js";
+import { isRoomNameFormatValid, parseRoomName } from "../utils/roomName.js";
 
 export class RoomService {
     constructor() {
@@ -22,10 +23,11 @@ export class RoomService {
     }
 
     async isRoomNameValid(roomName) {
-        if (!roomName || roomName.length < 1) {
+        const parsedRoomName = parseRoomName(roomName);
+        if (!isRoomNameFormatValid(parsedRoomName)) {
             return false;
         }
-        const existingRoom = await this.roomDao.findByName(roomName);
+        const existingRoom = await this.roomDao.findByName(parsedRoomName);
         if (existingRoom) {
             return false;
         }
@@ -33,10 +35,11 @@ export class RoomService {
     }
 
     async createRoom(roomName, leaderId) {
-        if (!roomName || !leaderId) {
+        const parsedRoomName = parseRoomName(roomName);
+        if (!isRoomNameFormatValid(parsedRoomName) || !leaderId) {
             throw new Error("Room name and leader ID are required");
         }
-        const existingRoom = await this.roomDao.findByName(roomName);
+        const existingRoom = await this.roomDao.findByName(parsedRoomName);
         if (existingRoom) {
             throw new Error("Room already exists");
         }
@@ -47,16 +50,17 @@ export class RoomService {
         }
 
         await this.roomDao.create({
-            name: roomName,
+            name: parsedRoomName,
             leaderId: leader.id,
             createdAt: new Date(),
         });
-        const enrichedRoom = await this.getRoomByName(roomName);
+        const enrichedRoom = await this.getRoomByName(parsedRoomName);
         return enrichedRoom;
     }
 
     async joinRoom(roomName, userId) {
-        const room = await this.getRoomByName(roomName);
+        const parsedRoomName = parseRoomName(roomName);
+        const room = await this.getRoomByName(parsedRoomName);
         if (!room) {
             throw new Error("Room not found");
         }
@@ -69,14 +73,15 @@ export class RoomService {
             throw new Error("User not found");
         }
 
-        await this.roomDao.updateByName(roomName, { opponent_id: user.id });
-        const updatedRoom = await this.getRoomByName(roomName);
+        await this.roomDao.updateByName(parsedRoomName, { opponent_id: user.id });
+        const updatedRoom = await this.getRoomByName(parsedRoomName);
         this.notifyPlayersRoomUpdated(updatedRoom);
         return updatedRoom;
     }
 
     async getRoomByName(roomName) {
-        const room = await this.roomDao.findByName(roomName);
+        const parsedRoomName = parseRoomName(roomName);
+        const room = await this.roomDao.findByName(parsedRoomName);
         if (room) {
             return this.enrichRoomData(room);
         }
@@ -120,7 +125,8 @@ export class RoomService {
     }
 
     async addPlayer(roomName, userId) {
-        const room = await this.getRoomByName(roomName);
+        const parsedRoomName = parseRoomName(roomName);
+        const room = await this.getRoomByName(parsedRoomName);
         if (!room) {
             throw new Error("Room not found");
         }
@@ -131,11 +137,12 @@ export class RoomService {
         if (room.leaderId === userId || room.opponentId === userId) {
             throw new Error("User already in room");
         }
-        return this.joinRoom(roomName, userId);
+        return this.joinRoom(parsedRoomName, userId);
     }
 
     async removePlayer(roomName, userId) {
-        const room = await this.getRoomByName(roomName);
+        const parsedRoomName = parseRoomName(roomName);
+        const room = await this.getRoomByName(parsedRoomName);
         if (!room) {
             return null;
         }
@@ -145,19 +152,19 @@ export class RoomService {
 
         if (room.leaderId === userId) {
             if (room.opponentId) {
-                await this.roomDao.updateByName(roomName, { leader_id: room.opponentId, opponent_id: null });
-                const updated = await this.getRoomByName(roomName);
+                await this.roomDao.updateByName(parsedRoomName, { leader_id: room.opponentId, opponent_id: null });
+                const updated = await this.getRoomByName(parsedRoomName);
                 this.notifyPlayersRoomUpdated(updated);
                 return updated;
             } else {
-                await this.roomDao.deleteByName(roomName);
+                await this.roomDao.deleteByName(parsedRoomName);
                 return null;
             }
         }
 
         if (room.opponentId === userId) {
-            await this.roomDao.updateByName(roomName, { opponent_id: null });
-            const updated = await this.getRoomByName(roomName);
+            await this.roomDao.updateByName(parsedRoomName, { opponent_id: null });
+            const updated = await this.getRoomByName(parsedRoomName);
             this.notifyPlayersRoomUpdated(updated);
             return updated;
         }
@@ -167,15 +174,16 @@ export class RoomService {
 
     async startGame(roomName) {
         try {
-            const roomData = await this.getRoomByName(roomName);
+            const parsedRoomName = parseRoomName(roomName);
+            const roomData = await this.getRoomByName(parsedRoomName);
             if (!roomData) {
                 throw new Error("Room not found");
             }
             if (!["PENDING", "COMPLETED"].includes(roomData.status)) {
                 throw new Error("Room is not in a waiting state");
             }
-            await this.roomDao.updateByName(roomName, { status: "PROCESSING" });
-            const updatedRoom = await this.getRoomByName(roomName);
+            await this.roomDao.updateByName(parsedRoomName, { status: "PROCESSING" });
+            const updatedRoom = await this.getRoomByName(parsedRoomName);
             this.notifyPlayersRoomUpdated(updatedRoom);
             multiGameService.createMultiGame(roomData.id, roomData.leaderId, roomData.playerIds);
             this.notifyPlayersRoomUpdated(updatedRoom);
@@ -187,13 +195,14 @@ export class RoomService {
     }
 
     async endGame(roomName) {
-        const room = await this.getRoomByName(roomName);
+        const parsedRoomName = parseRoomName(roomName);
+        const room = await this.getRoomByName(parsedRoomName);
         if (!room) {
             return null;
         }
-        await this.roomDao.updateByName(roomName, { gameOnGoing: false, gameStatus: "WAITING" });
+        await this.roomDao.updateByName(parsedRoomName, { gameOnGoing: false, gameStatus: "WAITING" });
         multiGameService.endMultiGame(room.id);
-        const updatedRoom = await this.getRoomByName(roomName);
+        const updatedRoom = await this.getRoomByName(parsedRoomName);
         this.notifyPlayersRoomUpdated(updatedRoom);
         return updatedRoom;
     }

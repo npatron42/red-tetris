@@ -18,6 +18,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 import { createUser } from "../../composables/useApi.js";
 import { useUser } from "../../providers/UserProvider.jsx";
+import { parseUserName, sanitizeUserNameInput, USER_NAME_MAX_LENGTH } from "../../utils/userName.js";
 
 import { ToastContainer, toast, Bounce } from "react-toastify";
 
@@ -37,12 +38,12 @@ const Login = () => {
 
     const handleSubmit = async event => {
         event.preventDefault();
-        const trimmed = name.trim();
-        if (!trimmed) {
+        const parsedName = parseUserName(name);
+        if (!parsedName) {
             return;
         }
         try {
-            const response = await createUser(trimmed);
+            const response = await createUser(parsedName);
 
             if (response?.token && response?.user) {
                 login(response);
@@ -74,10 +75,10 @@ const Login = () => {
                     type="text"
                     placeholder="Username"
                     value={name}
-                    onChange={event => setUsername(event.target.value)}
-                    maxLength={16}
+                    onChange={event => setUsername(sanitizeUserNameInput(event.target.value))}
+                    maxLength={USER_NAME_MAX_LENGTH}
                 />
-                <button className="login-submit" type="submit" disabled={name.trim().length < 1}>
+                <button className="login-submit" type="submit" disabled={parseUserName(name).length < 1}>
                     Continue
                 </button>
                 <button className="login-helper" type="button" onClick={() => navigate(-1)}>

@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 import roomService from "../services/roomService.js";
+import { parseRoomName } from "../utils/roomName.js";
 import pino from "pino";
 
 const logger = pino({
@@ -21,15 +22,16 @@ export const create = async (req, res) => {
     try {
         const { name } = req.body;
         const leaderId = req.user.id;
-        if (!name) {
+        const parsedName = parseRoomName(name);
+        if (!parsedName) {
             logger.error("Room name is required", { name });
             return res.status(400).json({ success: false, message: "Room name is required" });
         }
-        const isRoomNameValid = await roomService.isRoomNameValid(name);
+        const isRoomNameValid = await roomService.isRoomNameValid(parsedName);
         if (!isRoomNameValid) {
             return res.status(400).json({ success: false, message: "Room name is already taken" });
         }
-        const room = await roomService.createRoom(name, leaderId);
+        const room = await roomService.createRoom(parsedName, leaderId);
         res.json({ success: true, room });
     } catch (error) {
         logger.error("Error creating room", { error });
