@@ -109,6 +109,7 @@ const MultiGameRoom = () => {
 
     const isCurrentUserLeader = roomInfo?.leaderId === user?.user?.id;
     const isCurrentUserInRoom = roomInfo?.players?.some(player => player.id === user?.user?.id);
+    const hasEnoughPlayersToStart = (roomInfo?.players?.length || 0) >= 2;
     const canJoinNextRound = roomInfo && ["PENDING", "WAITING"].includes(roomInfo.status) && !isCurrentUserInRoom && !roomInfo.opponentId;
 
     if (!isUserAuthorized && !canJoinNextRound) {
@@ -177,7 +178,7 @@ const MultiGameRoom = () => {
                             </div>
                         </div>
                         <div className="lobby-actions">
-                            {isCurrentUserLeader && (
+                            {isCurrentUserLeader && hasEnoughPlayersToStart && (
                                 <button className="custom-button-play" onClick={startGame}>
                                     <PlayIcon size={24} color="#039BE5" />
                                     Start Game
