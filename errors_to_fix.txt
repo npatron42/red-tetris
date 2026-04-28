@@ -1,0 +1,7 @@
+1 - Rejoindre la partie via l'URL ->  http://<server_name_or_ip>:<port>/<room>/<player_name>. ACTUELLEMENT -> 401
+2 - Rotation des pieces
+3 - Restart game
+4 - PLayer qui rejoint sa meme game 
+5 - Gestion des rooms a revoir
+6 - Appuyer sur Tetris -> reset component
+7 - Div background sur Join et Create

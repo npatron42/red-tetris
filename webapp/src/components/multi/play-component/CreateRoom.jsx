@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 13:08:55 by npatron           #+#    #+#             */
-/*   Updated: 2026/02/02 16:27:28 by npatron          ###   ########.fr       */
+/*   Updated: 2026/04/28 13:06:50 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ const CreateRoom = () => {
     };
 
     return (
-        <div className="play-component-container">
+        <div className="history-container">
             <div className="play-header-container">
                 <div className="play-header-left">
                     <ArrowLeft size={24} onClick={() => navigate(-1)} />

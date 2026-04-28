@@ -78,14 +78,15 @@ test("Piece moves and rotates through its shapes", () => {
     assert.deepEqual(piece.getCurrentShape(), [
         [0, "T", 0],
         ["T", "T", "T"],
+        [0, 0, 0],
     ]);
 
     piece.rotate();
     assert.equal(piece.rotationIndex, 1);
     assert.deepEqual(piece.getCurrentShape(), [
-        ["T", 0],
-        ["T", "T"],
-        ["T", 0],
+        [0, "T", 0],
+        [0, "T", "T"],
+        [0, "T", 0],
     ]);
 
     piece.moveLeft();
@@ -339,16 +340,17 @@ test("SoloGame rotates with wall kicks and rolls back blocked rotations", () => 
 
     player.currentPiece.setPosition(-1, 0);
     game.movePiece(player.id, "ROTATE", socketService);
-    assert.equal(player.currentPiece.rotationIndex, 0);
+    assert.equal(player.currentPiece.rotationIndex, 2);
     assert.equal(player.currentPiece.getX(), 0);
 
     for (let y = 2; y < 6; y++) {
         player.getGrid().getGrid()[y][0] = "X";
         player.getGrid().getGrid()[y][1] = "X";
+        player.getGrid().getGrid()[y][2] = "X";
     }
     player.currentPiece.setPosition(-1, 2);
     game.movePiece(player.id, "ROTATE", socketService);
-    assert.equal(player.currentPiece.rotationIndex, 0);
+    assert.equal(player.currentPiece.rotationIndex, 2);
 });
 
 test("SoloGame hard drops and scores line clears", () => {
@@ -595,16 +597,17 @@ test("MultiPlayerGame rotates with wall kicks and rolls back blocked rotations",
 
     player.currentPiece.setPosition(-1, 0);
     game.movePiece(player.id, "ROTATE", socketService);
-    assert.equal(player.currentPiece.rotationIndex, 0);
+    assert.equal(player.currentPiece.rotationIndex, 2);
     assert.equal(player.currentPiece.getX(), 0);
 
     for (let y = 2; y < 6; y++) {
         player.getGrid().getGrid()[y][0] = "X";
         player.getGrid().getGrid()[y][1] = "X";
+        player.getGrid().getGrid()[y][2] = "X";
     }
     player.currentPiece.setPosition(-1, 2);
     game.movePiece(player.id, "ROTATE", socketService);
-    assert.equal(player.currentPiece.rotationIndex, 0);
+    assert.equal(player.currentPiece.rotationIndex, 2);
 });
 
 test("MultiPlayerGame hard drops pieces", () => {

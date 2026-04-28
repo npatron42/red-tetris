@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/07 16:54:59 by npatron           #+#    #+#             */
-/*   Updated: 2026/01/31 10:39:53 by npatron          ###   ########.fr       */
+/*   Updated: 2026/04/28 13:06:54 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ export default function JoinRoom() {
     };
 
     return (
-        <div className="play-component-container">
+        <div className="history-container">
             <div className="play-header-container">
                 <div className="play-header-left">
                     <ArrowLeft size={24} onClick={() => navigate(-1)} />

@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 14:20:43 by npatron           #+#    #+#             */
-/*   Updated: 2026/02/09 09:55:37 by npatron          ###   ########.fr       */
+/*   Updated: 2026/04/28 13:11:24 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ export const useHistory = () => {
         setError(null);
         try {
             const response = await getUser();
-            console.log(response);
             if (response.success && response.user) {
                 setMatchHistory(response.user.matchHistory || []);
                 setSoloGameHistory(response.user.soloGameHistory || []);

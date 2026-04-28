@@ -6,7 +6,7 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 02:56:25 by npatron           #+#    #+#             */
-/*   Updated: 2026/01/12 15:25:48 by npatron          ###   ########.fr       */
+/*   Updated: 2026/04/28 12:49:47 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,11 +34,13 @@ test("GameDao.findAll returns all games", async () => {
 
 test("GameDao.findAll throws on database errors", async () => {
     const findMany = createSpy(async () => {
-        throw new Error("boom");
+        const err = new Error("error");
+        err.name = "FindManyError";
+        throw err;
     });
     const dao = new GameDao({ soloGame: { findMany } });
 
-    await assert.rejects(() => dao.findAll(), /Failed to fetch all games: boom/);
+    await assert.rejects(() => dao.findAll(), /Failed to fetch all games: error/);
 });
 
 test("GameDao.findById returns null when missing id", async () => {
@@ -64,11 +66,13 @@ test("GameDao.findById fetches by id", async () => {
 
 test("GameDao.findById throws on database errors", async () => {
     const findUnique = createSpy(async () => {
-        throw new Error("boom");
+        const err = new Error("error");
+        err.name = "FindUniqueError";
+        throw err;
     });
     const dao = new GameDao({ soloGame: { findUnique } });
 
-    await assert.rejects(() => dao.findById("game-1"), /Failed to find game by id 'game-1': boom/);
+    await assert.rejects(() => dao.findById("game-1"), /Failed to find game by id 'game-1': error/);
 });
 
 test("GameDao.create prefers gameId when present", async () => {
@@ -101,11 +105,13 @@ test("GameDao.create requires an id", async () => {
 
 test("GameDao.create throws on database errors", async () => {
     const create = createSpy(async () => {
-        throw new Error("boom");
+        const err = new Error("error");
+        err.name = "CreateError";
+        throw err;
     });
     const dao = new GameDao({ soloGame: { create } });
 
-    await assert.rejects(() => dao.create({ id: "game-1" }), /Failed to create game 'game-1': boom/);
+    await assert.rejects(() => dao.create({ id: "game-1" }), /Failed to create game 'game-1': error/);
 });
 
 test("GameDao.update returns updated game", async () => {
@@ -130,7 +136,9 @@ test("GameDao.update returns null when missing id", async () => {
 
 test("GameDao.update returns null on errors", async () => {
     const update = createSpy(async () => {
-        throw new Error("boom");
+        const err = new Error("error");
+        err.name = "UpdateError";
+        throw err;
     });
     const dao = new GameDao({ soloGame: { update } });
 
@@ -161,7 +169,9 @@ test("GameDao.delete returns true on success", async () => {
 
 test("GameDao.delete returns false on errors", async () => {
     const del = createSpy(async () => {
-        throw new Error("boom");
+        const err = new Error("error");
+        err.name = "DeleteError";
+        throw err;
     });
     const dao = new GameDao({ soloGame: { delete: del } });
 
@@ -193,11 +203,13 @@ test("GameDao.findByUserId fetches games for a player", async () => {
 
 test("GameDao.findByUserId throws on database errors", async () => {
     const findMany = createSpy(async () => {
-        throw new Error("boom");
+        const err = new Error("error");
+        err.name = "FindManyUserError";
+        throw err;
     });
     const dao = new GameDao({ soloGame: { findMany } });
 
-    await assert.rejects(() => dao.findByUserId("user-1"), /Failed to find games by user id 'user-1': boom/);
+    await assert.rejects(() => dao.findByUserId("user-1"), /Failed to find games by user id 'user-1': error/);
 });
 
 test("UserDao.findByName returns null when missing name", async () => {
@@ -223,11 +235,13 @@ test("UserDao.findAll returns users", async () => {
 
 test("UserDao.findAll throws on database errors", async () => {
     const findMany = createSpy(async () => {
-        throw new Error("boom");
+        const err = new Error("error");
+        err.name = "FindAllUsersError";
+        throw err;
     });
     const dao = new UserDao({ user: { findMany } });
 
-    await assert.rejects(() => dao.findAll(), /Failed to fetch all users: boom/);
+    await assert.rejects(() => dao.findAll(), /Failed to fetch all users: error/);
 });
 
 test("UserDao.findByName fetches by name", async () => {
@@ -243,11 +257,13 @@ test("UserDao.findByName fetches by name", async () => {
 
 test("UserDao.findByName throws on database errors", async () => {
     const findFirst = createSpy(async () => {
-        throw new Error("boom");
+        const err = new Error("error");
+        err.name = "FindByNameError";
+        throw err;
     });
     const dao = new UserDao({ user: { findFirst } });
 
-    await assert.rejects(() => dao.findByName("alice"), /Failed to find user by name 'alice': boom/);
+    await assert.rejects(() => dao.findByName("alice"), /Failed to find user by name 'alice': error/);
 });
 
 test("UserDao.findByname delegates to findByName", async () => {
@@ -293,11 +309,13 @@ test("UserDao.findById fetches by id", async () => {
 
 test("UserDao.findById throws on database errors", async () => {
     const findUnique = createSpy(async () => {
-        throw new Error("boom");
+        const err = new Error("error");
+        err.name = "FindByIdError";
+        throw err;
     });
     const dao = new UserDao({ user: { findUnique } });
 
-    await assert.rejects(() => dao.findById("user-1"), /Failed to find user by id 'user-1': boom/);
+    await assert.rejects(() => dao.findById("user-1"), /Failed to find user by id 'user-1': error/);
 });
 
 test("UserDao.create requires a name", async () => {
@@ -332,11 +350,13 @@ test("UserDao.create generates an id when missing", async () => {
 
 test("UserDao.create throws on database errors", async () => {
     const create = createSpy(async () => {
-        throw new Error("boom");
+        const err = new Error("error");
+        err.name = "UserCreateError";
+        throw err;
     });
     const dao = new UserDao({ user: { create } });
 
-    await assert.rejects(() => dao.create({ id: "user-1", name: "alice" }), /Failed to create user 'alice': boom/);
+    await assert.rejects(() => dao.create({ id: "user-1", name: "alice" }), /Failed to create user 'alice': error/);
 });
 
 test("UserDao.updateById returns null when missing id", async () => {
@@ -361,11 +381,13 @@ test("UserDao.updateById updates by id", async () => {
 
 test("UserDao.updateById throws on database errors", async () => {
     const update = createSpy(async () => {
-        throw new Error("boom");
+        const err = new Error("error");
+        err.name = "UpdateByIdError";
+        throw err;
     });
     const dao = new UserDao({ user: { update } });
 
-    await assert.rejects(() => dao.updateById("user-1", { score: 10 }), /Failed to update user 'user-1': boom/);
+    await assert.rejects(() => dao.updateById("user-1", { score: 10 }), /Failed to update user 'user-1': error/);
 });
 
 test("UserDao.updateByName returns null when user missing", async () => {
@@ -392,7 +414,9 @@ test("UserDao.updateByName updates when user exists", async () => {
 
 test("UserDao.updateByName wraps lookup errors", async () => {
     const findFirst = createSpy(async () => {
-        throw new Error("boom");
+        const err = new Error("error");
+        err.name = "UpdateByNameLookupError";
+        throw err;
     });
     const dao = new UserDao({ user: { findFirst } });
 
@@ -431,7 +455,9 @@ test("UserDao.delete returns true on success", async () => {
 
 test("UserDao.delete returns false on errors", async () => {
     const del = createSpy(async () => {
-        throw new Error("boom");
+        const err = new Error("error");
+        err.name = "UserDeleteError";
+        throw err;
     });
     const dao = new UserDao({ user: { delete: del } });
 
@@ -464,7 +490,9 @@ test("UserDao.deleteByName deletes when user exists", async () => {
 
 test("UserDao.deleteByName returns false when lookup fails", async () => {
     const findFirst = createSpy(async () => {
-        throw new Error("boom");
+        const err = new Error("error");
+        err.name = "DeleteByNameLookupError";
+        throw err;
     });
     const dao = new UserDao({ user: { findFirst } });
 
@@ -613,7 +641,9 @@ test("RoomDao.delete returns true on success", async () => {
 
 test("RoomDao.delete returns false on errors", async () => {
     const del = createSpy(async () => {
-        throw new Error("boom");
+        const err = new Error("error");
+        err.name = "RoomDeleteError";
+        throw err;
     });
     const dao = new RoomDao({ room: { delete: del } });
 
@@ -846,7 +876,9 @@ test("MatchDao.delete returns true on success", async () => {
 
 test("MatchDao.delete returns false on errors", async () => {
     const del = createSpy(async () => {
-        throw new Error("boom");
+        const err = new Error("error");
+        err.name = "MatchDeleteError";
+        throw err;
     });
     const dao = new MatchDao({ match: { delete: del } });
 
