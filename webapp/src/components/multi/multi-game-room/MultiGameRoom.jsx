@@ -54,6 +54,7 @@ const MultiGameRoom = () => {
     const startGame = async () => {
         const result = await handleStartGame(roomName);
         if (result.success) {
+            setFinalPlayers(null);
             setRoomInfo(result.data.room);
         }
     };
@@ -69,8 +70,8 @@ const MultiGameRoom = () => {
         }
     };
 
-    const handleGameEnd = players => {
-        setFinalPlayers(players);
+    const handleGameEnd = (players, winnerId, loserId) => {
+        setFinalPlayers({ players, winnerId, loserId });
     };
 
     useEffect(() => {
@@ -95,15 +96,27 @@ const MultiGameRoom = () => {
     const renderContent = () => {
         const status = roomInfo.status;
 
+        if (finalPlayers) {
+            return (
+                <GameResults
+                    roomInfo={{
+                        ...roomInfo,
+                        players: finalPlayers.players,
+                        winnerId: finalPlayers.winnerId,
+                        loserId: finalPlayers.loserId,
+                    }}
+                    onRestart={startGame}
+                    onLeave={leaveRoom}
+                />
+            );
+        }
+
         switch (status) {
             case "PROCESSING":
                 return <TetrisGameMultiplayer roomInfo={roomInfo} currentUser={user} onGameEnd={handleGameEnd} />;
 
             case "COMPLETED":
-                const roomInfoWithScores = finalPlayers 
-                    ? { ...roomInfo, players: finalPlayers }
-                    : roomInfo;
-                return <GameResults roomInfo={roomInfoWithScores} onRestart={startGame} onLeave={leaveRoom} />;
+                return <GameResults roomInfo={roomInfo} onRestart={startGame} onLeave={leaveRoom} />;
 
             case "PENDING":
             case "WAITING":

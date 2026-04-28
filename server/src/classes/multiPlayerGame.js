@@ -12,6 +12,7 @@
 
 import { TetrominosBag } from "./tetrominosBag.js";
 import { ScoringSystem } from "./scoringSystem.js";
+import { Piece } from "./piece.js";
 
 export const Status = {
     PENDING: "PENDING",
@@ -24,6 +25,7 @@ export class MultiPlayerGame {
         this.room = room;
 
         this.tetrominosBag = new TetrominosBag();
+        this.pieceSequence = []; // Stores sequence of piece types
         this.scoringSystem = new ScoringSystem();
         this.isStarted = false;
         this.interval = null;
@@ -32,6 +34,11 @@ export class MultiPlayerGame {
 
         this.status = Status.PENDING;
         this.level = 1;
+        this.winnerId = null;
+        this.loserId = null;
+        this.rngSeed = null;
+        this.onGameCompleted = null;
+        this.completionNotified = false;
     }
 
     startGame() {
@@ -41,13 +48,47 @@ export class MultiPlayerGame {
         this.status = Status.IN_PROGRESS;
         this.level = 1;
         this.gameStartTime = Date.now();
+        this.winnerId = null;
+        this.loserId = null;
+        this.rngSeed = this.gameStartTime;
+        this.completionNotified = false;
+        this.pieceSequence = []; // Reset sequence cleanly
 
         const players = this.room.getPlayers();
         players.forEach(player => {
             player.resetGameData();
             player.incrementNumberOfGamesPlayed();
-            player.currentPiece = this.tetrominosBag.getNextPiece();
+            player.pieceIndex = 0; // Initialize player sequence index
+            this._assignNextPieceToPlayer(player);
         });
+    }
+
+    _assignNextPieceToPlayer(player) {
+        if (player.pieceIndex === undefined) {
+             player.pieceIndex = 0;
+        }
+        while (this.pieceSequence.length <= player.pieceIndex) {
+            const newPiece = this.tetrominosBag.getNextPiece();
+            this.pieceSequence.push(newPiece.type);
+        }
+        const type = this.pieceSequence[player.pieceIndex];
+        player.pieceIndex++;
+        player.currentPiece = new Piece(type);
+    }
+
+    _getPreviewPiecesForPlayer(player, count = 3) {
+        if (player.pieceIndex === undefined) {
+            player.pieceIndex = 0;
+        }
+        const nextPieces = [];
+        while (this.pieceSequence.length < player.pieceIndex + count) {
+            const newPiece = this.tetrominosBag.getNextPiece();
+            this.pieceSequence.push(newPiece.type);
+        }
+        for (let i = 0; i < count; i++) {
+            nextPieces.push(this.pieceSequence[player.pieceIndex + i]);
+        }
+        return nextPieces;
     }
 
     startGameLoop(socketService) {
@@ -75,11 +116,13 @@ export class MultiPlayerGame {
         this.stopLevelTimer();
     }
 
-    endGame() {
+    endGame(result = {}) {
         this.stopGameLoop();
         this.stopLevelTimer();
         this.isStarted = false;
         this.status = Status.COMPLETED;
+        this.winnerId = result.winnerId || this.winnerId;
+        this.loserId = result.loserId || this.loserId;
     }
 
     getPlayersCount() {
@@ -97,7 +140,7 @@ export class MultiPlayerGame {
         if (linesCleared > 0) {
             player.currentScore = this.scoringSystem.calculateScore(player.currentScore, this.level, linesCleared);
         }
-        player.currentPiece = this.tetrominosBag.getNextPiece();
+        this._assignNextPieceToPlayer(player);
         return linesCleared;
     }
 
@@ -118,6 +161,38 @@ export class MultiPlayerGame {
         });
     }
 
+    findLostPlayer() {
+        return this.room.getPlayers().find(player => player.getGrid().gameIsLost()) || null;
+    }
+
+    completeGameForLoser(loser) {
+        const players = this.room.getPlayers();
+        const winner = players.find(player => player.id !== loser.id) || null;
+
+        loser.hasLost();
+        if (winner) {
+            winner.incrementNumberOfWins();
+        }
+
+        const result = {
+            completed: true,
+            winnerId: winner?.id || null,
+            loserId: loser.id,
+        };
+
+        this.endGame(result);
+        this.notifyGameCompleted(result);
+        return result;
+    }
+
+    notifyGameCompleted(result) {
+        if (this.completionNotified || !this.onGameCompleted) {
+            return;
+        }
+        this.completionNotified = true;
+        this.onGameCompleted(result);
+    }
+
     movePiece(userId, direction, socketService) {
         if (!this.isStarted) {
             return null;
@@ -130,10 +205,11 @@ export class MultiPlayerGame {
 
         const piece = player.currentPiece;
         const grid = player.getGrid();
-        if (grid.gameIsLost()) {
-            this.endGame();
+        const alreadyLostPlayer = this.findLostPlayer();
+        if (alreadyLostPlayer) {
+            const result = this.completeGameForLoser(alreadyLostPlayer);
             this.sendUpdatedGridToPlayers(socketService);
-            return;
+            return result;
         }
 
         const oldX = piece.getX();
@@ -186,7 +262,15 @@ export class MultiPlayerGame {
             this.applyPenaltyLinesToOpponents(player, linesCleared);
         }
 
+        const lostPlayer = this.findLostPlayer();
+        if (lostPlayer) {
+            const result = this.completeGameForLoser(lostPlayer);
+            this.sendUpdatedGridToPlayers(socketService);
+            return result;
+        }
+
         this.sendUpdatedGridToPlayers(socketService);
+        return null;
     }
 
     sendUpdatedGridToPlayers(socketService) {
@@ -199,13 +283,19 @@ export class MultiPlayerGame {
                 score: player.currentScore,
                 level: this.level,
                 status: this.getStatus(),
-                nextPieces: this.tetrominosBag.peekNextPieces(3),
+                isWinner: this.winnerId === player.id,
+                isLoser: this.loserId === player.id,
+                nextPieces: this._getPreviewPiecesForPlayer(player, 3),
             }));
 
             const playerIds = players.map(player => player.id).filter(Boolean);
+            const roomId = this.room.id || this.room.getRoomName?.();
 
             socketService.emitToUsers(playerIds, "multiGridUpdate", {
-                roomId: this.room.id,
+                roomId,
+                winnerId: this.winnerId,
+                loserId: this.loserId,
+                rngSeed: this.rngSeed,
                 gameState,
             });
         } catch (error) {

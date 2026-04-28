@@ -14,11 +14,11 @@ import matchHistoryService from "../services/matchHistoryService.js";
 
 export const createHistoryMatch = async (req, res) => {
     try {
-        const { playerIds, winnerId } = req.body;
-        if (!playerIds || !winnerId) {
-            return res.status(400).json({ success: false, message: "Player IDs and winner ID are required" });
+        const { playerIds, winnerId, rngSeed } = req.body;
+        if (!playerIds || !winnerId || rngSeed === undefined || rngSeed === null) {
+            return res.status(400).json({ success: false, message: "Player IDs, winner ID and RNG seed are required" });
         }
-        const match = await matchHistoryService.createMatchHistory(playerIds, winnerId);
+        const match = await matchHistoryService.createMatchHistory(playerIds, winnerId, rngSeed);
         res.json({ success: true, message: "Match history created", match });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message || "Error creating history match" });

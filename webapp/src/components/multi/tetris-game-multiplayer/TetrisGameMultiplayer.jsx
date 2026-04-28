@@ -64,29 +64,34 @@ export const TetrisGameMultiplayer = ({ roomInfo, onGameEnd }) => {
 
     useEffect(() => {
         const handleMultiGridUpdate = async data => {
-            console.log("data", data);
             setPlayersState(data.gameState);
 
             if (data.gameState && data.gameState.length > 0) {
                 const status = data.gameState[0].status;
                 if (status === "COMPLETED" && !gameEnded) {
                     setGameEnded(true);
-                    const sortedPlayers = [...data.gameState].sort((a, b) => b.score - a.score);
-                    const winnerId = sortedPlayers[0].id;
+                    const winnerId = data.winnerId || data.gameState.find(player => player.isWinner)?.id;
+                    const loserId = data.loserId || data.gameState.find(player => player.isLoser)?.id;
+                    const rngSeed = data.rngSeed;
                     const playerIds = data.gameState.map(p => p.id);
+                    const playersWithResults = data.gameState.map(player => ({
+                        id: player.id,
+                        name: player.name,
+                        currentScore: player.score,
+                        isWinner: player.id === winnerId,
+                        isLoser: player.id === loserId,
+                    }));
 
                     try {
-                        await createHistoryMatch(playerIds, winnerId);
-                        if (onGameEnd) {
-                            const playersWithScores = data.gameState.map(p => ({
-                                id: p.id,
-                                name: p.name,
-                                currentScore: p.score,
-                            }));
-                            onGameEnd(playersWithScores);
+                        if (winnerId && user?.user?.id === roomInfo.leaderId) {
+                            await createHistoryMatch(playerIds, winnerId, rngSeed);
                         }
                     } catch (error) {
                         console.error("Error creating match history:", error);
+                    }
+
+                    if (onGameEnd) {
+                        onGameEnd(playersWithResults, winnerId, loserId);
                     }
                 }
             }
@@ -96,11 +101,11 @@ export const TetrisGameMultiplayer = ({ roomInfo, onGameEnd }) => {
         return () => {
             socketService.off("multiGridUpdate", handleMultiGridUpdate);
         };
-    }, [roomInfo.name, gameEnded, onGameEnd]);
+    }, [roomInfo.leaderId, roomInfo.name, gameEnded, onGameEnd, user]);
 
     useEffect(() => {
         const handleKeyDown = event => {
-            if (!socket || !user) return;
+            if (!socket || !user || gameEnded) return;
 
             if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", " "].includes(event.key)) {
                 event.preventDefault();
@@ -128,7 +133,6 @@ export const TetrisGameMultiplayer = ({ roomInfo, onGameEnd }) => {
             }
 
             if (direction) {
-                console.log("roomInfo", roomInfo);
                 socketService.sendMoveMultiplayer({
                     roomId: roomInfo.id,
                     direction,
@@ -141,7 +145,7 @@ export const TetrisGameMultiplayer = ({ roomInfo, onGameEnd }) => {
         return () => {
             window.removeEventListener("keydown", handleKeyDown);
         };
-    }, [socket, user, roomInfo.name]);
+    }, [socket, user, roomInfo.id, roomInfo.name, gameEnded]);
 
     const renderGrid = grid => {
         return grid.flatMap((row, rowIndex) =>
@@ -184,8 +188,19 @@ export const TetrisGameMultiplayer = ({ roomInfo, onGameEnd }) => {
         );
     };
 
+    const playerCount = Math.max(1, playersState.length);
+    const cols = playerCount <= 1 ? 1 : playerCount <= 4 ? 2 : Math.ceil(Math.sqrt(playerCount));
+    const rows = Math.ceil(playerCount / cols);
+
     return (
-        <div className="multiplayer-game-container">
+        <div 
+            className="multiplayer-game-container"
+            style={{
+                "--cols": cols,
+                "--rows": rows,
+                "--player-count": playerCount,
+            }}
+        >
             <div className="players-boards">
                 {playersState.length > 0 ? (
                     playersState.map(playerState => (

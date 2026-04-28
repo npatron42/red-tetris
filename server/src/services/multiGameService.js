@@ -18,11 +18,9 @@ export class MultiGameService {
     setupSocketHandler() {
         try {
             socketService.setMultiMoveHandler((roomId, userId, direction) => {
-                try {
-                    this.handleMovePiece(roomId, userId, direction);
-                } catch (error) {
+                this.handleMovePiece(roomId, userId, direction).catch(error => {
                     logger.error(`Error in move handler: ${error.message}`);
-                }
+                });
             });
 
             socketService.addDisconnectHandler(async userId => {
@@ -103,6 +101,11 @@ export class MultiGameService {
             this.activeGames.set(roomId, roomInstance);
 
             const game = roomInstance.getGame();
+            game.onGameCompleted = result => {
+                this.finalizeCompletedGame(roomId, roomInstance, result).catch(error => {
+                    logger.error(`Error finalizing completed game: ${error.message}`);
+                });
+            };
             game.startGame();
             game.startGameLoop(socketService);
 
@@ -193,7 +196,67 @@ export class MultiGameService {
         }
     }
 
-    handleMovePiece(roomId, userId, direction) {
+    buildRoomPayload(room) {
+        if (!room) {
+            return null;
+        }
+
+        const players = [];
+        const playerIds = [];
+        const playerNames = [];
+
+        if (room.leader) {
+            players.push({ id: room.leader.id, name: room.leader.name });
+            playerIds.push(room.leader.id);
+            playerNames.push(room.leader.name);
+        }
+        if (room.opponent) {
+            players.push({ id: room.opponent.id, name: room.opponent.name });
+            playerIds.push(room.opponent.id);
+            playerNames.push(room.opponent.name);
+        }
+
+        return {
+            ...room,
+            leaderId: room.leader_id,
+            opponentId: room.opponent_id,
+            leaderUsername: room.leader?.name || null,
+            opponentUsername: room.opponent?.name || null,
+            players,
+            playerIds,
+            playerNames,
+        };
+    }
+
+    async finalizeCompletedGame(roomId, roomInstance, result) {
+        const players = roomInstance.getPlayers();
+        const playerIds = players.map(player => player.id).filter(Boolean);
+
+        this.activeGames.delete(roomId);
+        await this.roomDao.updateById(roomId, { status: "COMPLETED" });
+
+        const updatedRoom = await this.roomDao.findById(roomId);
+        const roomPayload = this.buildRoomPayload(updatedRoom) || {
+            id: roomId,
+            status: "COMPLETED",
+            players: players.map(player => ({
+                id: player.id,
+                name: player.getUsername(),
+            })),
+            playerIds,
+            playerNames: players.map(player => player.getUsername()),
+        };
+
+        socketService.emitToUsers(playerIds, "roomUpdated", {
+            ...roomPayload,
+            winnerId: result.winnerId,
+            loserId: result.loserId,
+        });
+
+        logger.info(`Multi game completed in room ${roomId}, winner: ${result.winnerId}`);
+    }
+
+    async handleMovePiece(roomId, userId, direction) {
         try {
             const roomInstance = this.getActiveGame(roomId);
 
@@ -203,7 +266,11 @@ export class MultiGameService {
             }
 
             const game = roomInstance.getGame();
-            game.movePiece(userId, direction, socketService);
+            const result = game.movePiece(userId, direction, socketService);
+
+            if (result?.completed && !game.completionNotified) {
+                await this.finalizeCompletedGame(roomId, roomInstance, result);
+            }
         } catch (error) {
             logger.error(`Error in handleMovePiece: ${error.message}`);
         }

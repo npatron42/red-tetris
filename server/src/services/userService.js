@@ -95,11 +95,14 @@ export class UserService {
         if (!user) {
             throw new Error("User not found");
         }
+        if (match.rngSeed === undefined || match.rngSeed === null) {
+            throw new Error("rngSeed is required");
+        }
         return this.matchDao.create({
             player1Id: user.id,
             player2Id: user.id,
             winnerId: match.winnerId || null,
-            rngSeed: match.rngSeed ?? Date.now(),
+            rngSeed: match.rngSeed,
             status: match.status,
         });
     }

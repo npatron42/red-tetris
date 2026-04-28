@@ -104,9 +104,9 @@ export const leaveRoom = async roomName => {
     }
 };
 
-export const createHistoryMatch = async (playerIds, winnerId) => {
+export const createHistoryMatch = async (playerIds, winnerId, rngSeed) => {
     try {
-        const response = await api.post("/match-history/create", { playerIds, winnerId });
+        const response = await api.post("/match-history/create", { playerIds, winnerId, rngSeed });
         return response.data;
     } catch (error) {
         console.error(`Error creating history match:`, error);

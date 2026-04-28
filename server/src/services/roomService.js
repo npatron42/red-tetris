@@ -145,7 +145,7 @@ export class RoomService {
 
         if (room.leaderId === userId) {
             if (room.opponentId) {
-                await this.roomDao.updateByName(roomName, { leaderId: room.opponentId, opponentId: null });
+                await this.roomDao.updateByName(roomName, { leader_id: room.opponentId, opponent_id: null });
                 const updated = await this.getRoomByName(roomName);
                 this.notifyPlayersRoomUpdated(updated);
                 return updated;
@@ -156,7 +156,7 @@ export class RoomService {
         }
 
         if (room.opponentId === userId) {
-            await this.roomDao.updateByName(roomName, { opponentId: null });
+            await this.roomDao.updateByName(roomName, { opponent_id: null });
             const updated = await this.getRoomByName(roomName);
             this.notifyPlayersRoomUpdated(updated);
             return updated;
@@ -171,13 +171,12 @@ export class RoomService {
             if (!roomData) {
                 throw new Error("Room not found");
             }
-            if (roomData.status !== "PENDING") {
+            if (!["PENDING", "COMPLETED"].includes(roomData.status)) {
                 throw new Error("Room is not in a waiting state");
             }
             await this.roomDao.updateByName(roomName, { status: "PROCESSING" });
             const updatedRoom = await this.getRoomByName(roomName);
             this.notifyPlayersRoomUpdated(updatedRoom);
-            console.log("roomName. leaderId, player Ids", roomName, roomData.leaderId, roomData.playerIds);
             multiGameService.createMultiGame(roomData.id, roomData.leaderId, roomData.playerIds);
             this.notifyPlayersRoomUpdated(updatedRoom);
             return roomData;

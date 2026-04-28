@@ -15,8 +15,8 @@ import { Trophy, Award } from "lucide-react";
 
 export const GameResults = ({ roomInfo, onRestart, onLeave }) => {
     const players = roomInfo.players || [];
-    const sortedPlayers = [...players].sort((a, b) => (b.currentScore || 0) - (a.currentScore || 0));
-    const winner = sortedPlayers[0];
+    const winner = players.find(player => player.id === roomInfo.winnerId || player.isWinner) || players[0];
+    const sortedPlayers = winner ? [winner, ...players.filter(player => player.id !== winner.id)] : players;
 
     return (
         <div className="game-results-container">
@@ -34,10 +34,13 @@ export const GameResults = ({ roomInfo, onRestart, onLeave }) => {
 
                 <div className="players-scores">
                     {sortedPlayers.map((player, index) => (
-                        <div key={player.id || index} className={`player-score-item ${index === 0 ? "winner-item" : ""}`}>
+                        <div
+                            key={player.id || index}
+                            className={`player-score-item ${player.id === winner?.id ? "winner-item" : ""}`}
+                        >
                             <span className="player-rank">#{index + 1}</span>
                             <span className="player-name-result">{player.name}</span>
-                            <span className="player-final-score">{(player.currentScore || 0).toLocaleString()}</span>
+                            <span className="player-final-score">{player.id === winner?.id ? "Victory" : "Defeat"}</span>
                         </div>
                     ))}
                 </div>

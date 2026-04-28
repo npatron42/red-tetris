@@ -570,6 +570,28 @@ test("RoomDao.updateByName updates when room exists", async () => {
     assert.equal(result.data.name, "Room Two");
 });
 
+test("RoomDao.updateById returns null when room missing", async () => {
+    const findUnique = createSpy(async () => null);
+    const update = createSpy(async args => args);
+    const dao = new RoomDao({ room: { findUnique, update } });
+
+    const result = await dao.updateById("missing", { status: "COMPLETED" });
+
+    assert.equal(result, null);
+    assert.equal(update.calls.length, 0);
+});
+
+test("RoomDao.updateById updates when room exists", async () => {
+    const findUnique = createSpy(async () => ({ id: "room-1" }));
+    const update = createSpy(async args => args);
+    const dao = new RoomDao({ room: { findUnique, update } });
+
+    const result = await dao.updateById("room-1", { status: "COMPLETED" });
+
+    assert.equal(result.where.id, "room-1");
+    assert.equal(result.data.status, "COMPLETED");
+});
+
 test("RoomDao.delete returns false when missing id", async () => {
     const del = createSpy(async () => undefined);
     const dao = new RoomDao({ room: { delete: del } });
