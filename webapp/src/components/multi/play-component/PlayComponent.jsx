@@ -6,13 +6,13 @@
 /*   By: npatron <npatron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 17:01:45 by npatron           #+#    #+#             */
-/*   Updated: 2026/04/28 13:12:18 by npatron          ###   ########.fr       */
+/*   Updated: 2026/04/28 14:29:50 by npatron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import "./PlayComponent.css";
 
-import { Joystick, Swords } from "lucide-react";
+import { BarChart3, Joystick, Swords } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../../providers/UserProvider";
 
@@ -24,18 +24,25 @@ export const PlayComponent = () => {
         <div className="play-container">
             <div className="play-header-container">
                 <div className="play-header-center">
-                    <Joystick size={24} color="#FFC4D9" />
                     <span>PLAY</span>
-                    <Joystick size={24} color="#FFC4D9" />
                 </div>
                 {user && (
-                    <button
-                        className="history-icon-btn"
-                        onClick={() => navigate("/history")}
-                        aria-label="View match history"
-                    >
-                        <Swords size={24} color="#FFC4D9" />
-                    </button>
+                    <div className="play-header-actions">
+                        <button
+                            className="header-icon-btn"
+                            onClick={() => navigate("/history")}
+                            aria-label="View match history"
+                        >
+                            <Swords size={24} color="#FFC4D9" />
+                        </button>
+                        <button
+                            className="header-icon-btn"
+                            onClick={() => navigate("/statistics")}
+                            aria-label="View statistics"
+                        >
+                            <BarChart3 size={24} color="#FFC4D9" />
+                        </button>
+                    </div>
                 )}
             </div>
             {user ? (

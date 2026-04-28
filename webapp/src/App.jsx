@@ -17,6 +17,7 @@ import { Routes, Route } from "react-router-dom";
 
 import Home from "./components/home/Home";
 import History from "./components/history/History";
+import Statistics from "./components/statistics/Statistics";
 import Login from "./components/login/Login";
 import CreateRoom from "./components/multi/play-component/CreateRoom";
 import JoinRoom from "./components/multi/play-component/JoinRoom";
@@ -44,6 +45,14 @@ const App = () => {
                             element={
                                 <RequireAuth>
                                     <History />
+                                </RequireAuth>
+                            }
+                        />
+                        <Route
+                            path="/statistics"
+                            element={
+                                <RequireAuth>
+                                    <Statistics />
                                 </RequireAuth>
                             }
                         />
