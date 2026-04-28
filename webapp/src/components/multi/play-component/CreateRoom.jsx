@@ -16,6 +16,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../../providers/UserProvider";
 import { useRoom } from "../../../composables/useRoom";
+import { parseRoomName, sanitizeRoomNameInput } from "../../../utils/roomName";
 
 import { BadgePlus, ArrowLeft } from "lucide-react";
 import { ToastContainer, toast, Bounce } from "react-toastify";
@@ -25,6 +26,7 @@ const CreateRoom = () => {
     const navigate = useNavigate();
     const { user } = useUser();
     const { handleCreateRoom, isLoading } = useRoom();
+    const parsedRoomName = parseRoomName(roomName);
 
     if (!user) {
         return null;
@@ -32,14 +34,13 @@ const CreateRoom = () => {
 
     const handleRoomCreation = async event => {
         event.preventDefault();
-        const parsedRoomName = roomName.trim();
         if (parsedRoomName.length < 1) {
             return;
         }
         const result = await handleCreateRoom(parsedRoomName);
         if (result.success) {
             if (result.data.room.id) {
-                navigate(`/${parsedRoomName}/${user.user.name}`);
+                navigate(`/${encodeURIComponent(result.data.room.name)}/${encodeURIComponent(user.user.name)}`);
             } else {
                 toast.error(result.error, {
                     position: "top-right",
@@ -52,7 +53,7 @@ const CreateRoom = () => {
                 });
             }
         } else {
-            toast.error("Room name already taken", {
+            toast.error(result.error || "Room name already taken", {
                 position: "top-right",
                 autoClose: 5000,
                 hideProgressBar: false,
@@ -79,12 +80,12 @@ const CreateRoom = () => {
                     type="text"
                     placeholder="Room name"
                     value={roomName}
-                    onChange={event => setRoomName(event.target.value)}
+                    onChange={event => setRoomName(sanitizeRoomNameInput(event.target.value))}
                     maxLength={32}
                     minLength={1}
                     className="input-button"
                 />
-                <button className="play-button" type="submit" disabled={roomName.trim().length < 1 || isLoading}>
+                <button className="play-button" type="submit" disabled={parsedRoomName.length < 1 || isLoading}>
                     {isLoading ? "Creating..." : "Create"}
                     <BadgePlus size={16} />
                 </button>

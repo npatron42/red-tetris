@@ -13,7 +13,7 @@
 import "./GameResults.css";
 import { Trophy, Award } from "lucide-react";
 
-export const GameResults = ({ roomInfo, onRestart, onLeave }) => {
+export const GameResults = ({ roomInfo, canRestart = true, onRestart, onLeave }) => {
     const players = roomInfo.players || [];
     const winner = players.find(player => player.id === roomInfo.winnerId || player.isWinner) || players[0];
     const sortedPlayers = winner ? [winner, ...players.filter(player => player.id !== winner.id)] : players;
@@ -46,9 +46,11 @@ export const GameResults = ({ roomInfo, onRestart, onLeave }) => {
                 </div>
 
                 <div className="results-actions">
-                    <button className="custom-button-play" onClick={onRestart}>
-                        Restart Game
-                    </button>
+                    {canRestart && (
+                        <button className="custom-button-play" onClick={onRestart}>
+                            Restart Game
+                        </button>
+                    )}
                     <button className="custom-button-leave" onClick={onLeave}>
                         Back to Menu
                     </button>

@@ -54,7 +54,7 @@ export const getUser = async () => {
 
 export const getRoomByName = async roomName => {
     try {
-        const response = await api.get(`/room/${roomName}`);
+        const response = await api.get(`/room/${encodeURIComponent(roomName)}`);
         return response.data;
     } catch (error) {
         console.error(`Error getting room:`, error);
@@ -130,6 +130,16 @@ export const startGame = async roomName => {
         return response.data;
     } catch (error) {
         console.error(`Error starting game:`, error);
+        throw error;
+    }
+};
+
+export const restartGame = async roomName => {
+    try {
+        const response = await api.post("/room/restart-game", { roomName });
+        return response.data;
+    } catch (error) {
+        console.error(`Error restarting game:`, error);
         throw error;
     }
 };

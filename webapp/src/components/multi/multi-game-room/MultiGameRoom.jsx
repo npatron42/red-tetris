@@ -28,7 +28,7 @@ const MultiGameRoom = () => {
     const { roomName } = useParams();
     const { user } = useUser();
     const { roomEvents } = useSocket();
-    const { isUserAllowedToJoinARoom, handleLeaveRoom, handleStartGame, isLoading, error } = useRoom();
+    const { handleGetRoomDetails, handleJoinRoom, handleLeaveRoom, handleRestartGame, handleStartGame, isLoading, error } = useRoom();
 
     const [isUserAuthorized, setIsUserAuthorized] = useState(false);
     const [roomInfo, setRoomInfo] = useState(null);
@@ -37,15 +37,17 @@ const MultiGameRoom = () => {
     const fetchRoomDetails = useCallback(async () => {
         if (!roomName) return;
         if (!user) return;
-        const result = await isUserAllowedToJoinARoom(roomName, user.user.id);
+        const result = await handleGetRoomDetails(roomName);
         if (result.success && result.data?.room) {
-            setIsUserAuthorized(true);
             setRoomInfo(result.data.room);
+            setIsUserAuthorized(
+                result.data.room.leaderId === user.user.id || result.data.room.opponentId === user.user.id,
+            );
         } else {
             setIsUserAuthorized(false);
             setRoomInfo(null);
         }
-    }, [isUserAllowedToJoinARoom, roomName, user]);
+    }, [handleGetRoomDetails, roomName, user]);
 
     useEffect(() => {
         fetchRoomDetails();
@@ -56,6 +58,23 @@ const MultiGameRoom = () => {
         if (result.success) {
             setFinalPlayers(null);
             setRoomInfo(result.data.room);
+        }
+    };
+
+    const restartGame = async () => {
+        const result = await handleRestartGame(roomName);
+        if (result.success) {
+            setFinalPlayers(null);
+            setRoomInfo(result.data.room);
+        }
+    };
+
+    const joinRoom = async () => {
+        const result = await handleJoinRoom(roomName);
+        if (result.success && result.data?.room) {
+            setFinalPlayers(null);
+            setRoomInfo(result.data.room);
+            setIsUserAuthorized(true);
         }
     };
 
@@ -77,12 +96,22 @@ const MultiGameRoom = () => {
     useEffect(() => {
         if (!roomEvents.roomUpdated) return;
         setRoomInfo(roomEvents.roomUpdated);
-    }, [roomEvents.roomUpdated]);
+        setIsUserAuthorized(
+            roomEvents.roomUpdated.leaderId === user?.user?.id || roomEvents.roomUpdated.opponentId === user?.user?.id,
+        );
+        if (["PENDING", "WAITING", "PROCESSING"].includes(roomEvents.roomUpdated.status)) {
+            setFinalPlayers(null);
+        }
+    }, [roomEvents.roomUpdated, user?.user?.id]);
 
     if (isLoading && !roomInfo) return <div className="room-loading">Loading room...</div>;
     if (error && !isUserAuthorized) return <div className="room-error">Error: {error}</div>;
 
-    if (!isUserAuthorized) {
+    const isCurrentUserLeader = roomInfo?.leaderId === user?.user?.id;
+    const isCurrentUserInRoom = roomInfo?.players?.some(player => player.id === user?.user?.id);
+    const canJoinNextRound = roomInfo && ["PENDING", "WAITING"].includes(roomInfo.status) && !isCurrentUserInRoom && !roomInfo.opponentId;
+
+    if (!isUserAuthorized && !canJoinNextRound) {
         return (
             <div className="room-unauthorized">
                 <h1>Access Denied</h1>
@@ -105,7 +134,8 @@ const MultiGameRoom = () => {
                         winnerId: finalPlayers.winnerId,
                         loserId: finalPlayers.loserId,
                     }}
-                    onRestart={startGame}
+                    canRestart={isCurrentUserLeader}
+                    onRestart={restartGame}
                     onLeave={leaveRoom}
                 />
             );
@@ -116,7 +146,7 @@ const MultiGameRoom = () => {
                 return <TetrisGameMultiplayer roomInfo={roomInfo} currentUser={user} onGameEnd={handleGameEnd} />;
 
             case "COMPLETED":
-                return <GameResults roomInfo={roomInfo} onRestart={startGame} onLeave={leaveRoom} />;
+                return <GameResults roomInfo={roomInfo} canRestart={isCurrentUserLeader} onRestart={restartGame} onLeave={leaveRoom} />;
 
             case "PENDING":
             case "WAITING":
@@ -124,7 +154,7 @@ const MultiGameRoom = () => {
                     <div className="gameroom-card">
                         <header className="room-header">
                             <h1 className="room-title">
-                                <span>{roomName}</span>
+                                <span>{roomInfo.name}</span>
                             </h1>
                         </header>
 
@@ -147,17 +177,26 @@ const MultiGameRoom = () => {
                             </div>
                         </div>
                         <div className="lobby-actions">
-                            {user.user.id === roomInfo.leaderId && roomInfo.opponentId !== null && (
+                            {isCurrentUserLeader && (
                                 <button className="custom-button-play" onClick={startGame}>
                                     <PlayIcon size={24} color="#039BE5" />
                                     Start Game
                                 </button>
                             )}
 
-                            <button className="custom-button-leave" onClick={leaveRoom}>
-                                <LogOutIcon size={24} color="#E53935" />
-                                Leave Room
-                            </button>
+                            {canJoinNextRound && (
+                                <button className="custom-button-play" onClick={joinRoom}>
+                                    <PlayIcon size={24} color="#039BE5" />
+                                    Join
+                                </button>
+                            )}
+
+                            {isCurrentUserInRoom && (
+                                <button className="custom-button-leave" onClick={leaveRoom}>
+                                    <LogOutIcon size={24} color="#E53935" />
+                                    Leave Room
+                                </button>
+                            )}
                         </div>
                     </div>
                 );

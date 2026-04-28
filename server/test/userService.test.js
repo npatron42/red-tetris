@@ -17,6 +17,13 @@ import { createSpy } from "./testUtils.js";
 process.env.DATABASE_URL;
 
 const { UserService } = await import("../src/services/userService.js");
+const { parseUserName } = await import("../src/utils/userName.js");
+
+test("parseUserName returns an URL-safe user name", () => {
+    assert.equal(parseUserName("  drôle player !! / one  "), "drole-player-one");
+    assert.equal(parseUserName("___"), "");
+    assert.equal(parseUserName("a".repeat(24)), "a".repeat(16));
+});
 
 test("UserService.getUserByName requires a name", async () => {
     const userDao = { findByName: createSpy(async () => ({ id: "user-1" })) };
@@ -40,6 +47,18 @@ test("UserService.getUserByName returns user", async () => {
     const result = await service.getUserByName("alice");
 
     assert.equal(result, user);
+});
+
+test("UserService.getUserByName searches with the parsed user name", async () => {
+    const user = { id: "user-1", name: "drole-player" };
+    const findByName = createSpy(async () => user);
+    const userDao = { findByName };
+    const service = new UserService(userDao, {});
+
+    const result = await service.getUserByName(" drôle player!! ");
+
+    assert.equal(result, user);
+    assert.deepEqual(findByName.calls[0], ["drole-player"]);
 });
 
 test("UserService.userExistsByName returns false for missing name", async () => {
@@ -105,7 +124,7 @@ test("UserService.createUser rejects invalid names", async () => {
     const service = new UserService(userDao, {});
 
     await assert.rejects(() => service.createUser(""), /Invalid name/);
-    await assert.rejects(() => service.createUser("this-name-is-way-too-long"), /Invalid name/);
+    await assert.rejects(() => service.createUser("___"), /Invalid name/);
 });
 
 test("UserService.createUser rejects existing users", async () => {
@@ -128,6 +147,24 @@ test("UserService.createUser creates a new user", async () => {
     assert.equal(result.name, "alice");
     assert.deepEqual(create.calls[0][0], {
         name: "alice",
+        multiplayerWins: 0,
+        multiPlayerLosses: "0",
+    });
+});
+
+test("UserService.createUser stores the parsed user name", async () => {
+    const create = createSpy(async user => user);
+    const userDao = {
+        findByName: createSpy(async () => null),
+        create,
+    };
+    const service = new UserService(userDao, {});
+
+    const result = await service.createUser("  drôle player!!  ");
+
+    assert.equal(result.name, "drole-player");
+    assert.deepEqual(create.calls[0][0], {
+        name: "drole-player",
         multiplayerWins: 0,
         multiPlayerLosses: "0",
     });

@@ -13,6 +13,7 @@
 import { UserDao } from "../dao/userDao.js";
 import { MatchDao } from "../dao/matchDao.js";
 import { SoloGameDao } from "../dao/soloGameDao.js";
+import { isUserNameFormatValid, parseUserName } from "../utils/userName.js";
 
 export class UserService {
     constructor(userDao, matchDao, soloGameDao) {
@@ -37,10 +38,11 @@ export class UserService {
     }
 
     async getUserByName(name) {
-        if (!name) {
+        const parsedName = parseUserName(name);
+        if (!parsedName) {
             throw new Error("name is required");
         }
-        const user = await this.userDao.findByName(name);
+        const user = await this.userDao.findByName(parsedName);
         if (!user) {
             throw new Error("User not found");
         }
@@ -49,10 +51,11 @@ export class UserService {
 
     async userExistsByName(name) {
         try {
-            if (!name) {
+            const parsedName = parseUserName(name);
+            if (!parsedName) {
                 return false;
             }
-            const user = await this.userDao.findByName(name);
+            const user = await this.userDao.findByName(parsedName);
             return !!user;
         } catch (error) {
             return false;
@@ -72,15 +75,16 @@ export class UserService {
     }
 
     async createUser(name) {
-        if (!name || name.length > 16) {
+        const parsedName = parseUserName(name);
+        if (!isUserNameFormatValid(parsedName)) {
             throw new Error("Invalid name");
         }
-        const exists = await this.userExistsByName(name);
+        const exists = await this.userExistsByName(parsedName);
         if (exists) {
             throw new Error("User already exists");
         }
         const user = await this.userDao.create({
-            name: name,
+            name: parsedName,
             multiplayerWins: 0,
             multiPlayerLosses: "0",
         });

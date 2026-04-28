@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 import roomService from "../services/roomService.js";
+import { parseRoomName } from "../utils/roomName.js";
 import pino from "pino";
 
 const logger = pino({
@@ -21,15 +22,16 @@ export const create = async (req, res) => {
     try {
         const { name } = req.body;
         const leaderId = req.user.id;
-        if (!name) {
+        const parsedName = parseRoomName(name);
+        if (!parsedName) {
             logger.error("Room name is required", { name });
             return res.status(400).json({ success: false, message: "Room name is required" });
         }
-        const isRoomNameValid = await roomService.isRoomNameValid(name);
+        const isRoomNameValid = await roomService.isRoomNameValid(parsedName);
         if (!isRoomNameValid) {
             return res.status(400).json({ success: false, message: "Room name is already taken" });
         }
-        const room = await roomService.createRoom(name, leaderId);
+        const room = await roomService.createRoom(parsedName, leaderId);
         res.json({ success: true, room });
     } catch (error) {
         logger.error("Error creating room", { error });
@@ -66,7 +68,15 @@ export const joinRoomByName = async (req, res) => {
         res.json({ success: true, room });
     } catch (error) {
         logger.error("Error joining room", { error });
-        res.status(500).json({ success: false, message: error.message || "Error joining room" });
+        const status =
+            error.message === "Room not found"
+                ? 404
+                : error.message === "Room is full"
+                  ? 409
+                  : error.message === "Room is not joinable"
+                    ? 400
+                    : 500;
+        res.status(status).json({ success: false, message: error.message || "Error joining room" });
     }
 };
 
@@ -103,10 +113,27 @@ export const startGame = async (req, res) => {
         if (!roomName) {
             return res.status(400).json({ success: false, message: "Room name is required" });
         }
-        const room = await roomService.startGame(roomName);
+        const room = await roomService.startGame(roomName, req.user.id);
         res.json({ success: true, room });
     } catch (error) {
         logger.error("Error starting game", { error });
-        res.status(500).json({ success: false, message: error.message || "Error starting game" });
+        const status = error.message?.startsWith("Only room host") ? 403 : error.message === "Room not found" ? 404 : 400;
+        res.status(status).json({ success: false, message: error.message || "Error starting game" });
+    }
+};
+
+export const restartGame = async (req, res) => {
+    try {
+        logger.info("Restarting game", { body: req.body, userId: req.user.id });
+        const { roomName } = req.body;
+        if (!roomName) {
+            return res.status(400).json({ success: false, message: "Room name is required" });
+        }
+        const room = await roomService.restartRoom(roomName, req.user.id);
+        res.json({ success: true, room });
+    } catch (error) {
+        logger.error("Error restarting game", { error });
+        const status = error.message?.startsWith("Only room host") ? 403 : error.message === "Room not found" ? 404 : 400;
+        res.status(status).json({ success: false, message: error.message || "Error restarting game" });
     }
 };

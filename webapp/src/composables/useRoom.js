@@ -11,31 +11,41 @@
 /* ************************************************************************** */
 
 import { useCallback, useState } from "react";
-import { createRoom, getRoomByName, joinRoom, leaveRoom, startGame } from "./useApi";
+import { createRoom, getRoomByName, joinRoom, leaveRoom, restartGame, startGame } from "./useApi";
+import { parseRoomName } from "../utils/roomName";
 
 export const useRoom = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
     const handleCreateRoom = useCallback(async roomName => {
+        const parsedRoomName = parseRoomName(roomName);
+        if (!parsedRoomName) {
+            return { success: false, error: "Room name is required" };
+        }
         setIsLoading(true);
         setError(null);
         try {
-            const response = await createRoom(roomName);
+            const response = await createRoom(parsedRoomName);
             return { success: true, data: response };
         } catch (err) {
-            setError("Failed to create room", err);
-            return { success: false, error: err.message };
+            const message = err.response?.data?.message || err.message || "Failed to create room";
+            setError(message);
+            return { success: false, error: message };
         } finally {
             setIsLoading(false);
         }
     }, []);
 
     const isUserAllowedToJoinARoom = useCallback(async (roomName, userId) => {
+        const parsedRoomName = parseRoomName(roomName);
+        if (!parsedRoomName) {
+            return { success: false, error: "Room name is required" };
+        }
         setIsLoading(true);
         setError(null);
         try {
-            const response = await getRoomByName(roomName);
+            const response = await getRoomByName(parsedRoomName);
             if (!response.success || !response.room) {
                 return { success: false, error: "Room not found" };
             }
@@ -51,11 +61,37 @@ export const useRoom = () => {
         }
     }, []);
 
-    const handleJoinRoom = useCallback(async roomName => {
+    const handleGetRoomDetails = useCallback(async roomName => {
+        const parsedRoomName = parseRoomName(roomName);
+        if (!parsedRoomName) {
+            return { success: false, error: "Room name is required" };
+        }
         setIsLoading(true);
         setError(null);
         try {
-            const response = await joinRoom(roomName);
+            const response = await getRoomByName(parsedRoomName);
+            if (response.success && response.room) {
+                return { success: true, data: response };
+            }
+            return { success: false, error: response.message || "Room not found" };
+        } catch (err) {
+            const message = err.response?.data?.message || err.message || "Failed to get room";
+            setError(message);
+            return { success: false, error: message };
+        } finally {
+            setIsLoading(false);
+        }
+    }, []);
+
+    const handleJoinRoom = useCallback(async roomName => {
+        const parsedRoomName = parseRoomName(roomName);
+        if (!parsedRoomName) {
+            return { success: false, error: "Room name is required" };
+        }
+        setIsLoading(true);
+        setError(null);
+        try {
+            const response = await joinRoom(parsedRoomName);
             if (response.success) {
                 return { success: true, data: response };
             }
@@ -72,13 +108,14 @@ export const useRoom = () => {
     }, []);
 
     const handleLeaveRoom = useCallback(async roomName => {
-        if (!roomName) {
+        const parsedRoomName = parseRoomName(roomName);
+        if (!parsedRoomName) {
             return { success: false, error: "Room name is required" };
         }
         setIsLoading(true);
         setError(null);
         try {
-            const response = await leaveRoom(roomName);
+            const response = await leaveRoom(parsedRoomName);
             if (response.success) {
                 return { success: true, data: response };
             }
@@ -95,14 +132,38 @@ export const useRoom = () => {
     }, []);
 
     const handleStartGame = useCallback(async roomName => {
+        const parsedRoomName = parseRoomName(roomName);
+        if (!parsedRoomName) {
+            return { success: false, error: "Room name is required" };
+        }
         setIsLoading(true);
         setError(null);
         try {
-            const response = await startGame(roomName);
+            const response = await startGame(parsedRoomName);
             return { success: true, data: response };
         } catch (err) {
-            setError("Failed to start game", err);
-            return { success: false, error: err.message || "Failed to start game" };
+            const message = err.response?.data?.message || err.message || "Failed to start game";
+            setError(message);
+            return { success: false, error: message };
+        } finally {
+            setIsLoading(false);
+        }
+    }, []);
+
+    const handleRestartGame = useCallback(async roomName => {
+        const parsedRoomName = parseRoomName(roomName);
+        if (!parsedRoomName) {
+            return { success: false, error: "Room name is required" };
+        }
+        setIsLoading(true);
+        setError(null);
+        try {
+            const response = await restartGame(parsedRoomName);
+            return { success: true, data: response };
+        } catch (err) {
+            const message = err.response?.data?.message || err.message || "Failed to restart game";
+            setError(message);
+            return { success: false, error: message };
         } finally {
             setIsLoading(false);
         }
@@ -110,10 +171,12 @@ export const useRoom = () => {
 
     return {
         handleCreateRoom,
+        handleGetRoomDetails,
         isUserAllowedToJoinARoom,
         handleJoinRoom,
         handleLeaveRoom,
         handleStartGame,
+        handleRestartGame,
         isLoading,
         error,
     };
