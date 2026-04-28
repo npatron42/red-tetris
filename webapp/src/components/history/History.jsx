@@ -25,10 +25,9 @@ const History = forwardRef(({ children }, ref) => {
 
     const totalMultiplayerGames = matchHistory.length;
     const totalSoloGames = soloGameHistory.length;
-    const multiplayerWins = matchHistory.filter(match => match.winnerId === user?.user?.id).length;
+    const multiplayerWins = matchHistory.filter(match => match.winner_id === user?.user?.id).length;
     const multiplayerLosses = totalMultiplayerGames - multiplayerWins;
-    console.log(soloGameHistory);
-    console.log(matchHistory);
+
     useImperativeHandle(ref, () => ({
         toggleHistory: () => setIsHistoryActivated(prev => !prev),
     }));
@@ -80,7 +79,7 @@ const History = forwardRef(({ children }, ref) => {
                                 ) : (
                                     <div className="history-list">
                                         {matchHistory.map(match => {
-                                            const isWinner = match.winnerId === user?.user?.id;
+                                            const isWinner = match.winner_id === user?.user?.id;
                                             return (
                                                 <div key={match.id} className={`history-item ${isWinner ? "win" : "loss"}`}>
                                                     <div className="history-item-icon">

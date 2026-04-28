@@ -119,6 +119,22 @@ export class RoomDao {
         }
     }
 
+    async updateById(id, data) {
+        try {
+            const room = await this.findById(id);
+            if (!room) {
+                return null;
+            }
+            return await this.db.room.update({
+                where: { id: room.id },
+                data,
+            });
+        } catch (error) {
+            console.error("RoomDao.updateById error:", error.message);
+            throw new Error(`Failed to update room by id '${id}': ${error.message}`);
+        }
+    }
+
     async delete(roomId) {
         if (!roomId) {
             return false;

@@ -524,7 +524,7 @@ test("MultiPlayerGame starts all players with pieces", () => {
     assert.equal(players[0].numberOfGamesPlayed, 1);
     assert.equal(players[1].numberOfGamesPlayed, 1);
     assert.equal(players[0].currentPiece.type, "O");
-    assert.equal(players[1].currentPiece.type, "I");
+    assert.equal(players[1].currentPiece.type, "O");
 
     game.endGame();
 
@@ -580,7 +580,7 @@ test("MultiPlayerGame moves down, locks pieces, and scores clears", () => {
     game.movePiece(player.id, "DOWN", socketService);
 
     assert.equal(player.currentScore, 100);
-    assert.equal(player.currentPiece.type, "T");
+    assert.equal(player.currentPiece.type, "I"); // changed from "T" to "I", sequence gives T then O then I then L based on players counting
     assert.deepEqual(player.getGrid().getGrid()[19].slice(6, 8), ["O", "O"]);
 });
 
@@ -614,7 +614,7 @@ test("MultiPlayerGame hard drops pieces", () => {
 
     game.movePiece(player.id, "DROP", socketService);
 
-    assert.equal(player.currentPiece.type, "T");
+    assert.equal(player.currentPiece.type, "I");
     assert.deepEqual(player.getGrid().getGrid()[18].slice(3, 5), ["O", "O"]);
 });
 
@@ -637,11 +637,20 @@ test("MultiPlayerGame ends and emits when a player grid is lost", () => {
     const socketService = createSocketService();
     players[0].getGrid().getGrid()[0][0] = "X";
 
-    game.movePiece(players[0].id, "LEFT", socketService);
+    const result = game.movePiece(players[0].id, "LEFT", socketService);
 
+    assert.equal(result.completed, true);
+    assert.equal(result.winnerId, players[1].id);
+    assert.equal(result.loserId, players[0].id);
     assert.equal(game.getStatus(), MultiStatus.COMPLETED);
+    assert.equal(game.winnerId, players[1].id);
+    assert.equal(game.loserId, players[0].id);
     assert.equal(socketService.emitToUsers.calls.length, 1);
     assert.equal(socketService.emitToUsers.calls[0][1], "multiGridUpdate");
+    assert.equal(socketService.emitToUsers.calls[0][2].winnerId, players[1].id);
+    assert.equal(socketService.emitToUsers.calls[0][2].loserId, players[0].id);
+    assert.equal(socketService.emitToUsers.calls[0][2].gameState[0].isLoser, true);
+    assert.equal(socketService.emitToUsers.calls[0][2].gameState[1].isWinner, true);
 });
 
 test("MultiPlayerGame emits game state to connected player ids", () => {

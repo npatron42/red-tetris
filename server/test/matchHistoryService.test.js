@@ -32,7 +32,15 @@ test("MatchHistoryService.createMatchHistory requires winner", async () => {
     const userService = { getUserById: createSpy(async () => ({})), updateStatsById: createSpy(async () => {}) };
     const service = new MatchHistoryService(matchDao, userService);
 
-    await assert.rejects(() => service.createMatchHistory(["user-1"]), /Winner ID is required/);
+    await assert.rejects(() => service.createMatchHistory(["user-1"], null, 123), /Winner ID is required/);
+});
+
+test("MatchHistoryService.createMatchHistory requires rngSeed", async () => {
+    const matchDao = { create: createSpy(async () => ({})) };
+    const userService = { getUserById: createSpy(async () => ({})), updateStatsById: createSpy(async () => {}) };
+    const service = new MatchHistoryService(matchDao, userService);
+
+    await assert.rejects(() => service.createMatchHistory(["user-1"], "user-1"), /RNG seed is required/);
 });
 
 test("MatchHistoryService.createMatchHistory creates match and updates stats", async () => {
@@ -47,13 +55,32 @@ test("MatchHistoryService.createMatchHistory creates match and updates stats", a
     const matchDao = { create: createSpy(async data => data) };
     const service = new MatchHistoryService(matchDao, userService);
 
-    const result = await service.createMatchHistory(["user-1", "user-2"], "user-2");
+    const result = await service.createMatchHistory(["user-1", "user-2"], "user-2", 67890);
 
     assert.equal(result.player1Id, "user-1");
     assert.equal(result.player2Id, "user-2");
     assert.equal(result.winnerId, "user-2");
+    assert.equal(result.rngSeed, 67890);
     assert.equal(result.status, "COMPLETED");
     assert.equal(userService.updateStatsById.calls.length, 2);
+});
+
+test("MatchHistoryService.createMatchHistory forwards provided rngSeed", async () => {
+    const users = new Map([
+        ["user-1", { id: "user-1", name: "alice" }],
+        ["user-2", { id: "user-2", name: "bob" }],
+    ]);
+    const userService = {
+        getUserById: createSpy(async id => users.get(id)),
+        updateStatsById: createSpy(async () => {}),
+    };
+    const matchDao = { create: createSpy(async data => data) };
+    const service = new MatchHistoryService(matchDao, userService);
+
+    const result = await service.createMatchHistory(["user-1", "user-2"], "user-1", 12345);
+
+    assert.equal(result.rngSeed, 12345);
+    assert.equal(matchDao.create.calls[0][0].rngSeed, 12345);
 });
 
 test("MatchHistoryService.createMatchHistory uses player1 as player2 when missing", async () => {
@@ -65,7 +92,7 @@ test("MatchHistoryService.createMatchHistory uses player1 as player2 when missin
     const matchDao = { create: createSpy(async data => data) };
     const service = new MatchHistoryService(matchDao, userService);
 
-    const result = await service.createMatchHistory(["user-1"], "user-1");
+    const result = await service.createMatchHistory(["user-1"], "user-1", 12345);
 
     assert.equal(result.player1Id, "user-1");
     assert.equal(result.player2Id, "user-1");

@@ -20,12 +20,15 @@ export class MatchHistoryService {
         this.userService = userService || new UserService();
     }
 
-    async createMatchHistory(playerIds, winnerId) {
+    async createMatchHistory(playerIds, winnerId, rngSeed) {
         if (!Array.isArray(playerIds) || playerIds.length === 0) {
             throw new Error("Player IDs array is required");
         }
         if (!winnerId) {
             throw new Error("Winner ID is required");
+        }
+        if (rngSeed === undefined || rngSeed === null) {
+            throw new Error("RNG seed is required");
         }
 
         const [player1Id, player2Id] = playerIds;
@@ -38,6 +41,7 @@ export class MatchHistoryService {
             player1Id: player1.id,
             player2Id: player2.id,
             winnerId: winnerId,
+            rngSeed,
             status: "COMPLETED",
         });
 
