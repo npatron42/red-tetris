@@ -67,6 +67,18 @@ test("RoomService.joinRoom rejects new players while a game is running", async (
     await assert.rejects(() => service.joinRoom("room", "new-player"), /Room is not joinable/);
 });
 
+test("RoomService.joinRoom rejects users already in the room", async () => {
+    const service = new RoomService();
+    const findByName = createSpy(async () => createRoom());
+
+    service.roomDao = {
+        findByName,
+    };
+
+    await assert.rejects(() => service.joinRoom("room", "leader-1"), /User already in room/);
+    await assert.rejects(() => service.joinRoom("room", "opponent-1"), /User already in room/);
+});
+
 test("RoomService.startGame rejects non-host users", async () => {
     const service = new RoomService();
     const findByName = createSpy(async () => createRoom({ status: "PENDING", opponent_id: null, opponent: null }));
@@ -76,6 +88,17 @@ test("RoomService.startGame rejects non-host users", async () => {
     };
 
     await assert.rejects(() => service.startGame("room", "opponent-1"), /Only room host can start the game/);
+});
+
+test("RoomService.startGame rejects rooms with only the host", async () => {
+    const service = new RoomService();
+    const findByName = createSpy(async () => createRoom({ status: "PENDING", opponent_id: null, opponent: null }));
+
+    service.roomDao = {
+        findByName,
+    };
+
+    await assert.rejects(() => service.startGame("room", "leader-1"), /Cannot start game alone/);
 });
 
 test("RoomService.restartRoom rejects non-host users", async () => {
@@ -109,6 +132,49 @@ test("RoomService.restartRoom resets completed room for the next round", async (
     assert.equal(result.status, "PENDING");
     assert.equal(result.opponentId, null);
     assert.deepEqual(updateByName.calls[0], ["room", { status: "PENDING", opponent_id: null }]);
+});
+
+test("RoomService keeps promoted host start-ready after another user joins", async () => {
+    const service = new RoomService();
+    const users = {
+        "leader-1": { id: "leader-1", name: "alice" },
+        "opponent-1": { id: "opponent-1", name: "bob" },
+        "player-3": { id: "player-3", name: "charlie" },
+    };
+    const roomState = {
+        id: "room-1",
+        name: "room",
+        status: "PENDING",
+        leader_id: "leader-1",
+        opponent_id: "opponent-1",
+    };
+    const hydrateRoom = () =>
+        createRoom({
+            ...roomState,
+            leader: users[roomState.leader_id],
+            opponent: roomState.opponent_id ? users[roomState.opponent_id] : null,
+        });
+
+    service.roomDao = {
+        findByName: createSpy(async () => hydrateRoom()),
+        updateByName: createSpy(async (name, updates) => {
+            Object.assign(roomState, updates);
+            return hydrateRoom();
+        }),
+    };
+    service.userDao = {
+        findById: createSpy(async id => users[id] || null),
+    };
+
+    await service.removePlayer("room", "leader-1");
+    const updatedRoom = await service.joinRoom("room", "player-3");
+
+    assert.equal(updatedRoom.leaderId, "opponent-1");
+    assert.equal(updatedRoom.opponentId, "player-3");
+    assert.deepEqual(
+        updatedRoom.players.map(player => player.id),
+        ["opponent-1", "player-3"],
+    );
 });
 
 test("RoomService.removePlayer promotes opponent using Prisma column names", async () => {

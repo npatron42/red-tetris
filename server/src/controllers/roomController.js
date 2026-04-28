@@ -71,6 +71,8 @@ export const joinRoomByName = async (req, res) => {
         const status =
             error.message === "Room not found"
                 ? 404
+                : error.message === "User already in room"
+                  ? 409
                 : error.message === "Room is full"
                   ? 409
                   : error.message === "Room is not joinable"

@@ -65,7 +65,7 @@ export class RoomService {
             throw new Error("Room not found");
         }
         if (room.leaderId === userId || room.opponentId === userId) {
-            return room;
+            throw new Error("User already in room");
         }
         if (!["PENDING", "WAITING"].includes(room.status)) {
             throw new Error("Room is not joinable");
@@ -187,6 +187,9 @@ export class RoomService {
         if (roomData.leaderId !== userId) {
             throw new Error("Only room host can start the game");
         }
+        if (roomData.playerIds.length < 2) {
+            throw new Error("Cannot start game alone");
+        }
         if (!["PENDING", "WAITING"].includes(roomData.status)) {
             throw new Error("Room is not in a waiting state");
         }
@@ -235,8 +238,8 @@ export class RoomService {
         if (!room || !socketService.launched) {
             return;
         }
-        const payload = this.enrichRoomData(room);
-        this.notifyUsersRoomUpdated([room.leaderId, room.opponentId], payload);
+        const payload = room.players ? room : this.enrichRoomData(room);
+        this.notifyUsersRoomUpdated([payload.leaderId, payload.opponentId], payload);
     }
 
     notifyUsersRoomUpdated(userIds, room) {
