@@ -12,7 +12,7 @@
 
 import express from "express";
 import { authenticate } from "../middleware/authMiddleware.js";
-import { create, getAll, getByName, joinRoomByName, leaveRoom, startGame } from "../controllers/roomController.js";
+import { create, getAll, getByName, joinRoomByName, leaveRoom, restartGame, startGame } from "../controllers/roomController.js";
 
 const roomRouter = express.Router();
 
@@ -22,5 +22,6 @@ roomRouter.get("/:roomName", authenticate, getByName);
 roomRouter.post("/join", authenticate, joinRoomByName);
 roomRouter.post("/leave", authenticate, leaveRoom);
 roomRouter.post("/start-game", authenticate, startGame);
+roomRouter.post("/restart-game", authenticate, restartGame);
 
 export default roomRouter;

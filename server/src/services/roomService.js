@@ -64,8 +64,14 @@ export class RoomService {
         if (!room) {
             throw new Error("Room not found");
         }
-        if (room.opponentId) {
+        if (room.leaderId === userId || room.opponentId === userId) {
             return room;
+        }
+        if (!["PENDING", "WAITING"].includes(room.status)) {
+            throw new Error("Room is not joinable");
+        }
+        if (room.opponentId) {
+            throw new Error("Room is full");
         }
 
         const user = await this.userDao.findById(userId);
@@ -172,26 +178,44 @@ export class RoomService {
         return room;
     }
 
-    async startGame(roomName) {
-        try {
-            const parsedRoomName = parseRoomName(roomName);
-            const roomData = await this.getRoomByName(parsedRoomName);
-            if (!roomData) {
-                throw new Error("Room not found");
-            }
-            if (!["PENDING", "COMPLETED"].includes(roomData.status)) {
-                throw new Error("Room is not in a waiting state");
-            }
-            await this.roomDao.updateByName(parsedRoomName, { status: "PROCESSING" });
-            const updatedRoom = await this.getRoomByName(parsedRoomName);
-            this.notifyPlayersRoomUpdated(updatedRoom);
-            multiGameService.createMultiGame(roomData.id, roomData.leaderId, roomData.playerIds);
-            this.notifyPlayersRoomUpdated(updatedRoom);
-            return roomData;
-        } catch (error) {
-            console.error("Error starting game:", error);
-            return null;
+    async startGame(roomName, userId) {
+        const parsedRoomName = parseRoomName(roomName);
+        const roomData = await this.getRoomByName(parsedRoomName);
+        if (!roomData) {
+            throw new Error("Room not found");
         }
+        if (roomData.leaderId !== userId) {
+            throw new Error("Only room host can start the game");
+        }
+        if (!["PENDING", "WAITING"].includes(roomData.status)) {
+            throw new Error("Room is not in a waiting state");
+        }
+        await this.roomDao.updateByName(parsedRoomName, { status: "PROCESSING" });
+        const updatedRoom = await this.getRoomByName(parsedRoomName);
+        this.notifyPlayersRoomUpdated(updatedRoom);
+        multiGameService.createMultiGame(roomData.id, roomData.leaderId, roomData.playerIds);
+        this.notifyPlayersRoomUpdated(updatedRoom);
+        return updatedRoom;
+    }
+
+    async restartRoom(roomName, userId) {
+        const parsedRoomName = parseRoomName(roomName);
+        const roomData = await this.getRoomByName(parsedRoomName);
+        if (!roomData) {
+            throw new Error("Room not found");
+        }
+        if (roomData.leaderId !== userId) {
+            throw new Error("Only room host can restart the game");
+        }
+        if (roomData.status !== "COMPLETED") {
+            throw new Error("Room is not completed");
+        }
+
+        const previousPlayerIds = roomData.playerIds;
+        await this.roomDao.updateByName(parsedRoomName, { status: "PENDING", opponent_id: null });
+        const updatedRoom = await this.getRoomByName(parsedRoomName);
+        this.notifyUsersRoomUpdated(previousPlayerIds, updatedRoom);
+        return updatedRoom;
     }
 
     async endGame(roomName) {
@@ -212,7 +236,15 @@ export class RoomService {
             return;
         }
         const payload = this.enrichRoomData(room);
-        socketService.emitToUsers([room.leaderId, room.opponentId], "roomUpdated", payload);
+        this.notifyUsersRoomUpdated([room.leaderId, room.opponentId], payload);
+    }
+
+    notifyUsersRoomUpdated(userIds, room) {
+        if (!room || !socketService.launched) {
+            return;
+        }
+        const payload = room.players ? room : this.enrichRoomData(room);
+        socketService.emitToUsers(userIds, "roomUpdated", payload);
     }
 }
 

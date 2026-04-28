@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 import { useCallback, useState } from "react";
-import { createRoom, getRoomByName, joinRoom, leaveRoom, startGame } from "./useApi";
+import { createRoom, getRoomByName, joinRoom, leaveRoom, restartGame, startGame } from "./useApi";
 import { parseRoomName } from "../utils/roomName";
 
 export const useRoom = () => {
@@ -56,6 +56,28 @@ export const useRoom = () => {
         } catch (err) {
             setError("Failed to check room access", err);
             return { success: false, error: err.message || "Failed to check room access" };
+        } finally {
+            setIsLoading(false);
+        }
+    }, []);
+
+    const handleGetRoomDetails = useCallback(async roomName => {
+        const parsedRoomName = parseRoomName(roomName);
+        if (!parsedRoomName) {
+            return { success: false, error: "Room name is required" };
+        }
+        setIsLoading(true);
+        setError(null);
+        try {
+            const response = await getRoomByName(parsedRoomName);
+            if (response.success && response.room) {
+                return { success: true, data: response };
+            }
+            return { success: false, error: response.message || "Room not found" };
+        } catch (err) {
+            const message = err.response?.data?.message || err.message || "Failed to get room";
+            setError(message);
+            return { success: false, error: message };
         } finally {
             setIsLoading(false);
         }
@@ -128,12 +150,33 @@ export const useRoom = () => {
         }
     }, []);
 
+    const handleRestartGame = useCallback(async roomName => {
+        const parsedRoomName = parseRoomName(roomName);
+        if (!parsedRoomName) {
+            return { success: false, error: "Room name is required" };
+        }
+        setIsLoading(true);
+        setError(null);
+        try {
+            const response = await restartGame(parsedRoomName);
+            return { success: true, data: response };
+        } catch (err) {
+            const message = err.response?.data?.message || err.message || "Failed to restart game";
+            setError(message);
+            return { success: false, error: message };
+        } finally {
+            setIsLoading(false);
+        }
+    }, []);
+
     return {
         handleCreateRoom,
+        handleGetRoomDetails,
         isUserAllowedToJoinARoom,
         handleJoinRoom,
         handleLeaveRoom,
         handleStartGame,
+        handleRestartGame,
         isLoading,
         error,
     };

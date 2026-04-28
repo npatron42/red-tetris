@@ -56,6 +56,61 @@ test("RoomService.createRoom stores the parsed room name", async () => {
     assert.deepEqual(create.calls[0][0].name, "nice-room");
 });
 
+test("RoomService.joinRoom rejects new players while a game is running", async () => {
+    const service = new RoomService();
+    const findByName = createSpy(async () => createRoom({ status: "PROCESSING", opponent_id: null, opponent: null }));
+
+    service.roomDao = {
+        findByName,
+    };
+
+    await assert.rejects(() => service.joinRoom("room", "new-player"), /Room is not joinable/);
+});
+
+test("RoomService.startGame rejects non-host users", async () => {
+    const service = new RoomService();
+    const findByName = createSpy(async () => createRoom({ status: "PENDING", opponent_id: null, opponent: null }));
+
+    service.roomDao = {
+        findByName,
+    };
+
+    await assert.rejects(() => service.startGame("room", "opponent-1"), /Only room host can start the game/);
+});
+
+test("RoomService.restartRoom rejects non-host users", async () => {
+    const service = new RoomService();
+    const findByName = createSpy(async () => createRoom({ status: "COMPLETED" }));
+
+    service.roomDao = {
+        findByName,
+    };
+
+    await assert.rejects(() => service.restartRoom("room", "opponent-1"), /Only room host can restart the game/);
+});
+
+test("RoomService.restartRoom resets completed room for the next round", async () => {
+    const service = new RoomService();
+    const findByName = createSpy(async () => {
+        if (findByName.calls.length > 1) {
+            return createRoom({ status: "PENDING", opponent_id: null, opponent: null });
+        }
+        return createRoom({ status: "COMPLETED" });
+    });
+    const updateByName = createSpy(async () => undefined);
+
+    service.roomDao = {
+        findByName,
+        updateByName,
+    };
+
+    const result = await service.restartRoom("room", "leader-1");
+
+    assert.equal(result.status, "PENDING");
+    assert.equal(result.opponentId, null);
+    assert.deepEqual(updateByName.calls[0], ["room", { status: "PENDING", opponent_id: null }]);
+});
+
 test("RoomService.removePlayer promotes opponent using Prisma column names", async () => {
     const service = new RoomService();
     const findByName = createSpy(async () => createRoom());

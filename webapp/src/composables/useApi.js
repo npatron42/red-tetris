@@ -134,6 +134,16 @@ export const startGame = async roomName => {
     }
 };
 
+export const restartGame = async roomName => {
+    try {
+        const response = await api.post("/room/restart-game", { roomName });
+        return response.data;
+    } catch (error) {
+        console.error(`Error restarting game:`, error);
+        throw error;
+    }
+};
+
 export const createSoloGame = async difficulty => {
     try {
         const response = await api.post("/solo/create", { difficulty });
