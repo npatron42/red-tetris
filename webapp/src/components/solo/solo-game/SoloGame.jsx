@@ -31,7 +31,7 @@ const SoloGameResult = ({ score }) => {
 };
 
 export const SoloGame = () => {
-    const { gameId } = useParams();
+    const { roomName: gameId } = useParams();
     const [finalScore, setFinalScore] = useState(null);
 
     const handleGameCompleted = score => {

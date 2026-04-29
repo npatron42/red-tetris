@@ -321,6 +321,19 @@ body {
 .cell.J { --cell-color: #0000f0; --cell-color-dark: #0000a0; --cell-color-light: #0000ff; }
 .cell.L { --cell-color: #f0a000; --cell-color-dark: #a07000; --cell-color-light: #ffc000; }
 
+.cell.spectrum {
+    --cell-color: #2e5c6e;
+    --cell-color-dark: #1a3a47;
+    --cell-color-light: #3d7a91;
+    background: linear-gradient(135deg, var(--cell-color) 0%, var(--cell-color-dark) 100%);
+    border: 1px solid var(--cell-color-light);
+    border-radius: 3px;
+    box-shadow:
+        0 0 3px rgba(46, 92, 110, 0.6),
+        inset 0 0 4px rgba(0, 0, 0, 0.4);
+    opacity: 0.85;
+}
+
 .cell.ghost {
     background-color: transparent !important;
     border: 2px dashed var(--cell-color, #ff3179);

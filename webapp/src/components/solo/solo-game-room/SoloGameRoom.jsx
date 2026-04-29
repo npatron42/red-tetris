@@ -31,7 +31,7 @@ const SoloGameRoom = () => {
     const handleCreateSoloGame = async () => {
         try {
             const gameId = await createGame(difficulty);
-            navigate(`/solo/${gameId}`);
+            navigate(`/${gameId}/${user.user.name}`);
         } catch (error) {
             console.error(error);
         }

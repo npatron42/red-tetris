@@ -27,6 +27,7 @@ const COLOR_MAP = {
     T: "#BC13FE",
     Z: "#FF003C",
     X: "#3A3A3A",
+    SPECTRUM: "#2e5c6e",
 
     0: "transparent",
 
@@ -39,6 +40,38 @@ const COLOR_MAP = {
     "Z-ghost": "#FF003C",
 };
 
+const computeSpectrumGrid = lockedGrid => {
+    const COLS = 10;
+    const ROWS = 20;
+    const topRow = Array(COLS).fill(ROWS);
+    for (let c = 0; c < COLS; c++) {
+        for (let r = 0; r < ROWS; r++) {
+            if (lockedGrid[r][c] !== 0) {
+                topRow[c] = r;
+                break;
+            }
+        }
+    }
+    return lockedGrid.map((row, r) =>
+        row.map((cell, c) => {
+            if (cell === "X") return "X";
+            if (r >= topRow[c]) return "SPECTRUM";
+            return 0;
+        }),
+    );
+};
+
+const computeSpectrumWithPiece = (grid, lockedGrid) => {
+    const spectrum = computeSpectrumGrid(lockedGrid);
+    return spectrum.map((row, r) =>
+        row.map((cell, c) => {
+            const fullCell = grid[r][c];
+            if (fullCell !== 0 && lockedGrid[r][c] === 0) return fullCell;
+            return cell;
+        }),
+    );
+};
+
 export const TetrisGameMultiplayer = ({ roomInfo, onGameEnd }) => {
     const [playersState, setPlayersState] = useState([]);
     const [gameEnded, setGameEnded] = useState(false);
@@ -49,11 +82,12 @@ export const TetrisGameMultiplayer = ({ roomInfo, onGameEnd }) => {
         if (cell === 0) return { className: "cell empty", style: {} };
 
         const isGhost = typeof cell === "string" && cell.includes("-ghost");
+        const isSpectrum = cell === "SPECTRUM";
         const colorKey = cell;
         const colorValue = COLOR_MAP[colorKey];
 
         return {
-            className: `cell ${isGhost ? "ghost" : "filled"}`,
+            className: `cell ${isGhost ? "ghost" : isSpectrum ? "spectrum" : "filled"}`,
             style: {
                 backgroundColor: isGhost ? "transparent" : colorValue,
                 "--cell-color": colorValue,
@@ -147,7 +181,9 @@ export const TetrisGameMultiplayer = ({ roomInfo, onGameEnd }) => {
 
     const renderPlayerBoard = (playerState, isCurrentUser) => {
         const defaultGrid = Array.from({ length: 20 }, () => Array(10).fill(0));
-        const grid = playerState?.grid || defaultGrid;
+        const rawGrid = playerState?.grid || defaultGrid;
+        const lockedGrid = playerState?.lockedGrid || defaultGrid;
+        const grid = isCurrentUser ? rawGrid : computeSpectrumWithPiece(rawGrid, lockedGrid);
         const nextPieces = playerState?.nextPieces || [];
 
         return (
