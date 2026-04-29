@@ -325,6 +325,8 @@ test("SoloGame moves down or locks when blocked", () => {
 
     player.currentPiece.setPosition(1, 18);
     game.movePiece(player.id, "DOWN", socketService);
+    assert.equal(player.currentPiece.type, "O");
+    game.movePiece(player.id, "DOWN", socketService);
 
     assert.equal(player.currentPiece.type, "I");
     assert.deepEqual(player.getGrid().getGrid()[18].slice(1, 3), ["O", "O"]);
@@ -579,10 +581,12 @@ test("MultiPlayerGame moves down, locks pieces, and scores clears", () => {
 
     grid[19] = ["Z", "Z", "Z", "Z", "Z", "Z", 0, 0, "Z", "Z"];
     player.currentPiece.setPosition(6, 18);
-    game.movePiece(player.id, "DOWN", socketService);
+    game.movePiece(player.id, "DOWN", socketService); // grace frame: touchingBottom = true
+    assert.equal(player.currentPiece.type, "O");      // piece not locked yet
+    game.movePiece(player.id, "DOWN", socketService); // actual lock
 
     assert.equal(player.currentScore, 100);
-    assert.equal(player.currentPiece.type, "I"); // changed from "T" to "I", sequence gives T then O then I then L based on players counting
+    assert.equal(player.currentPiece.type, "I");
     assert.deepEqual(player.getGrid().getGrid()[19].slice(6, 8), ["O", "O"]);
 });
 

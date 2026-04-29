@@ -129,6 +129,7 @@ export class SoloGame {
             case "LEFT":
                 piece.moveLeft();
                 if (grid.isValidPosition(piece, piece.getX(), piece.getY())) {
+                    this.player.touchingBottom = false;
                 } else {
                     piece.setPosition(oldX, oldY);
                 }
@@ -136,6 +137,7 @@ export class SoloGame {
             case "RIGHT":
                 piece.moveRight();
                 if (grid.isValidPosition(piece, piece.getX(), piece.getY())) {
+                    this.player.touchingBottom = false;
                 } else {
                     piece.setPosition(oldX, oldY);
                 }
@@ -143,9 +145,15 @@ export class SoloGame {
             case "DOWN":
                 piece.moveDown();
                 if (grid.isValidPosition(piece, piece.getX(), piece.getY())) {
+                    this.player.touchingBottom = false;
                 } else {
                     piece.setPosition(oldX, oldY);
-                    this.handleLockPiece();
+                    if (!this.player.touchingBottom) {
+                        this.player.touchingBottom = true;
+                    } else {
+                        this.player.touchingBottom = false;
+                        this.handleLockPiece();
+                    }
                 }
                 break;
             case "ROTATE":
@@ -155,6 +163,8 @@ export class SoloGame {
                         piece.rotationIndex = oldRotation;
                         piece.setPosition(oldX, oldY);
                     }
+                } else {
+                    this.player.touchingBottom = false;
                 }
                 break;
             case "DROP":
@@ -163,6 +173,7 @@ export class SoloGame {
                     dropY++;
                 }
                 piece.setPosition(piece.getX(), dropY);
+                this.player.touchingBottom = false;
                 this.handleLockPiece();
                 break;
         }

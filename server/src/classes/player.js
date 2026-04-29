@@ -35,6 +35,7 @@ export class Player {
         this.isSpectrum = false;
         this.linesResistant = 0;
         this.currentPiece = null;
+        this.touchingBottom = false;
     }
 
     incrementNumberOfGamesPlayed() {

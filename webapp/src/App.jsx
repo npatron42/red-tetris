@@ -13,7 +13,7 @@
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useParams } from "react-router-dom";
 
 import Home from "./components/home/Home";
 import History from "./components/history/History";
@@ -29,6 +29,13 @@ import BackgroundAnimation from "./components/animations/background/BackgroundAn
 import { RequireAuth, UserProvider } from "./providers/UserProvider";
 import { SocketProvider } from "./providers/SocketProvider";
 import { Navbar } from "./components/navbar/Navbar";
+
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+const GameRouter = () => {
+    const { roomName } = useParams();
+    return UUID_PATTERN.test(roomName) ? <SoloGame /> : <MultiGameRoom />;
+};
 
 const App = () => {
     return (
@@ -57,14 +64,6 @@ const App = () => {
                             }
                         />
                         <Route
-                            path="/solo/:gameId"
-                            element={
-                                <RequireAuth>
-                                    <SoloGame />
-                                </RequireAuth>
-                            }
-                        />
-                        <Route
                             path="/create-room"
                             element={
                                 <RequireAuth>
@@ -81,10 +80,10 @@ const App = () => {
                             }
                         />
                         <Route
-                            path="/:roomName/:leaderUsername"
+                            path="/:roomName/:playerName"
                             element={
                                 <RequireAuth>
-                                    <MultiGameRoom />
+                                    <GameRouter />
                                 </RequireAuth>
                             }
                         />

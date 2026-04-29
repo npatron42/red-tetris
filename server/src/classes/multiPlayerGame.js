@@ -222,6 +222,7 @@ export class MultiPlayerGame {
             case "LEFT":
                 piece.moveLeft();
                 if (grid.isValidPosition(piece, piece.getX(), piece.getY())) {
+                    player.touchingBottom = false;
                 } else {
                     piece.setPosition(oldX, oldY);
                 }
@@ -229,6 +230,7 @@ export class MultiPlayerGame {
             case "RIGHT":
                 piece.moveRight();
                 if (grid.isValidPosition(piece, piece.getX(), piece.getY())) {
+                    player.touchingBottom = false;
                 } else {
                     piece.setPosition(oldX, oldY);
                 }
@@ -236,9 +238,15 @@ export class MultiPlayerGame {
             case "DOWN":
                 piece.moveDown();
                 if (grid.isValidPosition(piece, piece.getX(), piece.getY())) {
+                    player.touchingBottom = false;
                 } else {
                     piece.setPosition(oldX, oldY);
-                    linesCleared = this.handleLockPiece(player);
+                    if (!player.touchingBottom) {
+                        player.touchingBottom = true;
+                    } else {
+                        player.touchingBottom = false;
+                        linesCleared = this.handleLockPiece(player);
+                    }
                 }
                 break;
             case "ROTATE":
@@ -248,6 +256,8 @@ export class MultiPlayerGame {
                         piece.rotationIndex = oldRotation;
                         piece.setPosition(oldX, oldY);
                     }
+                } else {
+                    player.touchingBottom = false;
                 }
                 break;
             case "DROP":
@@ -256,6 +266,7 @@ export class MultiPlayerGame {
                     dropY++;
                 }
                 piece.setPosition(piece.getX(), dropY);
+                player.touchingBottom = false;
                 linesCleared = this.handleLockPiece(player);
                 break;
         }
@@ -282,6 +293,7 @@ export class MultiPlayerGame {
                 id: player.id,
                 name: player.getUsername(),
                 grid: player.currentPiece ? player.getGrid().getGridWithPiece(player.currentPiece) : player.getGrid().getGrid(),
+                lockedGrid: player.getGrid().getGrid(),
                 score: player.currentScore,
                 level: this.level,
                 status: this.getStatus(),
